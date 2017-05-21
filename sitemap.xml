@@ -2,88 +2,88 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>/about/</loc>
+    <loc>https://lucassabreu.github.io/about/</loc>
     <lastmod>2017-05-20T22:05:52+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/post/steps-e-a-concepcao-de-um-produto/</loc>
+    <loc>https://lucassabreu.github.io/post/steps-e-a-concepcao-de-um-produto/</loc>
     <lastmod>2017-02-24T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/post/simplificando-setup-projetos-github/</loc>
+    <loc>https://lucassabreu.github.io/post/simplificando-setup-projetos-github/</loc>
     <lastmod>2017-01-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/apps/</loc>
+    <loc>https://lucassabreu.github.io/tags/apps/</loc>
     <lastmod>2017-02-24T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/tags/coderockr-way/</loc>
-    <lastmod>2017-01-10T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/github/</loc>
+    <loc>https://lucassabreu.github.io/tags/coderockr-way/</loc>
     <lastmod>2017-01-10T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/</loc>
-    <lastmod>2017-02-24T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/new-product-development/</loc>
-    <lastmod>2017-02-24T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/post/</loc>
-    <lastmod>2017-02-24T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/product-design/</loc>
-    <lastmod>2017-02-24T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/project-management/</loc>
+    <loc>https://lucassabreu.github.io/tags/github/</loc>
     <lastmod>2017-01-10T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/tags/script/</loc>
-    <lastmod>2017-01-10T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/scripting/</loc>
-    <lastmod>2017-01-10T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/social-anxiety/</loc>
+    <loc>https://lucassabreu.github.io/</loc>
     <lastmod>2017-02-24T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/tags/</loc>
+    <loc>https://lucassabreu.github.io/tags/new-product-development/</loc>
+    <lastmod>2017-02-24T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://lucassabreu.github.io/post/</loc>
+    <lastmod>2017-02-24T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://lucassabreu.github.io/tags/product-design/</loc>
+    <lastmod>2017-02-24T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://lucassabreu.github.io/tags/project-management/</loc>
+    <lastmod>2017-01-10T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://lucassabreu.github.io/tags/script/</loc>
+    <lastmod>2017-01-10T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://lucassabreu.github.io/tags/scripting/</loc>
+    <lastmod>2017-01-10T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://lucassabreu.github.io/tags/social-anxiety/</loc>
+    <lastmod>2017-02-24T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://lucassabreu.github.io/tags/</loc>
     <priority>0</priority>
   </url>
   

@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Lucas dos Santos Abreu</title>
-    <link>/index.xml</link>
+    <link>https://lucassabreu.github.io/index.xml</link>
     <description>Recent content on Lucas dos Santos Abreu</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>pt-BR</language>
     <lastBuildDate>Fri, 24 Feb 2017 00:00:00 +0000</lastBuildDate>
-    <atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://lucassabreu.github.io/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Steps e a concepção de um produto</title>
-      <link>/post/steps-e-a-concepcao-de-um-produto/</link>
+      <link>https://lucassabreu.github.io/post/steps-e-a-concepcao-de-um-produto/</link>
       <pubDate>Fri, 24 Feb 2017 00:00:00 +0000</pubDate>
       
-      <guid>/post/steps-e-a-concepcao-de-um-produto/</guid>
+      <guid>https://lucassabreu.github.io/post/steps-e-a-concepcao-de-um-produto/</guid>
       <description>&lt;p&gt;&lt;/p&gt;
 
 &lt;p&gt;Recentemente na newsletter do Product Hunt me deparei com um aplicativo bem interessante que se propunha a solucionar um problema bem comum, com uma formula bem simples.&lt;/p&gt;
@@ -83,10 +83,10 @@ recomendar uma boa leitura.&lt;/p&gt;</description>
     
     <item>
       <title>Simplificando o Setup de Projetos no GitHub</title>
-      <link>/post/simplificando-setup-projetos-github/</link>
+      <link>https://lucassabreu.github.io/post/simplificando-setup-projetos-github/</link>
       <pubDate>Tue, 10 Jan 2017 00:00:00 +0000</pubDate>
       
-      <guid>/post/simplificando-setup-projetos-github/</guid>
+      <guid>https://lucassabreu.github.io/post/simplificando-setup-projetos-github/</guid>
       <description>&lt;p&gt;&lt;/p&gt;
 
 &lt;p&gt;Na &lt;a href=&#34;http://blog.coderockr.com/&#34;&gt;Coderockr&lt;/a&gt; iniciamos e assumimos vários projetos, sejam para clientes que nos contratam ou para ações internas, e normalmente o &lt;a href=&#34;http://github.com&#34;&gt;GitHub&lt;/a&gt; acaba sendo a ferramenta escolhida para eles.&lt;/p&gt;
