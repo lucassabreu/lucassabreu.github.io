@@ -199,6 +199,227 @@ secret &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;mysql-secrets&amp;qu
     </item>
     
     <item>
+      <title>Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 3</title>
+      <link>https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/</link>
+      <pubDate>Thu, 09 Mar 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/</guid>
+      <description>&lt;p&gt;&lt;/p&gt;
+
+
+&lt;figure class=&#34;big&#34;&gt;
+  
+    
+      &lt;img class=&#34;lazyload&#34; data-src=&#34;/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png&#34;  /&gt;
+    
+  
+  
+&lt;/figure&gt;
+&lt;style media=&#34;screen&#34;&gt;
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+&lt;/style&gt;
+
+
+&lt;p&gt;Este post é a terceira parte de uma série sobre o básico necessário para
+usar o Kubernetes, caso você não tenha lido o post anterior recomendo
+lê-lo e depois voltar aqui para não ficar perdido.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Parte 1 - Conceitos Básicos: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Parte 2 - Construindo o Ambiente: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Parte 4 - Segredos: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Como comentei no &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2&#34;&gt;post anterior&lt;/a&gt; existem alguns problemas no ambiente que construí, e o princípial deles é que os Pods não totalmente efêmeros, ou seja, se eu adicionar novos dados nele, no momento que o Pod fosse destruído os dados iriam junto e sem backup !&lt;/p&gt;
+
+&lt;p&gt;E agora iremos tratar esse primeiro problema. Caso não tenha mais os fontes até o estado do post anterior, ou prefira acompanhar o meu andamento, pode pode pegá-los aqui: &lt;a href=&#34;https://github.com/lucassabreu/openshift-next-gen/tree/v1&#34;&gt;https://github.com/lucassabreu/openshift-next-gen/tree/v1&lt;/a&gt;; ou executar:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;git clone -b v1 &lt;span style=&#34;color: #ae81ff&#34;&gt;\&lt;/span&gt;
+    https://github.com/lucassabreu/openshift-next-gen.git
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&#34;a297 .graf .graf--h4 .graf--leading name=&#34;a297&#34;&#34;&gt;Volumes Persistentes&lt;/h4&gt;
+
+&lt;p&gt;Podemos testar esse problema conectando no Pod e adicionando alguns dados e então destruindo ele para ver o efeito. Vou adicionar um registro sobre para Homens no Sábado, pois é um dia sem nenhuma informação e facilita a visualização.&lt;/p&gt;
+
+
+&lt;figure &gt;
+  
+    
+      &lt;img class=&#34;lazyload&#34; data-src=&#34;/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/male-chart-before.png&#34;  /&gt;
+    
+  
+  
+  &lt;figcaption&gt;
+    &lt;header&gt;&lt;b&gt;Antes... sem dados&lt;/b&gt;&lt;/header&gt;
+    
+  &lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+&lt;style media=&#34;screen&#34;&gt;
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+&lt;/style&gt;
+
+
+&lt;p&gt;Para acessar o Pod usa-se o comando &lt;code&gt;oc rsh &amp;lt;pod-name&amp;gt;&lt;/code&gt;, e para encontrar o nome do Pod posso usar o comando &lt;code&gt;oc get pods -l &amp;lt;selector&amp;gt;&lt;/code&gt;, então é só acessar o MySQL e inserir os dados:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;$ oc get pods -l &lt;span style=&#34;color: #f8f8f2&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f92672&#34;&gt;=&lt;/span&gt;db-pod
+NAME                             READY     STATUS    RESTARTS   AGE
+db-deployment-3618823556-zrje2   &lt;span style=&#34;color: #ae81ff&#34;&gt;1&lt;/span&gt;/1       Running   &lt;span style=&#34;color: #ae81ff&#34;&gt;0&lt;/span&gt;          14m
+$ oc rsh db-deployment-3618823556-zrje2 bash
+&amp;lt;dentro contêiner&amp;gt;:/$ mysql -u&lt;span style=&#34;color: #f8f8f2&#34;&gt;$MYSQL_USER&lt;/span&gt; -p&lt;span style=&#34;color: #f8f8f2&#34;&gt;$MYSQL_PASSWORD&lt;/span&gt; appointments
+mysql&amp;gt; insert into appointments values&lt;span style=&#34;color: #f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;21&lt;/span&gt;, &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;#39;M&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;#39;2017-03-05&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;#39;Sunday&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color: #ae81ff&#34;&gt;1&lt;/span&gt;, null&lt;span style=&#34;color: #f92672&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;;&lt;/span&gt;
+Query OK, &lt;span style=&#34;color: #ae81ff&#34;&gt;1&lt;/span&gt; row affected &lt;span style=&#34;color: #f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;0&lt;/span&gt;.00 sec&lt;span style=&#34;color: #f92672&#34;&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Entrando novamente na aplicação e indo em &amp;ldquo;Sunday&amp;rdquo;, tenho um gráfico com dados para os Homens.&lt;/p&gt;
+
+
+&lt;figure &gt;
+  
+    
+      &lt;img class=&#34;lazyload&#34; data-src=&#34;/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/male-chart-changed.png&#34;  /&gt;
+    
+  
+  
+  &lt;figcaption&gt;
+    &lt;header&gt;&lt;b&gt;isso se o seu contêiner não morrer no caminho&lt;/b&gt;&lt;/header&gt;
+    
+  &lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+&lt;style media=&#34;screen&#34;&gt;
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+&lt;/style&gt;
+
+
+&lt;p&gt;Para concluir o teste, basta apagar o Pod com &lt;code&gt;oc delete pods -l name=db-pod&lt;/code&gt; ou &lt;code&gt;oc delete pod db-deployment-xyz&lt;/code&gt;, esperar o Pod ser recriado e então ver que as alterações nos dados se foram:&lt;/p&gt;
+
+
+&lt;figure &gt;
+  
+    
+      &lt;img class=&#34;lazyload&#34; data-src=&#34;/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/male-chart-before.png&#34;  /&gt;
+    
+  
+  
+  &lt;figcaption&gt;
+    &lt;header&gt;&lt;b&gt;:&amp;#39;(&lt;/b&gt;&lt;/header&gt;
+    
+  &lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+&lt;style media=&#34;screen&#34;&gt;
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+&lt;/style&gt;
+
+
+&lt;p&gt;Para resolver esse problema o Kubernetes possui os &lt;a href=&#34;https://kubernetes.io/docs/user-guide/persistent-volumes/&#34;&gt;&lt;strong&gt;Persistent Volume Claims (PVC)&lt;/strong&gt;&lt;/a&gt; que permitem definir volumes que existem fora do ciclo de vida de um Pod, ou seja, mesmo que todos os Pods sejam destruídos, o PVC irá manter os dados em si.&lt;/p&gt;
+
+&lt;p&gt;Podemos utilizar vários tipos de volumes em um PVC para armazenar os dados, no caso do OpenShift o padrão é &lt;a href=&#34;https://kubernetes.io/docs/user-guide/persistent-volumes/#aws&#34;&gt;EBS&lt;/a&gt;, que são volumes armazenados dentro do &lt;a href=&#34;https://aws.amazon.com/&#34;&gt;AWS da Amazon&lt;/a&gt;, mas existe a opção de usar volumes do Google Cloud, do Azure, Locais, etc; no Kubernetes.&lt;/p&gt;
+
+&lt;p&gt;Mas no momento o OpenShift esta ofertando apenas o EBS. Abaixo esta a definição do PVC:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;apiVersion&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;kind&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;PersistentVolumeClaim&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;mysql-pv-claim&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;spec&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;accessModes&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;ReadWriteOnce&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;resources&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;requests&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;storage&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;1Gi&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Depois de um momento o OpenShift irá criar um volume e disponibilizá-lo, agora é preciso vincular ele com os &lt;code&gt;db-pods&lt;/code&gt;, para isso basta alterar os volumes no &lt;code&gt;db-deployment&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;apiVersion&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;extensions/v1beta1&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;kind&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;Deployment&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;db-deployment&amp;quot;&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;spec&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;replicas&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;1&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;template&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;labels&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+        &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;db-pod&amp;quot;&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;spec&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;containers&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+        &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;db&amp;quot;&lt;/span&gt;
+          &lt;span style=&#34;color: #ae81ff&#34;&gt;image&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;lucassabreu/openshift-mysql-test&amp;quot;&lt;/span&gt;
+          &lt;span style=&#34;color: #ae81ff&#34;&gt;ports&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;mysql-port&amp;quot;&lt;/span&gt;
+              &lt;span style=&#34;color: #ae81ff&#34;&gt;containerPort&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;3306&lt;/span&gt;
+          &lt;span style=&#34;color: #ae81ff&#34;&gt;env&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;MYSQL_DATABASE&lt;/span&gt;
+              &lt;span style=&#34;color: #ae81ff&#34;&gt;value&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;appointments&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;MYSQL_ROOT_PASSWORD&lt;/span&gt;
+              &lt;span style=&#34;color: #ae81ff&#34;&gt;value&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;root&amp;quot;&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;MYSQL_USER&lt;/span&gt;
+              &lt;span style=&#34;color: #ae81ff&#34;&gt;value&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;appoint&amp;quot;&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;MYSQL_PASSWORD&lt;/span&gt;
+              &lt;span style=&#34;color: #ae81ff&#34;&gt;value&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;123&amp;quot;&lt;/span&gt;
+          &lt;span style=&#34;color: #ae81ff&#34;&gt;volumeMounts&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;mysql-persistent-volume&amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #75715e&#34;&gt;# mudou aqui&lt;/span&gt;
+              &lt;span style=&#34;color: #ae81ff&#34;&gt;mountPath&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;/var/lib/mysql&amp;quot;&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;volumes&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+        &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;mysql-persistent-volume&amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #75715e&#34;&gt;# e aqui&lt;/span&gt;
+          &lt;span style=&#34;color: #ae81ff&#34;&gt;persistentVolumeClaim&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+            &lt;span style=&#34;color: #ae81ff&#34;&gt;claimName&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;mysql-pv-claim&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Duas coisas foram alteradas no &lt;code&gt;db-deployment&lt;/code&gt;:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;O nome do volume mudou, isso é necessário porque estamos fazendo uma mudança de tipo de volume, e o Deployment não consegue alterar o tipo, mas se temos um novo, então tudo bem.&lt;/li&gt;
+&lt;li&gt;Adicionei a tag &lt;code&gt;persistentVolumeClaim&lt;/code&gt; no volume novo e apontei para o PVC que criei agora a pouco.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Executo o comando &lt;code&gt;oc apply -f db-deployment.yml&lt;/code&gt; e o Deployment irá destruir os Pods antigos e criar novos usando o PVC.&lt;/p&gt;
+
+&lt;p&gt;Agora se replicarmos os comandos de para incluir registros e destruir o Pod do MySQL, quando o Deployment recriar o Pod ele manterá os dados.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Outro ponto que esta desconfortável no meu ambiente é o fato das senhas e usuários estarem expostas diretamente nas configurações. O Kubernetes oferece uma solução para esse problema, que irei abordar no próximo post.&lt;/p&gt;
+
+&lt;p&gt;Próximo Post: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-usando-kubernetes-e-openshift-parte-4/&#34;&gt;clique aqui&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 2</title>
       <link>https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2/</link>
       <pubDate>Wed, 08 Mar 2017 00:00:00 +0000</pubDate>
@@ -574,227 +795,6 @@ docker run -d --name app-test --link db-test:db &lt;span style=&#34;color: #ae81
 &lt;p&gt;Como comentei no início, estou escrevendo uma série de postagens para mostrar como usar o básico do Kubernetes, e no próximo post irei usar os conceitos que acabei de descrever para implementar o ambiente.&lt;/p&gt;
 
 &lt;p&gt;Próximo Post: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2/&#34;&gt;clique aqui&lt;/a&gt;&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 3</title>
-      <link>https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/</link>
-      <pubDate>Mon, 09 Jan 2017 00:00:00 +0000</pubDate>
-      
-      <guid>https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/</guid>
-      <description>&lt;p&gt;&lt;/p&gt;
-
-
-&lt;figure class=&#34;big&#34;&gt;
-  
-    
-      &lt;img class=&#34;lazyload&#34; data-src=&#34;/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png&#34;  /&gt;
-    
-  
-  
-&lt;/figure&gt;
-&lt;style media=&#34;screen&#34;&gt;
-  .blur-up {
-    -webkit-filter: blur(5px);
-    filter: blur(5px);
-    transition: filter 400ms, -webkit-filter 400ms;
-  }
-  .blur-up.lazyloaded {
-    -webkit-filter: blur(0);
-    filter: blur(0);
-  }
-&lt;/style&gt;
-
-
-&lt;p&gt;Este post é a terceira parte de uma série sobre o básico necessário para
-usar o Kubernetes, caso você não tenha lido o post anterior recomendo
-lê-lo e depois voltar aqui para não ficar perdido.&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Parte 1 - Conceitos Básicos: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Parte 2 - Construindo o Ambiente: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Parte 4 - Segredos: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;Como comentei no &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2&#34;&gt;post anterior&lt;/a&gt; existem alguns problemas no ambiente que construí, e o princípial deles é que os Pods não totalmente efêmeros, ou seja, se eu adicionar novos dados nele, no momento que o Pod fosse destruído os dados iriam junto e sem backup !&lt;/p&gt;
-
-&lt;p&gt;E agora iremos tratar esse primeiro problema. Caso não tenha mais os fontes até o estado do post anterior, ou prefira acompanhar o meu andamento, pode pode pegá-los aqui: &lt;a href=&#34;https://github.com/lucassabreu/openshift-next-gen/tree/v1&#34;&gt;https://github.com/lucassabreu/openshift-next-gen/tree/v1&lt;/a&gt;; ou executar:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;git clone -b v1 &lt;span style=&#34;color: #ae81ff&#34;&gt;\&lt;/span&gt;
-    https://github.com/lucassabreu/openshift-next-gen.git
-&lt;/pre&gt;&lt;/div&gt;
-
-&lt;hr /&gt;
-
-&lt;h4 id=&#34;a297 .graf .graf--h4 .graf--leading name=&#34;a297&#34;&#34;&gt;Volumes Persistentes&lt;/h4&gt;
-
-&lt;p&gt;Podemos testar esse problema conectando no Pod e adicionando alguns dados e então destruindo ele para ver o efeito. Vou adicionar um registro sobre para Homens no Sábado, pois é um dia sem nenhuma informação e facilita a visualização.&lt;/p&gt;
-
-
-&lt;figure &gt;
-  
-    
-      &lt;img class=&#34;lazyload&#34; data-src=&#34;/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/male-chart-before.png&#34;  /&gt;
-    
-  
-  
-  &lt;figcaption&gt;
-    &lt;header&gt;&lt;b&gt;Antes... sem dados&lt;/b&gt;&lt;/header&gt;
-    
-  &lt;/figcaption&gt;
-  
-&lt;/figure&gt;
-&lt;style media=&#34;screen&#34;&gt;
-  .blur-up {
-    -webkit-filter: blur(5px);
-    filter: blur(5px);
-    transition: filter 400ms, -webkit-filter 400ms;
-  }
-  .blur-up.lazyloaded {
-    -webkit-filter: blur(0);
-    filter: blur(0);
-  }
-&lt;/style&gt;
-
-
-&lt;p&gt;Para acessar o Pod usa-se o comando &lt;code&gt;oc rsh &amp;lt;pod-name&amp;gt;&lt;/code&gt;, e para encontrar o nome do Pod posso usar o comando &lt;code&gt;oc get pods -l &amp;lt;selector&amp;gt;&lt;/code&gt;, então é só acessar o MySQL e inserir os dados:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;$ oc get pods -l &lt;span style=&#34;color: #f8f8f2&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f92672&#34;&gt;=&lt;/span&gt;db-pod
-NAME                             READY     STATUS    RESTARTS   AGE
-db-deployment-3618823556-zrje2   &lt;span style=&#34;color: #ae81ff&#34;&gt;1&lt;/span&gt;/1       Running   &lt;span style=&#34;color: #ae81ff&#34;&gt;0&lt;/span&gt;          14m
-$ oc rsh db-deployment-3618823556-zrje2 bash
-&amp;lt;dentro contêiner&amp;gt;:/$ mysql -u&lt;span style=&#34;color: #f8f8f2&#34;&gt;$MYSQL_USER&lt;/span&gt; -p&lt;span style=&#34;color: #f8f8f2&#34;&gt;$MYSQL_PASSWORD&lt;/span&gt; appointments
-mysql&amp;gt; insert into appointments values&lt;span style=&#34;color: #f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;21&lt;/span&gt;, &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;#39;M&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;#39;2017-03-05&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;#39;Sunday&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color: #ae81ff&#34;&gt;1&lt;/span&gt;, null&lt;span style=&#34;color: #f92672&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;;&lt;/span&gt;
-Query OK, &lt;span style=&#34;color: #ae81ff&#34;&gt;1&lt;/span&gt; row affected &lt;span style=&#34;color: #f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;0&lt;/span&gt;.00 sec&lt;span style=&#34;color: #f92672&#34;&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-&lt;p&gt;Entrando novamente na aplicação e indo em &amp;ldquo;Sunday&amp;rdquo;, tenho um gráfico com dados para os Homens.&lt;/p&gt;
-
-
-&lt;figure &gt;
-  
-    
-      &lt;img class=&#34;lazyload&#34; data-src=&#34;/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/male-chart-changed.png&#34;  /&gt;
-    
-  
-  
-  &lt;figcaption&gt;
-    &lt;header&gt;&lt;b&gt;isso se o seu contêiner não morrer no caminho&lt;/b&gt;&lt;/header&gt;
-    
-  &lt;/figcaption&gt;
-  
-&lt;/figure&gt;
-&lt;style media=&#34;screen&#34;&gt;
-  .blur-up {
-    -webkit-filter: blur(5px);
-    filter: blur(5px);
-    transition: filter 400ms, -webkit-filter 400ms;
-  }
-  .blur-up.lazyloaded {
-    -webkit-filter: blur(0);
-    filter: blur(0);
-  }
-&lt;/style&gt;
-
-
-&lt;p&gt;Para concluir o teste, basta apagar o Pod com &lt;code&gt;oc delete pods -l name=db-pod&lt;/code&gt; ou &lt;code&gt;oc delete pod db-deployment-xyz&lt;/code&gt;, esperar o Pod ser recriado e então ver que as alterações nos dados se foram:&lt;/p&gt;
-
-
-&lt;figure &gt;
-  
-    
-      &lt;img class=&#34;lazyload&#34; data-src=&#34;/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/male-chart-before.png&#34;  /&gt;
-    
-  
-  
-  &lt;figcaption&gt;
-    &lt;header&gt;&lt;b&gt;:&amp;#39;(&lt;/b&gt;&lt;/header&gt;
-    
-  &lt;/figcaption&gt;
-  
-&lt;/figure&gt;
-&lt;style media=&#34;screen&#34;&gt;
-  .blur-up {
-    -webkit-filter: blur(5px);
-    filter: blur(5px);
-    transition: filter 400ms, -webkit-filter 400ms;
-  }
-  .blur-up.lazyloaded {
-    -webkit-filter: blur(0);
-    filter: blur(0);
-  }
-&lt;/style&gt;
-
-
-&lt;p&gt;Para resolver esse problema o Kubernetes possui os &lt;a href=&#34;https://kubernetes.io/docs/user-guide/persistent-volumes/&#34;&gt;&lt;strong&gt;Persistent Volume Claims (PVC)&lt;/strong&gt;&lt;/a&gt; que permitem definir volumes que existem fora do ciclo de vida de um Pod, ou seja, mesmo que todos os Pods sejam destruídos, o PVC irá manter os dados em si.&lt;/p&gt;
-
-&lt;p&gt;Podemos utilizar vários tipos de volumes em um PVC para armazenar os dados, no caso do OpenShift o padrão é &lt;a href=&#34;https://kubernetes.io/docs/user-guide/persistent-volumes/#aws&#34;&gt;EBS&lt;/a&gt;, que são volumes armazenados dentro do &lt;a href=&#34;https://aws.amazon.com/&#34;&gt;AWS da Amazon&lt;/a&gt;, mas existe a opção de usar volumes do Google Cloud, do Azure, Locais, etc; no Kubernetes.&lt;/p&gt;
-
-&lt;p&gt;Mas no momento o OpenShift esta ofertando apenas o EBS. Abaixo esta a definição do PVC:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;apiVersion&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;v1&lt;/span&gt;
-&lt;span style=&#34;color: #ae81ff&#34;&gt;kind&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;PersistentVolumeClaim&lt;/span&gt;
-&lt;span style=&#34;color: #ae81ff&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
-  &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;mysql-pv-claim&lt;/span&gt;
-&lt;span style=&#34;color: #ae81ff&#34;&gt;spec&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
-  &lt;span style=&#34;color: #ae81ff&#34;&gt;accessModes&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
-    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;ReadWriteOnce&lt;/span&gt;
-  &lt;span style=&#34;color: #ae81ff&#34;&gt;resources&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
-    &lt;span style=&#34;color: #ae81ff&#34;&gt;requests&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
-      &lt;span style=&#34;color: #ae81ff&#34;&gt;storage&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;1Gi&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-&lt;p&gt;Depois de um momento o OpenShift irá criar um volume e disponibilizá-lo, agora é preciso vincular ele com os &lt;code&gt;db-pods&lt;/code&gt;, para isso basta alterar os volumes no &lt;code&gt;db-deployment&lt;/code&gt;:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;apiVersion&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;extensions/v1beta1&lt;/span&gt;
-&lt;span style=&#34;color: #ae81ff&#34;&gt;kind&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;Deployment&lt;/span&gt;
-&lt;span style=&#34;color: #ae81ff&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
-  &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;db-deployment&amp;quot;&lt;/span&gt;
-&lt;span style=&#34;color: #ae81ff&#34;&gt;spec&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
-  &lt;span style=&#34;color: #ae81ff&#34;&gt;replicas&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;1&lt;/span&gt;
-  &lt;span style=&#34;color: #ae81ff&#34;&gt;template&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
-    &lt;span style=&#34;color: #ae81ff&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
-      &lt;span style=&#34;color: #ae81ff&#34;&gt;labels&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
-        &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;db-pod&amp;quot;&lt;/span&gt;
-    &lt;span style=&#34;color: #ae81ff&#34;&gt;spec&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
-      &lt;span style=&#34;color: #ae81ff&#34;&gt;containers&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
-        &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;db&amp;quot;&lt;/span&gt;
-          &lt;span style=&#34;color: #ae81ff&#34;&gt;image&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;lucassabreu/openshift-mysql-test&amp;quot;&lt;/span&gt;
-          &lt;span style=&#34;color: #ae81ff&#34;&gt;ports&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
-            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;mysql-port&amp;quot;&lt;/span&gt;
-              &lt;span style=&#34;color: #ae81ff&#34;&gt;containerPort&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;3306&lt;/span&gt;
-          &lt;span style=&#34;color: #ae81ff&#34;&gt;env&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
-            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;MYSQL_DATABASE&lt;/span&gt;
-              &lt;span style=&#34;color: #ae81ff&#34;&gt;value&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;appointments&lt;/span&gt;
-            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;MYSQL_ROOT_PASSWORD&lt;/span&gt;
-              &lt;span style=&#34;color: #ae81ff&#34;&gt;value&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;root&amp;quot;&lt;/span&gt;
-            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;MYSQL_USER&lt;/span&gt;
-              &lt;span style=&#34;color: #ae81ff&#34;&gt;value&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;appoint&amp;quot;&lt;/span&gt;
-            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;MYSQL_PASSWORD&lt;/span&gt;
-              &lt;span style=&#34;color: #ae81ff&#34;&gt;value&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;123&amp;quot;&lt;/span&gt;
-          &lt;span style=&#34;color: #ae81ff&#34;&gt;volumeMounts&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
-            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;mysql-persistent-volume&amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #75715e&#34;&gt;# mudou aqui&lt;/span&gt;
-              &lt;span style=&#34;color: #ae81ff&#34;&gt;mountPath&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;/var/lib/mysql&amp;quot;&lt;/span&gt;
-      &lt;span style=&#34;color: #ae81ff&#34;&gt;volumes&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
-        &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;mysql-persistent-volume&amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #75715e&#34;&gt;# e aqui&lt;/span&gt;
-          &lt;span style=&#34;color: #ae81ff&#34;&gt;persistentVolumeClaim&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
-            &lt;span style=&#34;color: #ae81ff&#34;&gt;claimName&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;mysql-pv-claim&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-&lt;p&gt;Duas coisas foram alteradas no &lt;code&gt;db-deployment&lt;/code&gt;:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;O nome do volume mudou, isso é necessário porque estamos fazendo uma mudança de tipo de volume, e o Deployment não consegue alterar o tipo, mas se temos um novo, então tudo bem.&lt;/li&gt;
-&lt;li&gt;Adicionei a tag &lt;code&gt;persistentVolumeClaim&lt;/code&gt; no volume novo e apontei para o PVC que criei agora a pouco.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Executo o comando &lt;code&gt;oc apply -f db-deployment.yml&lt;/code&gt; e o Deployment irá destruir os Pods antigos e criar novos usando o PVC.&lt;/p&gt;
-
-&lt;p&gt;Agora se replicarmos os comandos de para incluir registros e destruir o Pod do MySQL, quando o Deployment recriar o Pod ele manterá os dados.&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;Outro ponto que esta desconfortável no meu ambiente é o fato das senhas e usuários estarem expostas diretamente nas configurações. O Kubernetes oferece uma solução para esse problema, que irei abordar no próximo post.&lt;/p&gt;
-
-&lt;p&gt;Próximo Post: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-usando-kubernetes-e-openshift-parte-4/&#34;&gt;clique aqui&lt;/a&gt;&lt;/p&gt;</description>
     </item>
     
   </channel>
