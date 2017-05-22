@@ -6,8 +6,576 @@
     <description>Recent content in Posts on Lucas dos Santos Abreu</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>pt-BR</language>
-    <lastBuildDate>Fri, 24 Feb 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 10 Mar 2017 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://lucassabreu.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 4</title>
+      <link>https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4/</link>
+      <pubDate>Fri, 10 Mar 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4/</guid>
+      <description>&lt;p&gt;&lt;/p&gt;
+
+
+&lt;figure class=&#34;big&#34;&gt;
+  
+    
+      &lt;img class=&#34;lazyload&#34; data-src=&#34;/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png&#34;  /&gt;
+    
+  
+  
+&lt;/figure&gt;
+&lt;style media=&#34;screen&#34;&gt;
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+&lt;/style&gt;
+
+
+&lt;p&gt;Este post é a quarta parte de uma série sobre o básico necessário para usar o Kubernetes, caso você não tenha lido o post anterior recomendo lê-lo e depois voltar aqui para não ficar perdido.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Parte 1 - Conceitos Básicos: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Parte 2 - Construindo o Ambiente: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Parte 3 - Volumes Persistentes: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Como citei no &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3&#34;&gt;post anterior&lt;/a&gt; ainda existe um ponto de desconforto no ambiente, que é o fato das senhas e usuários estarem expostos diretamente nas configurações. O Kubernetes oferece uma solução para esse problema os &lt;a href=&#34;https://kubernetes.io/docs/user-guide/secrets/&#34;&gt;&lt;strong&gt;Secrets&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;E agora irei mostrar como adicioná-los ao projeto.&lt;/p&gt;
+
+&lt;p&gt;Caso não tenha mais os fontes até o estado do post anterior, ou prefira acompanhar o meu andamento, pode pode pegá-los aqui: &lt;a href=&#34;https://github.com/lucassabreu/openshift-next-gen/tree/v2&#34;&gt;https://github.com/lucassabreu/openshift-next-gen/tree/v2&lt;/a&gt;; ou executar:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;git clone -b v2 &lt;span style=&#34;color: #ae81ff&#34;&gt;\&lt;/span&gt;
+    https://github.com/lucassabreu/openshift-next-gen.git
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&#34;secrets&#34;&gt;Secrets&lt;/h4&gt;
+
+&lt;p&gt;Existem algumas formas de criar e usar os mesmos, criá-los diretamente de arquivos, ou usando configurações, e expô-los aos contêineres usando volumes ou variáveis de ambiente.&lt;/p&gt;
+
+&lt;p&gt;Para essa aplicação vou utilizar um YAML para definir um Secret e vou modificar os Pods para alimentarem as variáveis de ambiente com eles. A estrutura básica do Secret é como segue:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;apiVersion&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;kind&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;Secret&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;mysql-secrets&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;type&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;Opaque&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;data&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;mysql-root-password&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;&amp;lt;hash base64&amp;gt;&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;mysql-user&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;&amp;lt;hash base64&amp;gt;&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;mysql-password&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;&amp;lt;hash base64&amp;gt;&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;mysql-database-connection&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;&amp;lt;hash base64&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Nele estou criando o Secret &lt;code&gt;mysql-secrets&lt;/code&gt; e definindo quatro chaves que representam as três variáveis do MySQL e uma do servidor HTTP. No lugar do &lt;code&gt;&amp;lt;hash base64&amp;gt;&lt;/code&gt; deve ir o conteúdo do segredo em Base 64, que pode ser gerado usando o comando &lt;code&gt;echo -n &amp;quot;meusegredo&amp;quot; | base64 -w0&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Eu não gostei muito da ideia de guardar o Base 64 dentro da definição do Secret, então fiz a seguinte modificação no meu &lt;code&gt;mysql-secrets.yml&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;apiVersion&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;kind&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;Secret&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;mysql-secrets&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;type&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;Opaque&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;data&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;mysql-root-password&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #960050; background-color: #1e0010&#34;&gt;%&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;MYSQL_ROOT_PASSWORD&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;mysql-user&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #960050; background-color: #1e0010&#34;&gt;%&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;MYSQL_USER&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;mysql-password&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #960050; background-color: #1e0010&#34;&gt;%&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;MYSQL_PASSWORD&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;mysql-database-connection&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #960050; background-color: #1e0010&#34;&gt;%&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;DATABASE_CONNECTION&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;E quando vou aplicar o Secret no Kubernetes uso este script:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;MYSQL_ROOT_PASSWORD&lt;/span&gt;&lt;span style=&#34;color: #f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #66d9ef&#34;&gt;$(&lt;/span&gt;&amp;lt; /dev/urandom tr -dc _A-Z-a-z-0-9 &lt;span style=&#34;color: #f8f8f2&#34;&gt;|&lt;/span&gt; head -c&lt;span style=&#34;color: #e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color: #66d9ef&#34;&gt;:-&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;32&lt;/span&gt;&lt;span style=&#34;color: #e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color: #66d9ef&#34;&gt;)&lt;/span&gt;
+&lt;span style=&#34;color: #f8f8f2&#34;&gt;B64_MYSQL_ROOT_PASSWORD&lt;/span&gt;&lt;span style=&#34;color: #f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #66d9ef&#34;&gt;$(&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;echo&lt;/span&gt; -n &lt;span style=&#34;color: #f8f8f2&#34;&gt;$MYSQL_ROOT_PASSWORD&lt;/span&gt; &lt;span style=&#34;color: #f8f8f2&#34;&gt;|&lt;/span&gt; base64 -w0&lt;span style=&#34;color: #66d9ef&#34;&gt;)&lt;/span&gt;
+&lt;span style=&#34;color: #f8f8f2&#34;&gt;B64_DATABASE_USER&lt;/span&gt;&lt;span style=&#34;color: #f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #66d9ef&#34;&gt;$(&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;echo&lt;/span&gt; -n &lt;span style=&#34;color: #f8f8f2&#34;&gt;$DATABASE_USER&lt;/span&gt; &lt;span style=&#34;color: #f8f8f2&#34;&gt;|&lt;/span&gt; base64 -w0&lt;span style=&#34;color: #66d9ef&#34;&gt;)&lt;/span&gt;
+&lt;span style=&#34;color: #f8f8f2&#34;&gt;B64_DATABASE_PASSWORD&lt;/span&gt;&lt;span style=&#34;color: #f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #66d9ef&#34;&gt;$(&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;echo&lt;/span&gt; -n &lt;span style=&#34;color: #f8f8f2&#34;&gt;$DATABASE_PASSWORD&lt;/span&gt; &lt;span style=&#34;color: #f8f8f2&#34;&gt;|&lt;/span&gt; base64 -w0&lt;span style=&#34;color: #66d9ef&#34;&gt;)&lt;/span&gt;
+&lt;span style=&#34;color: #f8f8f2&#34;&gt;B64_DATABASE_CONNECTION&lt;/span&gt;&lt;span style=&#34;color: #f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #66d9ef&#34;&gt;$(&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;echo&lt;/span&gt; -n &lt;span style=&#34;color: #ae81ff&#34;&gt;\&lt;/span&gt;
+    &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;mysql://&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;$DATABASE_USER&lt;/span&gt;&lt;span style=&#34;color: #e6db74&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;$DATABASE_PASSWORD&lt;/span&gt;&lt;span style=&#34;color: #e6db74&#34;&gt;@db-service:3306/appointments&amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;\&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;|&lt;/span&gt; base64 -w0&lt;span style=&#34;color: #66d9ef&#34;&gt;)&lt;/span&gt;
+
+sed &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;\&lt;/span&gt;
+&lt;span style=&#34;color: #e6db74&#34;&gt;  s|%MYSQL_ROOT_PASSWORD|&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;$B64_MYSQL_ROOT_PASSWORD&lt;/span&gt;&lt;span style=&#34;color: #e6db74&#34;&gt;|;\&lt;/span&gt;
+&lt;span style=&#34;color: #e6db74&#34;&gt;  s|%MYSQL_USER|&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;$B64_DATABASE_USER&lt;/span&gt;&lt;span style=&#34;color: #e6db74&#34;&gt;|;\&lt;/span&gt;
+&lt;span style=&#34;color: #e6db74&#34;&gt;  s|%MYSQL_PASSWORD|&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;$B64_DATABASE_PASSWORD&lt;/span&gt;&lt;span style=&#34;color: #e6db74&#34;&gt;|;\&lt;/span&gt;
+&lt;span style=&#34;color: #e6db74&#34;&gt;  s|%DATABASE_CONNECTION|&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;$B64_DATABASE_CONNECTION&lt;/span&gt;&lt;span style=&#34;color: #e6db74&#34;&gt;|&amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;\&lt;/span&gt;
+  mysql-secrets.yml &lt;span style=&#34;color: #f8f8f2&#34;&gt;|&lt;/span&gt; oc apply -f -
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Esse script cria uma senha aleatória para o root e usa duas variáveis de ambiente para definir o usuário e senha do MySQL, faz o Base 64 deles, injeta eles no arquivo via &lt;code&gt;sed&lt;/code&gt; no Secret e aplica no Kubernetes com &lt;code&gt;oc apply -f -&lt;/code&gt; que irá ler a saída do &lt;code&gt;sed&lt;/code&gt; e aplicá-la. Na hora de executar fica assim:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;$ &lt;span style=&#34;color: #f8f8f2&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color: #f8f8f2&#34;&gt;DATABASE_USER&lt;/span&gt;&lt;span style=&#34;color: #f92672&#34;&gt;=&lt;/span&gt;appoint
+$ &lt;span style=&#34;color: #f8f8f2&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color: #f8f8f2&#34;&gt;DATABASE_PASSWORD&lt;/span&gt;&lt;span style=&#34;color: #f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;123&lt;/span&gt;
+$ ./env-set-oc.sh
+secret &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;mysql-secrets&amp;quot;&lt;/span&gt; configured
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Altero os Deployments para considerarem o Secret que criei:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;apiVersion&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;extensions/v1beta1&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;kind&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;Deployment&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;db-deployment&amp;quot;&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;spec&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;replicas&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;1&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;template&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;labels&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+        &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;db-pod&amp;quot;&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;spec&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;containers&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+        &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;db&amp;quot;&lt;/span&gt;
+          &lt;span style=&#34;color: #ae81ff&#34;&gt;image&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;lucassabreu/openshift-mysql-test&amp;quot;&lt;/span&gt;
+          &lt;span style=&#34;color: #ae81ff&#34;&gt;ports&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;mysql-port&amp;quot;&lt;/span&gt;
+              &lt;span style=&#34;color: #ae81ff&#34;&gt;containerPort&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;3306&lt;/span&gt;
+          &lt;span style=&#34;color: #ae81ff&#34;&gt;env&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;MYSQL_DATABASE&lt;/span&gt;
+              &lt;span style=&#34;color: #ae81ff&#34;&gt;value&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;appointments&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;MYSQL_ROOT_PASSWORD&lt;/span&gt;
+              &lt;span style=&#34;color: #ae81ff&#34;&gt;valueFrom&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+                &lt;span style=&#34;color: #ae81ff&#34;&gt;secretKeyRef&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+                  &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;mysql-secrets&lt;/span&gt;
+                  &lt;span style=&#34;color: #ae81ff&#34;&gt;key&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;mysql-root-password&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;MYSQL_USER&lt;/span&gt;
+              &lt;span style=&#34;color: #ae81ff&#34;&gt;valueFrom&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+                &lt;span style=&#34;color: #ae81ff&#34;&gt;secretKeyRef&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+                  &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;mysql-secrets&lt;/span&gt;
+                  &lt;span style=&#34;color: #ae81ff&#34;&gt;key&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;mysql-user&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;MYSQL_PASSWORD&lt;/span&gt;
+              &lt;span style=&#34;color: #ae81ff&#34;&gt;valueFrom&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+                &lt;span style=&#34;color: #ae81ff&#34;&gt;secretKeyRef&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+                  &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;mysql-secrets&lt;/span&gt;
+                  &lt;span style=&#34;color: #ae81ff&#34;&gt;key&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;mysql-password&lt;/span&gt;
+          &lt;span style=&#34;color: #ae81ff&#34;&gt;volumeMounts&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;mysql-persistent-volume&amp;quot;&lt;/span&gt;
+              &lt;span style=&#34;color: #ae81ff&#34;&gt;mountPath&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;/var/lib/mysql&amp;quot;&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;volumes&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+        &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;mysql-persistent-volume&amp;quot;&lt;/span&gt;
+          &lt;span style=&#34;color: #ae81ff&#34;&gt;persistentVolumeClaim&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+            &lt;span style=&#34;color: #ae81ff&#34;&gt;claimName&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;mysql-pv-claim&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;small&gt;&lt;center&gt;db-deployment.yml&lt;/center&gt;&lt;/small&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;apiVersion&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;extensions/v1beta1&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;kind&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;Deployment&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;node-deployment&amp;quot;&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;spec&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;replicas&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;1&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;template&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;labels&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+        &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;node-pod&amp;quot;&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;spec&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;containers&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+        &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;node&amp;quot;&lt;/span&gt;
+          &lt;span style=&#34;color: #ae81ff&#34;&gt;image&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;lucassabreu/openshift-app-test&amp;quot;&lt;/span&gt;
+          &lt;span style=&#34;color: #ae81ff&#34;&gt;ports&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;node-port&lt;/span&gt;
+              &lt;span style=&#34;color: #ae81ff&#34;&gt;containerPort&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;8080&lt;/span&gt;
+              &lt;span style=&#34;color: #ae81ff&#34;&gt;protocol&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;TCP&lt;/span&gt;
+          &lt;span style=&#34;color: #ae81ff&#34;&gt;env&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;DATABASE_CONNECTION&lt;/span&gt;
+              &lt;span style=&#34;color: #ae81ff&#34;&gt;valueFrom&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+                &lt;span style=&#34;color: #ae81ff&#34;&gt;secretKeyRef&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+                  &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;mysql-secrets&lt;/span&gt;
+                  &lt;span style=&#34;color: #ae81ff&#34;&gt;key&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;mysql-database-connection&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;small&gt;&lt;center&gt;node-deployment.yml&lt;/center&gt;&lt;/small&gt;&lt;/p&gt;
+
+&lt;p&gt;A alteração consiste de trocar a chave &lt;code&gt;value&lt;/code&gt; das variáveis por &lt;code&gt;valueFrom&lt;/code&gt; e apontar para as chaves corretas dentro do Secret.&lt;/p&gt;
+
+&lt;p&gt;Depois que aplica as mudanças os Deployments vão identificá-las e trocar os Pods por novos. E passaram a utilizar os Secrets informado nas variáveis para eles.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Ao final dessa séria, a conclusão que posso chegar é que o Kubernetes exige um conjunto razoavelmente grande de configurações para podermos servir uma aplicação, mas são arquivos simples de se entender e muito bem &lt;a href=&#34;https://kubernetes.io/docs/reference/&#34;&gt;documentados&lt;/a&gt; o que facilitou bastante o processo, e não me fez sentir o peso dessa quantidade.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 2</title>
+      <link>https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2/</link>
+      <pubDate>Wed, 08 Mar 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2/</guid>
+      <description>&lt;p&gt;&lt;/p&gt;
+
+
+&lt;figure class=&#34;big&#34;&gt;
+  
+    
+      &lt;img class=&#34;lazyload&#34; data-src=&#34;/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png&#34;  /&gt;
+    
+  
+  
+&lt;/figure&gt;
+&lt;style media=&#34;screen&#34;&gt;
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+&lt;/style&gt;
+
+
+&lt;p&gt;Este post é parte de uma série sobre o básico necessário para usar o Kubernetes, caso você não tenha lido os post anteriores recomendo lê-los e depois voltar aqui para não ficar perdido.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Parte 1 - Conceitos Básicos: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Parte 3 - Volumes Persistentes: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Parte 4 - Segredos: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Conhecendo os componentes básicos explicados no &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1&#34;&gt;post anterior&lt;/a&gt; posso preparar a aplicação que mostrei para o Kubernetes.&lt;/p&gt;
+
+&lt;p&gt;O primeiro passo é definir quais são os Pods do meu cluster.&lt;/p&gt;
+
+&lt;p&gt;Embora o primeiro impulso seja colocar cada um dos contêineres em um Pod distinto e seguir em frente, esse não é necessariamente a melhor forma de defini-los. Por exemplo, em situação certos contêineres tem o mesmo objetivo, ou dependem muito um do outro é uma boa ideia mantê-los juntos.&lt;/p&gt;
+
+&lt;p&gt;Mas para a minha aplicação faz mais sentido um Pod por contêiner, um para o servidor HTTP e outro para o banco de dados.&lt;/p&gt;
+
+&lt;p&gt;Como não é uma boa ideia simplesmente definir um Pod diretamente, criei dois Deployments o &lt;code&gt;node-deployment&lt;/code&gt; e o &lt;code&gt;db-deployment&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;No momento da escrita desse post os Deployments ainda estavam marcados como uma versão beta, mas já são bastante usados, então é confiável.&lt;/em&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;apiVersion&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;extensions/v1beta1&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;kind&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;Deployment&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;db-deployment&amp;quot;&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;spec&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;replicas&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;1&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;template&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;labels&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+        &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;db-pod&amp;quot;&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;spec&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;containers&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+        &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;db&amp;quot;&lt;/span&gt;
+          &lt;span style=&#34;color: #ae81ff&#34;&gt;image&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;lucassabreu/openshift-mysql-test&amp;quot;&lt;/span&gt;
+          &lt;span style=&#34;color: #ae81ff&#34;&gt;ports&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;mysql-port&amp;quot;&lt;/span&gt;
+              &lt;span style=&#34;color: #ae81ff&#34;&gt;containerPort&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;3306&lt;/span&gt;
+          &lt;span style=&#34;color: #ae81ff&#34;&gt;env&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;MYSQL_DATABASE&lt;/span&gt;
+              &lt;span style=&#34;color: #ae81ff&#34;&gt;value&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;appointments&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;MYSQL_ROOT_PASSWORD&lt;/span&gt;
+              &lt;span style=&#34;color: #ae81ff&#34;&gt;value&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;root&amp;quot;&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;MYSQL_USER&lt;/span&gt;
+              &lt;span style=&#34;color: #ae81ff&#34;&gt;value&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;appoint&amp;quot;&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;MYSQL_PASSWORD&lt;/span&gt;
+              &lt;span style=&#34;color: #ae81ff&#34;&gt;value&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;123&amp;quot;&lt;/span&gt;
+          &lt;span style=&#34;color: #ae81ff&#34;&gt;volumeMounts&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;mysql-volume&amp;quot;&lt;/span&gt;
+              &lt;span style=&#34;color: #ae81ff&#34;&gt;mountPath&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;/var/lib/mysql&amp;quot;&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;volumes&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+        &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;mysql-volume&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;O primeiro Deployment é para o &lt;code&gt;db-deployment&lt;/code&gt;. Os arquivos de configuração são simples de ler, sempre começamos o arquivo dizendo o tipo de objeto que será criado, o &lt;code&gt;metadata&lt;/code&gt; e definimos as &lt;code&gt;specs&lt;/code&gt; (que variam para cada tipo de componente).&lt;/p&gt;
+
+&lt;p&gt;Defini que preciso de apenas um Pod (&lt;code&gt;replica&lt;/code&gt;) e que as mesmas serão identificáveis pelas labels: &lt;code&gt;name=db-pod&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Outras duas informações importantes são &lt;code&gt;ports&lt;/code&gt; e &lt;code&gt;volumeMounts&lt;/code&gt;.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;ports&lt;/code&gt; define quais portas deverão ser expostas no Pod e permite que possam ser mapeadas nos Services posteriormente. Também é recomendado dar nomes às mesmas (&lt;code&gt;mysql-port&lt;/code&gt;), assim podemos usar o nome como identificador no lugar de números.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;volumeMounts&lt;/code&gt; define todos os volumes do contêiner, dessa forma o volume de dados do MySQL precisou ser mapeado (&lt;code&gt;/var/lib/mysql&lt;/code&gt;).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;apiVersion&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;extensions/v1beta1&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;kind&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;Deployment&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;node-deployment&amp;quot;&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;spec&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;replicas&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;1&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;template&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;labels&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+        &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;node-pod&amp;quot;&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;spec&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;containers&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+        &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;node&amp;quot;&lt;/span&gt;
+          &lt;span style=&#34;color: #ae81ff&#34;&gt;image&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;lucassabreu/openshift-app-test&amp;quot;&lt;/span&gt;
+          &lt;span style=&#34;color: #ae81ff&#34;&gt;ports&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;node-port&lt;/span&gt;
+              &lt;span style=&#34;color: #ae81ff&#34;&gt;containerPort&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;8080&lt;/span&gt;
+              &lt;span style=&#34;color: #ae81ff&#34;&gt;protocol&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;TCP&lt;/span&gt;
+          &lt;span style=&#34;color: #ae81ff&#34;&gt;env&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;DATABASE_CONNECTION&lt;/span&gt;
+              &lt;span style=&#34;color: #ae81ff&#34;&gt;value&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;mysql://appoint:123@db-service:3306/appointments&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;O segundo Deployment é do servidor HTTP, chamei-o de &lt;code&gt;node-deployment&lt;/code&gt;. Ele segue as mesmas regras do anterior, sendo até mais simples.&lt;/p&gt;
+
+&lt;p&gt;A novidade aqui é o &lt;code&gt;db-service&lt;/code&gt;, que vou explicar agora:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;apiVersion&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;v1&amp;quot;&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;kind&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;Service&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;db-service&amp;quot;&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;spec&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;ports&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;port&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;3306&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;targetPort&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;mysql-port&amp;quot;&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;protocol&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;TCP&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;selector&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;db-pod&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;O &lt;code&gt;db-service&lt;/code&gt; é o nome do Service que defini para agrupar os Pods de banco de dados, o Service ficou bem simples e basicamente tem duas partes:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;selector&lt;/code&gt; define uma regra para selecionar quais Pods fazem parte do Service, no caso estou usando uma regra bem simples de &lt;code&gt;name=db-pod&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ports&lt;/code&gt; permite que você mapeie as portas dos Pods para uma porta no Service, no caso estou roteando a porta de nome &lt;code&gt;mysql-port&lt;/code&gt; para a &lt;code&gt;3306&lt;/code&gt; do Service. Assim toda chamada para &lt;code&gt;db-service:3306&lt;/code&gt; será direcionada para a &lt;code&gt;mysql-port&lt;/code&gt; de um dos Pods.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;apiVersion&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;v1&amp;quot;&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;kind&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;Service&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;node-service&amp;quot;&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;spec&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;ports&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;port&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;80&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;targetPort&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;node-port&amp;quot;&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;protocol&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;TCP&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;selector&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;node-pod&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;O &lt;code&gt;node-service&lt;/code&gt; segue a mesma lógica, mas para os Pods do servidor HTTP.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;apiVersion&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;kind&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;Route&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;node-route&amp;quot;&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;spec&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;to&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;kind&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;Service&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;node-service&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Por fim criei uma Route para expor o serviço &lt;code&gt;node-service&lt;/code&gt; para a Internet. Eu poderia definir qual o nome de host, mas como não o fiz o OpenShift irá gerar uma URL automaticamente para mim.&lt;/p&gt;
+
+&lt;p&gt;Essa URL pode ser descoberta entrando na Dashboard do OpenShift ou com o comando &lt;code&gt;oc get routes&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;$ oc get routes
+NAME         HOST/PORT                                                  PATH      SERVICES       PORT      TERMINATION
+node-route   node-route-medium-example.44fs.preview.openshiftapps.com             node-service   &amp;lt;all&amp;gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Para aplicar as configurações no cluster a OpenShift disponibiliza um cliente de linha de comando, que usa basicamente a mesma estrutura do &lt;code&gt;kubectl&lt;/code&gt;, o &lt;code&gt;oc&lt;/code&gt;. Então tudo que precisa ser feito é executar:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;oc apply -f db-deployment.yml,node-deployment.yml,db-srv.yml,node-srv.yml,node-route.yml
+&lt;span style=&#34;color: #75715e&#34;&gt;# Ou&lt;/span&gt;
+oc apply -f db-deployment.yml
+oc apply -f node-deployment.yml
+oc apply -f db-srv.yml
+oc apply -f node-srv.yml
+oc apply -f node-route.yml
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;As instruções de como instalar o cliente e configurá-lo estão nesse
+link: &lt;a href=&#34;https://console.preview.openshift.com/console/command-line&#34;&gt;https://console.preview.openshift.com/console/command-line&lt;/a&gt;.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&#34;update-2017-04-29&#34;&gt;*** Update 2017–04–29 ***&lt;/h4&gt;
+
+&lt;p&gt;Se estiver lendo esse artigo algum tempo depois de lançado, a OpenShift fechou o preview e o link anterior não funciona, mas ainda é possível baixar o &lt;code&gt;oc&lt;/code&gt; client em:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/openshift/origin/releases&#34; title=&#34;https://github.com/openshift/origin/releases&#34;&gt;&lt;strong&gt;openshift/origin&lt;/strong&gt; origin - Enterprise Kubernetes for Developers&lt;/a&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Caso não queira criar os todos esses fontes, pode pegá-los aqui: &lt;a href=&#34;https://github.com/lucassabreu/openshift-next-gen/tree/v1&#34;&gt;https://github.com/lucassabreu/openshift-next-gen/tree/v1&lt;/a&gt;; ou executar:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;git clone -b v1 &lt;span style=&#34;color: #ae81ff&#34;&gt;\&lt;/span&gt;
+    https://github.com/lucassabreu/openshift-next-gen.git
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Agora no console do OpenShift deverão aparecer todos esses componentes
+rodando.&lt;/p&gt;
+
+
+&lt;figure class=&#34;big&#34;&gt;
+  
+    
+      &lt;img class=&#34;lazyload&#34; data-src=&#34;/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2/openshift-dashboard.png&#34;  /&gt;
+    
+  
+  
+  &lt;figcaption&gt;
+    &lt;header&gt;&lt;b&gt;eu fiz algumas brincadeiras antes de chegar aqui, então tenho mais versões dos deploys ☺&lt;/b&gt;&lt;/header&gt;
+    
+  &lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+&lt;style media=&#34;screen&#34;&gt;
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+&lt;/style&gt;
+
+
+&lt;p&gt;Caso esteja acompanhando as etapas, você já deve ter visto esse Dashboard, mas caso esteja apenas lendo: esse Dashboard é a tela principal dos clusters que você criar no OpenShift; basta clicar aqui, autenticar-se com o GitHub, criar um &lt;strong&gt;Project&lt;/strong&gt;, e pronto em &lt;strong&gt;Overview&lt;/strong&gt; você verá os componentes surgirem e sumirem em tempo real conforme vai aplicando as configurações.&lt;/p&gt;
+
+&lt;p&gt;Voltando, nesse momento temos o mesmo comportamento da aplicação local, rodando dentro do Kubernetes, empenhando o mínimo possível de configuração.&lt;/p&gt;
+
+&lt;p&gt;Mas existem alguns problemas no que foi definido.&lt;/p&gt;
+
+&lt;p&gt;O primeiro é que os &lt;code&gt;db-pods&lt;/code&gt; estão totalmente efêmeros, ou seja, se eu adicionar novos dados nele, no momento que o Pod fosse destruído os dados iriam junto e sem backup !&lt;/p&gt;
+
+&lt;p&gt;Irei mostrar como resolver esse problema no próximo post.&lt;/p&gt;
+
+&lt;p&gt;Próximo Post: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/&#34;&gt;clique aqui&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 1</title>
+      <link>https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/</link>
+      <pubDate>Tue, 07 Mar 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/</guid>
+      <description>&lt;p&gt;&lt;/p&gt;
+
+
+&lt;figure class=&#34;big&#34;&gt;
+  
+    
+      &lt;img class=&#34;lazyload&#34; data-src=&#34;/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png&#34;  /&gt;
+    
+  
+  
+&lt;/figure&gt;
+&lt;style media=&#34;screen&#34;&gt;
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+&lt;/style&gt;
+
+
+&lt;p&gt;Como parte das minhas metas dentro da &lt;a href=&#34;http://blog.coderockr.com&#34;&gt;Coderockr&lt;/a&gt; está a construção de um cluster usando algumas das ferramentas de orquestração de contêineres que existem no mercado; como o &lt;a href=&#34;https://docs.docker.com/engine/swarm/&#34;&gt;Docker Swarm&lt;/a&gt;, &lt;a href=&#34;http://kubernetes.io&#34;&gt;Kubernetes&lt;/a&gt;, &lt;a href=&#34;http://mesos.apache.org/&#34;&gt;Apache Mesos&lt;/a&gt;, etc.&lt;/p&gt;
+
+&lt;p&gt;Optei pelo &lt;strong&gt;Kubernetes&lt;/strong&gt; no momento, tanto pelo pedigree, criado pelo Google e mantido pela Cloud Native Computing Foundation; quanto pela oferta de grandes clouds como a Red Hat, Azure e Google.&lt;/p&gt;
+
+&lt;p&gt;Quando estava avaliando as opções disponíveis, o &lt;a href=&#34;https://medium.com/@JeanCarloMachad&#34;&gt;Jean Carlo Machado&lt;/a&gt; (colega da &lt;a href=&#34;https://medium.com/@compufacil&#34;&gt;CompuFácil&lt;/a&gt;), me sugeriu usar o &lt;a href=&#34;https://blog.openshift.com/next-generation-openshift-online/&#34;&gt;&lt;strong&gt;OpenShift Next Gen&lt;/strong&gt;&lt;/a&gt;, a plataforma da Red Hat para Kubernetes, que esta em &lt;a href=&#34;https://www.openshift.com/devpreview/&#34;&gt;Developer Preview&lt;/a&gt; permitindo que você se cadastre para testar a ferramenta deles por 30 dias.&lt;/p&gt;
+
+&lt;p&gt;Isso me salvou de já ter de sair pagando para testar, ou ter de fazer o &lt;a href=&#34;https://kubernetes.io/docs/getting-started-guides/minikube/&#34;&gt;setup do minikube&lt;/a&gt; na minha máquina, o que não me era muito atrativo.&lt;/p&gt;
+
+&lt;p&gt;Assim resolvi dar uma chance a plataforma da Red Hat, e construir um ambiente simples com um servidor HTTP em Node e um banco de dados MySQL, o que já me permite cobrir vários aspectos básicos do Kubernetes.&lt;/p&gt;
+
+&lt;p&gt;Mas como o texto foi ficando muito grande, achei melhor quebrá-lo em 4 partes para não cansar quem for ler e que irei publicar nos próximos dias.&lt;/p&gt;
+
+&lt;p&gt;Nessa primeira parte vou dar uma introdução aos conceitos básicos do Kubernetes, e nas próximas irei fazer uso desses conceitos.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Parte 2 - Construindo o Ambiente: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2/&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Parte 3 - Volumes Persistentes: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Parte 4 - Segredos: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4/&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;A aplicação que construí usa um &lt;a href=&#34;https://www.kaggle.com/joniarroba/noshowappointments&#34;&gt;conjunto de dados sobre faltas em consultas&lt;/a&gt; que achei no &lt;a href=&#34;https://www.kaggle.com/&#34;&gt;Kaggle&lt;/a&gt; e gera os gráficos abaixo, podendo escolher o dia da semana como filtro.&lt;/p&gt;
+
+
+&lt;figure &gt;
+  
+    
+      &lt;img class=&#34;lazyload&#34; data-src=&#34;/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/app-view.png&#34;  /&gt;
+    
+  
+  
+  &lt;figcaption&gt;
+    &lt;header&gt;&lt;b&gt;O fonte dessa aplicação pode ser encontrado aqui: &amp;lt;https://github.com/lucassabreu/openshift-next-gen/tree/app&amp;gt;&lt;/b&gt;&lt;/header&gt;
+    
+  &lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+&lt;style media=&#34;screen&#34;&gt;
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+&lt;/style&gt;
+
+
+&lt;p&gt;Então publiquei no &lt;a href=&#34;http://hub.docker.com&#34;&gt;Docker Hub&lt;/a&gt; uma imagem para a aplicação (&lt;a href=&#34;https://hub.docker.com/r/lucassabreu/openshift-app-test/&#34;&gt;lucassabreu/openshift-app-test&lt;/a&gt;) e outra para o banco de dados (&lt;a href=&#34;https://hub.docker.com/r/lucassabreu/openshift-mysql-test/&#34;&gt;lucassabreu/openshift-mysql-test&lt;/a&gt;) - essa imagem é um MySQL normal, mas que adicionei um dump da base que vou usar para facilitar o deploy.&lt;/p&gt;
+
+&lt;p&gt;Agora se eu quiser executar essa aplicação na minha máquina, posso simplesmente executar os seguintes comando do Docker e terei o servidor me respondendo em &lt;code&gt;http://localhost&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #75715e&#34;&gt;#!/bin/bash&lt;/span&gt;
+docker run -d --name db-test &lt;span style=&#34;color: #ae81ff&#34;&gt;\&lt;/span&gt;
+  -e &lt;span style=&#34;color: #f8f8f2&#34;&gt;MYSQL_ROOT_PASSWORD&lt;/span&gt;&lt;span style=&#34;color: #f92672&#34;&gt;=&lt;/span&gt;root -e &lt;span style=&#34;color: #f8f8f2&#34;&gt;MYSQL_DATABASE&lt;/span&gt;&lt;span style=&#34;color: #f92672&#34;&gt;=&lt;/span&gt;appointments &lt;span style=&#34;color: #ae81ff&#34;&gt;\&lt;/span&gt;
+  -e &lt;span style=&#34;color: #f8f8f2&#34;&gt;MYSQL_USER&lt;/span&gt;&lt;span style=&#34;color: #f92672&#34;&gt;=&lt;/span&gt;appoint -e &lt;span style=&#34;color: #f8f8f2&#34;&gt;MYSQL_PASSWORD&lt;/span&gt;&lt;span style=&#34;color: #f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;123&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;\&lt;/span&gt;
+  lucassabreu/openshift-mysql-test
+
+docker run -d --name app-test --link db-test:db &lt;span style=&#34;color: #ae81ff&#34;&gt;\&lt;/span&gt;
+  -e &lt;span style=&#34;color: #f8f8f2&#34;&gt;DATABASE_CONNECTION&lt;/span&gt;&lt;span style=&#34;color: #f92672&#34;&gt;=&lt;/span&gt;mysql://appoint:123@&lt;span style=&#34;color: #f8f8f2&#34;&gt;$db&lt;/span&gt;:3306/appointments &lt;span style=&#34;color: #ae81ff&#34;&gt;\&lt;/span&gt;
+  -p &lt;span style=&#34;color: #ae81ff&#34;&gt;80&lt;/span&gt;:8080 lucassabreu/openshift-app-test
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Certo, agora que tenho certeza de que a minha aplicação está operacional, comecei a criar os objetos do Kubernetes, mas antes é importante entender alguns conceitos da plataforma para não ficar muito perdido:&lt;/p&gt;
+
+&lt;h4 id=&#34;pod-https-kubernetes-io-docs-user-guide-pods&#34;&gt;&lt;a href=&#34;https://kubernetes.io/docs/user-guide/pods/&#34;&gt;Pod&lt;/a&gt;&lt;/h4&gt;
+
+&lt;p&gt;Este é o menor componente do Kubernetes, representa um nó no cluster, executando um ou mais contêineres que entregam uma mesma função.&lt;/p&gt;
+
+&lt;p&gt;Eles tem a característica de serem descartáveis, ou seja, se eventualmente acontecer algum problema a um Pod, este pode ser destruído sem nenhum efeito colateral ou remorso.&lt;/p&gt;
+
+&lt;h4 id=&#34;deployment-https-kubernetes-io-docs-user-guide-deployments&#34;&gt;&lt;a href=&#34;https://kubernetes.io/docs/user-guide/deployments/&#34;&gt;Deployment&lt;/a&gt;&lt;/h4&gt;
+
+&lt;p&gt;Como o nome sugere controla o deploy de Pods dentro do cluster. Quando se cria esse componente, deve-se informar um template de Pod e quantos destes você precisa, e se necessário uma regra para criar mais instâncias.&lt;/p&gt;
+
+&lt;p&gt;Ele irá garantir duas coisas principalmente: que existam suficientes Pods quanto foi definido, e que os mesmos estejam atualizados em relação ao template que foi definido.&lt;/p&gt;
+
+&lt;p&gt;Então caso você mude algo no template o Deployment vai subir novos Pods e destruir os antigos para manter a expectativa (ele também &amp;ldquo;versiona&amp;rdquo; os deploys, então se algo explodir dá para voltar atrás).&lt;/p&gt;
+
+&lt;h4 id=&#34;service-https-kubernetes-io-docs-user-guide-services&#34;&gt;&lt;a href=&#34;https://kubernetes.io/docs/user-guide/services/&#34;&gt;Service&lt;/a&gt;&lt;/h4&gt;
+
+&lt;p&gt;Como os Pods além de efêmeros, podem existir em números variados por culpa dos Deployments, não há forma confiável de tentar conectar dois Pods diretamente, seja porque o Pod que você está dependendo pode morrer e quando voltar terá outro IP, e provavelmente outro nome, ou porque o Pod que você &amp;ldquo;fixou&amp;rdquo; pode não ser o mas indicado (menos ocupado ou mais próximo).&lt;/p&gt;
+
+&lt;p&gt;Para resolver esse problema existem os Services, em vez de tentar fazer as chamadas diretamente para um Pod, podemos chamar pelo nome de um Service e este irá rotear para um Pod que esteja abaixo dele.&lt;/p&gt;
+
+&lt;p&gt;É importante ressaltar que os Services fazem &amp;ldquo;apenas&amp;rdquo; a descoberta dos Pods, eles não os mantêm ligados, isso é responsabilidade dos Deployments.&lt;/p&gt;
+
+&lt;h4 id=&#34;route-https-docs-openshift-org-latest-architecture-core-concepts-routes-html&#34;&gt;&lt;a href=&#34;https://docs.openshift.org/latest/architecture/core_concepts/routes.html&#34;&gt;Route&lt;/a&gt;&lt;/h4&gt;
+
+&lt;p&gt;Permitem que você exponha Services para a rede externa e também permite algumas regras de proxy para melhor apresentá-los.&lt;/p&gt;
+
+&lt;p&gt;Embora seja possível fazer a exposição de Services para a rede externa com Kubernetes, na plataforma da OpenShift é necessário o uso do componente Route para isso.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Como comentei no início, estou escrevendo uma série de postagens para mostrar como usar o básico do Kubernetes, e no próximo post irei usar os conceitos que acabei de descrever para implementar o ambiente.&lt;/p&gt;
+
+&lt;p&gt;Próximo Post: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2/&#34;&gt;clique aqui&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>Steps e a concepção de um produto</title>
@@ -191,6 +759,227 @@ recomendar uma boa leitura.&lt;/p&gt;</description>
 &lt;p&gt;&lt;a href=&#34;https://github.com/Coderockr/coderockr-way-github-setup&#34;&gt;&lt;strong&gt;Coderockr/coderockr-way-github-setup&lt;/strong&gt; - Basic setup to use the Coderockr Way methodology&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Conclusão, investir um pouco de tempo para entender as ferramentas que você usa, não só te poupa tempo a longo prazo, quanto também gera uns scripts legais de compartilhar :)&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 3</title>
+      <link>https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/</link>
+      <pubDate>Mon, 09 Jan 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/</guid>
+      <description>&lt;p&gt;&lt;/p&gt;
+
+
+&lt;figure class=&#34;big&#34;&gt;
+  
+    
+      &lt;img class=&#34;lazyload&#34; data-src=&#34;/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png&#34;  /&gt;
+    
+  
+  
+&lt;/figure&gt;
+&lt;style media=&#34;screen&#34;&gt;
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+&lt;/style&gt;
+
+
+&lt;p&gt;Este post é a terceira parte de uma série sobre o básico necessário para
+usar o Kubernetes, caso você não tenha lido o post anterior recomendo
+lê-lo e depois voltar aqui para não ficar perdido.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Parte 1 - Conceitos Básicos: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Parte 2 - Construindo o Ambiente: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Parte 4 - Segredos: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Como comentei no &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2&#34;&gt;post anterior&lt;/a&gt; existem alguns problemas no ambiente que construí, e o princípial deles é que os Pods não totalmente efêmeros, ou seja, se eu adicionar novos dados nele, no momento que o Pod fosse destruído os dados iriam junto e sem backup !&lt;/p&gt;
+
+&lt;p&gt;E agora iremos tratar esse primeiro problema. Caso não tenha mais os fontes até o estado do post anterior, ou prefira acompanhar o meu andamento, pode pode pegá-los aqui: &lt;a href=&#34;https://github.com/lucassabreu/openshift-next-gen/tree/v1&#34;&gt;https://github.com/lucassabreu/openshift-next-gen/tree/v1&lt;/a&gt;; ou executar:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;git clone -b v1 &lt;span style=&#34;color: #ae81ff&#34;&gt;\&lt;/span&gt;
+    https://github.com/lucassabreu/openshift-next-gen.git
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&#34;a297 .graf .graf--h4 .graf--leading name=&#34;a297&#34;&#34;&gt;Volumes Persistentes&lt;/h4&gt;
+
+&lt;p&gt;Podemos testar esse problema conectando no Pod e adicionando alguns dados e então destruindo ele para ver o efeito. Vou adicionar um registro sobre para Homens no Sábado, pois é um dia sem nenhuma informação e facilita a visualização.&lt;/p&gt;
+
+
+&lt;figure &gt;
+  
+    
+      &lt;img class=&#34;lazyload&#34; data-src=&#34;/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/male-chart-before.png&#34;  /&gt;
+    
+  
+  
+  &lt;figcaption&gt;
+    &lt;header&gt;&lt;b&gt;Antes... sem dados&lt;/b&gt;&lt;/header&gt;
+    
+  &lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+&lt;style media=&#34;screen&#34;&gt;
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+&lt;/style&gt;
+
+
+&lt;p&gt;Para acessar o Pod usa-se o comando &lt;code&gt;oc rsh &amp;lt;pod-name&amp;gt;&lt;/code&gt;, e para encontrar o nome do Pod posso usar o comando &lt;code&gt;oc get pods -l &amp;lt;selector&amp;gt;&lt;/code&gt;, então é só acessar o MySQL e inserir os dados:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;$ oc get pods -l &lt;span style=&#34;color: #f8f8f2&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f92672&#34;&gt;=&lt;/span&gt;db-pod
+NAME                             READY     STATUS    RESTARTS   AGE
+db-deployment-3618823556-zrje2   &lt;span style=&#34;color: #ae81ff&#34;&gt;1&lt;/span&gt;/1       Running   &lt;span style=&#34;color: #ae81ff&#34;&gt;0&lt;/span&gt;          14m
+$ oc rsh db-deployment-3618823556-zrje2 bash
+&amp;lt;dentro contêiner&amp;gt;:/$ mysql -u&lt;span style=&#34;color: #f8f8f2&#34;&gt;$MYSQL_USER&lt;/span&gt; -p&lt;span style=&#34;color: #f8f8f2&#34;&gt;$MYSQL_PASSWORD&lt;/span&gt; appointments
+mysql&amp;gt; insert into appointments values&lt;span style=&#34;color: #f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;21&lt;/span&gt;, &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;#39;M&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;#39;2017-03-05&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;#39;Sunday&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color: #ae81ff&#34;&gt;1&lt;/span&gt;, null&lt;span style=&#34;color: #f92672&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;;&lt;/span&gt;
+Query OK, &lt;span style=&#34;color: #ae81ff&#34;&gt;1&lt;/span&gt; row affected &lt;span style=&#34;color: #f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;0&lt;/span&gt;.00 sec&lt;span style=&#34;color: #f92672&#34;&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Entrando novamente na aplicação e indo em &amp;ldquo;Sunday&amp;rdquo;, tenho um gráfico com dados para os Homens.&lt;/p&gt;
+
+
+&lt;figure &gt;
+  
+    
+      &lt;img class=&#34;lazyload&#34; data-src=&#34;/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/male-chart-changed.png&#34;  /&gt;
+    
+  
+  
+  &lt;figcaption&gt;
+    &lt;header&gt;&lt;b&gt;isso se o seu contêiner não morrer no caminho&lt;/b&gt;&lt;/header&gt;
+    
+  &lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+&lt;style media=&#34;screen&#34;&gt;
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+&lt;/style&gt;
+
+
+&lt;p&gt;Para concluir o teste, basta apagar o Pod com &lt;code&gt;oc delete pods -l name=db-pod&lt;/code&gt; ou &lt;code&gt;oc delete pod db-deployment-xyz&lt;/code&gt;, esperar o Pod ser recriado e então ver que as alterações nos dados se foram:&lt;/p&gt;
+
+
+&lt;figure &gt;
+  
+    
+      &lt;img class=&#34;lazyload&#34; data-src=&#34;/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/male-chart-before.png&#34;  /&gt;
+    
+  
+  
+  &lt;figcaption&gt;
+    &lt;header&gt;&lt;b&gt;:&amp;#39;(&lt;/b&gt;&lt;/header&gt;
+    
+  &lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+&lt;style media=&#34;screen&#34;&gt;
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+&lt;/style&gt;
+
+
+&lt;p&gt;Para resolver esse problema o Kubernetes possui os &lt;a href=&#34;https://kubernetes.io/docs/user-guide/persistent-volumes/&#34;&gt;&lt;strong&gt;Persistent Volume Claims (PVC)&lt;/strong&gt;&lt;/a&gt; que permitem definir volumes que existem fora do ciclo de vida de um Pod, ou seja, mesmo que todos os Pods sejam destruídos, o PVC irá manter os dados em si.&lt;/p&gt;
+
+&lt;p&gt;Podemos utilizar vários tipos de volumes em um PVC para armazenar os dados, no caso do OpenShift o padrão é &lt;a href=&#34;https://kubernetes.io/docs/user-guide/persistent-volumes/#aws&#34;&gt;EBS&lt;/a&gt;, que são volumes armazenados dentro do &lt;a href=&#34;https://aws.amazon.com/&#34;&gt;AWS da Amazon&lt;/a&gt;, mas existe a opção de usar volumes do Google Cloud, do Azure, Locais, etc; no Kubernetes.&lt;/p&gt;
+
+&lt;p&gt;Mas no momento o OpenShift esta ofertando apenas o EBS. Abaixo esta a definição do PVC:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;apiVersion&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;kind&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;PersistentVolumeClaim&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;mysql-pv-claim&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;spec&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;accessModes&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;ReadWriteOnce&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;resources&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;requests&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;storage&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;1Gi&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Depois de um momento o OpenShift irá criar um volume e disponibilizá-lo, agora é preciso vincular ele com os &lt;code&gt;db-pods&lt;/code&gt;, para isso basta alterar os volumes no &lt;code&gt;db-deployment&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;apiVersion&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;extensions/v1beta1&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;kind&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;Deployment&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;db-deployment&amp;quot;&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;spec&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;replicas&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;1&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;template&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;labels&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+        &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;db-pod&amp;quot;&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;spec&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;containers&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+        &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;db&amp;quot;&lt;/span&gt;
+          &lt;span style=&#34;color: #ae81ff&#34;&gt;image&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;lucassabreu/openshift-mysql-test&amp;quot;&lt;/span&gt;
+          &lt;span style=&#34;color: #ae81ff&#34;&gt;ports&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;mysql-port&amp;quot;&lt;/span&gt;
+              &lt;span style=&#34;color: #ae81ff&#34;&gt;containerPort&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;3306&lt;/span&gt;
+          &lt;span style=&#34;color: #ae81ff&#34;&gt;env&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;MYSQL_DATABASE&lt;/span&gt;
+              &lt;span style=&#34;color: #ae81ff&#34;&gt;value&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;appointments&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;MYSQL_ROOT_PASSWORD&lt;/span&gt;
+              &lt;span style=&#34;color: #ae81ff&#34;&gt;value&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;root&amp;quot;&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;MYSQL_USER&lt;/span&gt;
+              &lt;span style=&#34;color: #ae81ff&#34;&gt;value&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;appoint&amp;quot;&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;MYSQL_PASSWORD&lt;/span&gt;
+              &lt;span style=&#34;color: #ae81ff&#34;&gt;value&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;123&amp;quot;&lt;/span&gt;
+          &lt;span style=&#34;color: #ae81ff&#34;&gt;volumeMounts&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;mysql-persistent-volume&amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #75715e&#34;&gt;# mudou aqui&lt;/span&gt;
+              &lt;span style=&#34;color: #ae81ff&#34;&gt;mountPath&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;/var/lib/mysql&amp;quot;&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;volumes&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+        &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;mysql-persistent-volume&amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #75715e&#34;&gt;# e aqui&lt;/span&gt;
+          &lt;span style=&#34;color: #ae81ff&#34;&gt;persistentVolumeClaim&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+            &lt;span style=&#34;color: #ae81ff&#34;&gt;claimName&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;mysql-pv-claim&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Duas coisas foram alteradas no &lt;code&gt;db-deployment&lt;/code&gt;:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;O nome do volume mudou, isso é necessário porque estamos fazendo uma mudança de tipo de volume, e o Deployment não consegue alterar o tipo, mas se temos um novo, então tudo bem.&lt;/li&gt;
+&lt;li&gt;Adicionei a tag &lt;code&gt;persistentVolumeClaim&lt;/code&gt; no volume novo e apontei para o PVC que criei agora a pouco.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Executo o comando &lt;code&gt;oc apply -f db-deployment.yml&lt;/code&gt; e o Deployment irá destruir os Pods antigos e criar novos usando o PVC.&lt;/p&gt;
+
+&lt;p&gt;Agora se replicarmos os comandos de para incluir registros e destruir o Pod do MySQL, quando o Deployment recriar o Pod ele manterá os dados.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Outro ponto que esta desconfortável no meu ambiente é o fato das senhas e usuários estarem expostas diretamente nas configurações. O Kubernetes oferece uma solução para esse problema, que irei abordar no próximo post.&lt;/p&gt;
+
+&lt;p&gt;Próximo Post: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-usando-kubernetes-e-openshift-parte-4/&#34;&gt;clique aqui&lt;/a&gt;&lt;/p&gt;</description>
     </item>
     
   </channel>

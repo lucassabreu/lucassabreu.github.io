@@ -4,27 +4,28 @@
     <meta name="generator" content="Hugo 0.18" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Design | Lucas dos Santos Abreu</title>
-    <meta name="description" content="">
-    <meta name="keywords" content="">
+    <title>Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 1 | Lucas dos Santos Abreu</title>
+    <meta name="description" content="Como parte das minhas metas dentro da Coderockr está a construção de um cluster usando algumas das ferramentas de orquestração de contêineres que existem no mercado; como o Docker Swarm, Kubernetes, Apache Mesos, etc. Optei pelo **Kubernetes**...">
+    <meta name="keywords" content="Kubernetes, Openshift, Introduction, Simple, Docker">
     
     
     
-    
-      <meta name="robots" content="noindex">
     
     
 
   <meta name="author" content="">
 
 
-    <meta property="og:title" content="Product Design" />
-<meta property="og:description" content="" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://lucassabreu.github.io/tags/product-design/" />
+    <meta property="og:title" content="Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 1" />
+<meta property="og:description" content="Como parte das minhas metas dentro da Coderockr está a construção de um cluster usando algumas das ferramentas de orquestração de contêineres que existem no mercado; como o Docker Swarm, Kubernetes, Apache Mesos, etc. Optei pelo **Kubernetes**..." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/" />
+
+  <meta property="og:image" content="https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png" />
 
 
-<meta property="og:updated_time" content="2017-02-24T00:00:00&#43;00:00"/>
+<meta property="og:updated_time" content="2017-03-07T00:00:00&#43;00:00"/>
+
 
 
 
@@ -44,10 +45,10 @@
     
     
     
-      <link href="https://lucassabreu.github.io/tags/product-design/index.xml" rel="alternate" type="application/rss+xml" title="Lucas dos Santos Abreu" />
+    <link rel="canonical" href="https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/">
     
-    <link rel="canonical" href="https://lucassabreu.github.io/tags/product-design/">
     
+      <link rel="next" href="/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2/">
     
     <link rel="icon" sizes="any" href="data:image/svg+xml,%3Csvg%20viewBox='0%200%2046%2045'%20xmlns='http://www.w3.org/2000/svg'%3E%3Ctitle%3EAfter%20Dark%3C/title%3E%3Cpath%20d='M.708%2045L23%20.416%2045.292%2045H.708zM35%2038L23%2019%2011%2038h24z'%20fill='%23000'/%3E%3C/svg%3E">
 
@@ -179,6 +180,8 @@ p.code-legend {
     </style>
     
     
+      <script async src="/js/lazysizes.min.js"></script>
+    
   </head>
   
   <body class="hack main container">
@@ -202,57 +205,250 @@ p.code-legend {
 
 </header>
     <main>
-  <header>
-    <h1>Product Design</h1>
-  </header>
-  
-    <a class="page-summary" href="/post/steps-e-a-concepcao-de-um-produto/">
-  <article itemscope itemtype="http://schema.org/CreativeWork">
+  <article itemscope itemtype="http://schema.org/BlogPosting">
+    
+<meta itemprop="name" content="Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 1">
+<meta itemprop="description" content="Como parte das minhas metas dentro da Coderockr está a construção de um cluster usando algumas das ferramentas de orquestração de contêineres que existem no mercado; como o Docker Swarm, Kubernetes, Apache Mesos, etc. Optei pelo **Kubernetes**...">
+
+
+<meta itemprop="dateModified" content="2017-03-07T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="808">
+
+  <meta itemprop="image" content="https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png">
+
+
+
+<meta itemprop="keywords" content="apps,coderockr-way,docker,github,introduction,kubernetes,new-product-development,openshift,product-design,project-management,script,scripting,simple,social-anxiety," />
+
     <header>
-      <h2 itemprop="name"><span>Steps e a concepção de um produto</span></h2>
-      
-        <p class="muted"><svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+      <h1 itemprop="headline">Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 1</h1>
+      <p class="muted">
+        <svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
   <circle cx="16" cy="16" r="14" />
   <path d="M16 8 L16 16 20 20" />
 </svg>
-<span>3 minute read</span>
+<span>4 minute read</span>
 <svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
   <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z" />
 </svg>
 
-  Published: <time datetime="2017-02-24T00:00:00&#43;00:00">24 Feb, 2017</time>
+  Published: <time datetime="2017-03-07T00:00:00&#43;00:00">7 Mar, 2017</time>
 
-</p>
-      
+
+      </p>
     </header>
     
-      <blockquote itemprop="headline">Recentemente na newsletter do Product Hunt me deparei com um aplicativo bem interessante que se propunha a solucionar um problema bem comum, com uma formula bem simples.</blockquote>
-    
-    <div itemprop="description">
+
+    <div itemprop="articleBody">
       <p></p>
+
+
+<figure class="big">
+  
+    
+      <img class="lazyload" data-src="/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png"  />
+    
+  
+  
+</figure>
+<style media="screen">
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+</style>
+
+
+<p>Como parte das minhas metas dentro da <a href="http://blog.coderockr.com">Coderockr</a> está a construção de um cluster usando algumas das ferramentas de orquestração de contêineres que existem no mercado; como o <a href="https://docs.docker.com/engine/swarm/">Docker Swarm</a>, <a href="http://kubernetes.io">Kubernetes</a>, <a href="http://mesos.apache.org/">Apache Mesos</a>, etc.</p>
+
+<p>Optei pelo <strong>Kubernetes</strong> no momento, tanto pelo pedigree, criado pelo Google e mantido pela Cloud Native Computing Foundation; quanto pela oferta de grandes clouds como a Red Hat, Azure e Google.</p>
+
+<p>Quando estava avaliando as opções disponíveis, o <a href="https://medium.com/@JeanCarloMachad">Jean Carlo Machado</a> (colega da <a href="https://medium.com/@compufacil">CompuFácil</a>), me sugeriu usar o <a href="https://blog.openshift.com/next-generation-openshift-online/"><strong>OpenShift Next Gen</strong></a>, a plataforma da Red Hat para Kubernetes, que esta em <a href="https://www.openshift.com/devpreview/">Developer Preview</a> permitindo que você se cadastre para testar a ferramenta deles por 30 dias.</p>
+
+<p>Isso me salvou de já ter de sair pagando para testar, ou ter de fazer o <a href="https://kubernetes.io/docs/getting-started-guides/minikube/">setup do minikube</a> na minha máquina, o que não me era muito atrativo.</p>
+
+<p>Assim resolvi dar uma chance a plataforma da Red Hat, e construir um ambiente simples com um servidor HTTP em Node e um banco de dados MySQL, o que já me permite cobrir vários aspectos básicos do Kubernetes.</p>
+
+<p>Mas como o texto foi ficando muito grande, achei melhor quebrá-lo em 4 partes para não cansar quem for ler e que irei publicar nos próximos dias.</p>
+
+<p>Nessa primeira parte vou dar uma introdução aos conceitos básicos do Kubernetes, e nas próximas irei fazer uso desses conceitos.</p>
+
+<ul>
+<li>Parte 2 - Construindo o Ambiente: <a href="/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2/">clique aqui</a></li>
+<li>Parte 3 - Volumes Persistentes: <a href="/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/">clique aqui</a></li>
+<li>Parte 4 - Segredos: <a href="/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4/">clique aqui</a></li>
+</ul>
+
+<hr />
+
+<p>A aplicação que construí usa um <a href="https://www.kaggle.com/joniarroba/noshowappointments">conjunto de dados sobre faltas em consultas</a> que achei no <a href="https://www.kaggle.com/">Kaggle</a> e gera os gráficos abaixo, podendo escolher o dia da semana como filtro.</p>
+
+
+<figure >
+  
+    
+      <img class="lazyload" data-src="/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/app-view.png"  />
+    
+  
+  
+  <figcaption>
+    <header><b>O fonte dessa aplicação pode ser encontrado aqui: &lt;https://github.com/lucassabreu/openshift-next-gen/tree/app&gt;</b></header>
+    
+  </figcaption>
+  
+</figure>
+<style media="screen">
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+</style>
+
+
+<p>Então publiquei no <a href="http://hub.docker.com">Docker Hub</a> uma imagem para a aplicação (<a href="https://hub.docker.com/r/lucassabreu/openshift-app-test/">lucassabreu/openshift-app-test</a>) e outra para o banco de dados (<a href="https://hub.docker.com/r/lucassabreu/openshift-mysql-test/">lucassabreu/openshift-mysql-test</a>) - essa imagem é um MySQL normal, mas que adicionei um dump da base que vou usar para facilitar o deploy.</p>
+
+<p>Agora se eu quiser executar essa aplicação na minha máquina, posso simplesmente executar os seguintes comando do Docker e terei o servidor me respondendo em <code>http://localhost</code>:</p>
+<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #75715e">#!/bin/bash</span>
+docker run -d --name db-test <span style="color: #ae81ff">\</span>
+  -e <span style="color: #f8f8f2">MYSQL_ROOT_PASSWORD</span><span style="color: #f92672">=</span>root -e <span style="color: #f8f8f2">MYSQL_DATABASE</span><span style="color: #f92672">=</span>appointments <span style="color: #ae81ff">\</span>
+  -e <span style="color: #f8f8f2">MYSQL_USER</span><span style="color: #f92672">=</span>appoint -e <span style="color: #f8f8f2">MYSQL_PASSWORD</span><span style="color: #f92672">=</span><span style="color: #ae81ff">123</span> <span style="color: #ae81ff">\</span>
+  lucassabreu/openshift-mysql-test
+
+docker run -d --name app-test --link db-test:db <span style="color: #ae81ff">\</span>
+  -e <span style="color: #f8f8f2">DATABASE_CONNECTION</span><span style="color: #f92672">=</span>mysql://appoint:123@<span style="color: #f8f8f2">$db</span>:3306/appointments <span style="color: #ae81ff">\</span>
+  -p <span style="color: #ae81ff">80</span>:8080 lucassabreu/openshift-app-test
+</pre></div>
+
+<p>Certo, agora que tenho certeza de que a minha aplicação está operacional, comecei a criar os objetos do Kubernetes, mas antes é importante entender alguns conceitos da plataforma para não ficar muito perdido:</p>
+
+<h4 id="pod-https-kubernetes-io-docs-user-guide-pods"><a href="https://kubernetes.io/docs/user-guide/pods/">Pod</a></h4>
+
+<p>Este é o menor componente do Kubernetes, representa um nó no cluster, executando um ou mais contêineres que entregam uma mesma função.</p>
+
+<p>Eles tem a característica de serem descartáveis, ou seja, se eventualmente acontecer algum problema a um Pod, este pode ser destruído sem nenhum efeito colateral ou remorso.</p>
+
+<h4 id="deployment-https-kubernetes-io-docs-user-guide-deployments"><a href="https://kubernetes.io/docs/user-guide/deployments/">Deployment</a></h4>
+
+<p>Como o nome sugere controla o deploy de Pods dentro do cluster. Quando se cria esse componente, deve-se informar um template de Pod e quantos destes você precisa, e se necessário uma regra para criar mais instâncias.</p>
+
+<p>Ele irá garantir duas coisas principalmente: que existam suficientes Pods quanto foi definido, e que os mesmos estejam atualizados em relação ao template que foi definido.</p>
+
+<p>Então caso você mude algo no template o Deployment vai subir novos Pods e destruir os antigos para manter a expectativa (ele também &ldquo;versiona&rdquo; os deploys, então se algo explodir dá para voltar atrás).</p>
+
+<h4 id="service-https-kubernetes-io-docs-user-guide-services"><a href="https://kubernetes.io/docs/user-guide/services/">Service</a></h4>
+
+<p>Como os Pods além de efêmeros, podem existir em números variados por culpa dos Deployments, não há forma confiável de tentar conectar dois Pods diretamente, seja porque o Pod que você está dependendo pode morrer e quando voltar terá outro IP, e provavelmente outro nome, ou porque o Pod que você &ldquo;fixou&rdquo; pode não ser o mas indicado (menos ocupado ou mais próximo).</p>
+
+<p>Para resolver esse problema existem os Services, em vez de tentar fazer as chamadas diretamente para um Pod, podemos chamar pelo nome de um Service e este irá rotear para um Pod que esteja abaixo dele.</p>
+
+<p>É importante ressaltar que os Services fazem &ldquo;apenas&rdquo; a descoberta dos Pods, eles não os mantêm ligados, isso é responsabilidade dos Deployments.</p>
+
+<h4 id="route-https-docs-openshift-org-latest-architecture-core-concepts-routes-html"><a href="https://docs.openshift.org/latest/architecture/core_concepts/routes.html">Route</a></h4>
+
+<p>Permitem que você exponha Services para a rede externa e também permite algumas regras de proxy para melhor apresentá-los.</p>
+
+<p>Embora seja possível fazer a exposição de Services para a rede externa com Kubernetes, na plataforma da OpenShift é necessário o uso do componente Route para isso.</p>
+
+<hr />
+
+<p>Como comentei no início, estou escrevendo uma série de postagens para mostrar como usar o básico do Kubernetes, e no próximo post irei usar os conceitos que acabei de descrever para implementar o ambiente.</p>
+
+<p>Próximo Post: <a href="/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2/">clique aqui</a></p>
+      <section class="share">
+  <hr />
+  <b>Share this post at</b>
+  <a href="https://twitter.com/share?text=Um%20ambiente%20simples%20usando%20Kubernetes%20e%20OpenShift%20Next%20Gen%e2%80%8a-%e2%80%8aParte%c2%a01&nbsp;-&nbsp;Lucas%20dos%20Santos%20Abreu&amp;url=https%3a%2f%2flucassabreu.github.io%2fpost%2fum-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1%2f"
+      onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      Twitter
+  </a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2flucassabreu.github.io%2fpost%2fum-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1%2f"
+      onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      Facebook
+  </a>
+  <a href="http://pinterest.com/pin/create/button/?url=https%3a%2f%2flucassabreu.github.io%2fpost%2fum-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1%2f&amp;description=Um%20ambiente%20simples%20usando%20Kubernetes%20e%20OpenShift%20Next%20Gen%e2%80%8a-%e2%80%8aParte%c2%a01"
+      onclick="window.open(this.href, 'pinterest-share','width=580,height=296');return false;">
+      Pinterest
+  </a>
+  <a href="https://plus.google.com/share?url=https%3a%2f%2flucassabreu.github.io%2fpost%2fum-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1%2f"
+     onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      Google+
+  </a>
+  <hr />
+</section>
+
     </div>
     
-    <meta itemprop="inLanguage" content="pt-BR">
-    <meta itemprop="datePublished" content="2017-02-24T00:00:00&#43;00:00">
-    <meta itemprop="dateModified" content="2017-02-24T00:00:00&#43;00:00">
-    <meta itemprop="url" content="/post/steps-e-a-concepcao-de-um-produto/">
-    
-      <meta itemprop="image" content="https://cdn-images-1.medium.com/max/800/1*zQ_-ZA-F8K4gCk4cM9jZrQ.jpeg">
-    
-  </article>
-</a>
+      <article>
+        <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'lucas-dos-santos-abreu';
+    var disqus_identifier = 'https:\/\/lucassabreu.github.io\/post\/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1\/';
+    var disqus_title = 'Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 1';
+    var disqus_url = 'https:\/\/lucassabreu.github.io\/post\/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1\/';
 
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      </article>
+    
+    <footer>
+      <hr>
+      <p>
+  Published
   
+    
+      by <span itemprop="author"></span>
+    
+  
+  <time datetime="2017-03-07T00:00:00&#43;00:00">
+    7 Mar, 2017
+  </time>
+  
+  
+    and tagged <a href="/tags/docker/">Docker</a>, <a href="/tags/introduction/">Introduction</a>, <a href="/tags/kubernetes/">Kubernetes</a>, <a href="/tags/openshift/">Openshift</a> and <a href="/tags/simple/">Simple</a>
+  
+  using <span itemprop="wordCount">808</span> words.
+</p>
+
+      
+  
+
+
+
+  <aside>
+    <header>Related Content</header>
+    <ul>
+      
+      
+        <li><a href="/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4/">Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 4</a> &ndash; 4 minutes
+      
+        <li><a href="/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2/">Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 2</a> &ndash; 5 minutes
+      
+        <li><a href="/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/">Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 3</a> &ndash; 4 minutes
+      
+    </ul>
+  </aside>
+
+
+    </footer>
+  </article>
 </main>
     <footer>
-  <nav>
-  <p>
-    
-    <span>Page 1 of 1</span>
-    
-  </p>
-</nav>
-
   
   <p class="muted">
     This page was generated using

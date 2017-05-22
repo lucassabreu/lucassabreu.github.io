@@ -7,6 +7,21 @@
   </url>
   
   <url>
+    <loc>https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4/</loc>
+    <lastmod>2017-03-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2/</loc>
+    <lastmod>2017-03-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/</loc>
+    <lastmod>2017-03-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://lucassabreu.github.io/post/steps-e-a-concepcao-de-um-produto/</loc>
     <lastmod>2017-02-24T00:00:00+00:00</lastmod>
   </url>
@@ -14,6 +29,11 @@
   <url>
     <loc>https://lucassabreu.github.io/post/simplificando-setup-projetos-github/</loc>
     <lastmod>2017-01-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/</loc>
+    <lastmod>2017-01-09T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -29,14 +49,32 @@
   </url>
   
   <url>
+    <loc>https://lucassabreu.github.io/tags/docker/</loc>
+    <lastmod>2017-03-10T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://lucassabreu.github.io/tags/github/</loc>
     <lastmod>2017-01-10T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
+    <loc>https://lucassabreu.github.io/tags/introduction/</loc>
+    <lastmod>2017-03-10T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://lucassabreu.github.io/tags/kubernetes/</loc>
+    <lastmod>2017-03-10T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://lucassabreu.github.io/</loc>
-    <lastmod>2017-02-24T00:00:00+00:00</lastmod>
+    <lastmod>2017-03-10T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -47,8 +85,14 @@
   </url>
   
   <url>
+    <loc>https://lucassabreu.github.io/tags/openshift/</loc>
+    <lastmod>2017-03-10T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://lucassabreu.github.io/post/</loc>
-    <lastmod>2017-02-24T00:00:00+00:00</lastmod>
+    <lastmod>2017-03-10T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -73,6 +117,12 @@
   <url>
     <loc>https://lucassabreu.github.io/tags/scripting/</loc>
     <lastmod>2017-01-10T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://lucassabreu.github.io/tags/simple/</loc>
+    <lastmod>2017-03-10T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
