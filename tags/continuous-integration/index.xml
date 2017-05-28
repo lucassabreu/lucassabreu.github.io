@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Continuous Integration on Lucas dos Santos Abreu</title>
-    <link>https://lucassabreu.net.br/tags/continuous-integration/index.xml</link>
+    <link>http://www.lucassabreu.net.br/tags/continuous-integration/index.xml</link>
     <description>Recent content in Continuous Integration on Lucas dos Santos Abreu</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>pt-BR</language>
-    <atom:link href="https://lucassabreu.net.br/tags/continuous-integration/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://www.lucassabreu.net.br/tags/continuous-integration/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Ambientes por Branch com OpenShift Next Gen usando GitHub</title>
-      <link>https://lucassabreu.net.br/post/ambientes-por-branch-com-openshift-next-gen-usando-github/</link>
+      <link>http://www.lucassabreu.net.br/post/ambientes-por-branch-com-openshift-next-gen-usando-github/</link>
       <pubDate>Sun, 07 May 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://lucassabreu.net.br/post/ambientes-por-branch-com-openshift-next-gen-usando-github/</guid>
+      <guid>http://www.lucassabreu.net.br/post/ambientes-por-branch-com-openshift-next-gen-usando-github/</guid>
       <description>&lt;p&gt;&lt;/p&gt;
 
 
@@ -38,7 +38,7 @@
 &lt;/style&gt;
 
 
-&lt;p&gt;&lt;i&gt;Esta postagem é uma continuação da &lt;a href=&#34;https://lucassabreu.net.br/post/ambientes-por-branch-com-openshift-next-gen&#34;&gt;&lt;strong&gt;Ambientes por Branch com OpenShift Next Gen&lt;/strong&gt;&lt;/a&gt;, a introdução do problema esta lá e também mostro como implementar o processo de deploy usando o GitLab nele, se não viu da uma conferida, vale o investimento* 😉.&lt;/i&gt;&lt;/p&gt;
+&lt;p&gt;&lt;i&gt;Esta postagem é uma continuação da &lt;a href=&#34;http://www.lucassabreu.net.br/post/ambientes-por-branch-com-openshift-next-gen&#34;&gt;&lt;strong&gt;Ambientes por Branch com OpenShift Next Gen&lt;/strong&gt;&lt;/a&gt;, a introdução do problema esta lá e também mostro como implementar o processo de deploy usando o GitLab nele, se não viu da uma conferida, vale o investimento* 😉.&lt;/i&gt;&lt;/p&gt;
 
 &lt;p&gt;Como prometi na outra postagem, vamos criar um processo de deploy de ambientes por branch usando o &lt;a href=&#34;https://medium.com/@github&#34;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
 
@@ -48,7 +48,7 @@
 
 &lt;p&gt;Sobre uma introdução ao Kubernetes/OpenShift pode ver aqui:&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&#34;https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/&#34;&gt;&lt;strong&gt;Um ambiente simples usando Kubernetes e OpenShift Next Gen — Parte 1&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;http://www.lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/&#34;&gt;&lt;strong&gt;Um ambiente simples usando Kubernetes e OpenShift Next Gen — Parte 1&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;O cliente de linha de comando do OpenShift pode ser baixado em:&lt;/p&gt;
 
@@ -532,10 +532,10 @@ ter uma base de como é a chamada.&lt;/p&gt;
     
     <item>
       <title>Ambientes por Branch com OpenShift Next Gen</title>
-      <link>https://lucassabreu.net.br/post/ambientes-por-branch-com-openshift-next-gen/</link>
+      <link>http://www.lucassabreu.net.br/post/ambientes-por-branch-com-openshift-next-gen/</link>
       <pubDate>Mon, 01 May 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://lucassabreu.net.br/post/ambientes-por-branch-com-openshift-next-gen/</guid>
+      <guid>http://www.lucassabreu.net.br/post/ambientes-por-branch-com-openshift-next-gen/</guid>
       <description>&lt;p&gt;&lt;/p&gt;
 
 
@@ -576,7 +576,7 @@ ter uma base de como é a chamada.&lt;/p&gt;
 
 &lt;p&gt;Sobre uma introdução ao Kubernetes/OpenShift pode ver aqui:&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&#34;https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/&#34;&gt;&lt;strong&gt;Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 1&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;http://www.lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/&#34;&gt;&lt;strong&gt;Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 1&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;O cliente de linha de comando pode ser baixado em:&lt;/p&gt;
 
@@ -1078,7 +1078,7 @@ sed &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;&lt;/span&gt;
 
 &lt;p&gt;A postagem acabou ficando bem grande apenas para falar do processo no GitLab, por isso vou criar um segundo post sobre como fazer isso no GitHub, abaixo esta o link para ele:&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&#34;https://lucassabreu.net.br/post/ambientes-por-branch-com-openshift-next-gen-usando-github&#34;&gt;&lt;strong&gt;Ambientes por Branch com OpenShift Next Gen usando GitHub&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;</description>
+&lt;p&gt;&lt;a href=&#34;http://www.lucassabreu.net.br/post/ambientes-por-branch-com-openshift-next-gen-usando-github&#34;&gt;&lt;strong&gt;Ambientes por Branch com OpenShift Next Gen usando GitHub&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;</description>
     </item>
     
   </channel>

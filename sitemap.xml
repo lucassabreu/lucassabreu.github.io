@@ -2,178 +2,178 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://lucassabreu.net.br/about/</loc>
+    <loc>http://www.lucassabreu.net.br/about/</loc>
     <lastmod>2017-05-20T22:05:52+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://lucassabreu.net.br/post/ambientes-por-branch-com-openshift-next-gen-usando-github/</loc>
+    <loc>http://www.lucassabreu.net.br/post/ambientes-por-branch-com-openshift-next-gen-usando-github/</loc>
     <lastmod>2017-05-07T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://lucassabreu.net.br/post/ambientes-por-branch-com-openshift-next-gen/</loc>
+    <loc>http://www.lucassabreu.net.br/post/ambientes-por-branch-com-openshift-next-gen/</loc>
     <lastmod>2017-05-01T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4/</loc>
+    <loc>http://www.lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4/</loc>
     <lastmod>2017-03-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/</loc>
+    <loc>http://www.lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/</loc>
     <lastmod>2017-03-09T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2/</loc>
+    <loc>http://www.lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2/</loc>
     <lastmod>2017-03-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/</loc>
+    <loc>http://www.lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/</loc>
     <lastmod>2017-03-07T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://lucassabreu.net.br/post/steps-e-a-concepcao-de-um-produto/</loc>
+    <loc>http://www.lucassabreu.net.br/post/steps-e-a-concepcao-de-um-produto/</loc>
     <lastmod>2017-02-24T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://lucassabreu.net.br/post/simplificando-setup-projetos-github/</loc>
+    <loc>http://www.lucassabreu.net.br/post/simplificando-setup-projetos-github/</loc>
     <lastmod>2017-01-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://lucassabreu.net.br/tags/apps/</loc>
+    <loc>http://www.lucassabreu.net.br/tags/apps/</loc>
     <lastmod>2017-02-24T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://lucassabreu.net.br/tags/buddy-works/</loc>
+    <loc>http://www.lucassabreu.net.br/tags/buddy-works/</loc>
     <lastmod>2017-05-07T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://lucassabreu.net.br/tags/coderockr-way/</loc>
+    <loc>http://www.lucassabreu.net.br/tags/coderockr-way/</loc>
     <lastmod>2017-01-10T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://lucassabreu.net.br/tags/continuous-deployment/</loc>
+    <loc>http://www.lucassabreu.net.br/tags/continuous-deployment/</loc>
     <lastmod>2017-05-07T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://lucassabreu.net.br/tags/continuous-integration/</loc>
+    <loc>http://www.lucassabreu.net.br/tags/continuous-integration/</loc>
     <lastmod>2017-05-07T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://lucassabreu.net.br/tags/docker/</loc>
+    <loc>http://www.lucassabreu.net.br/tags/docker/</loc>
     <lastmod>2017-03-10T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://lucassabreu.net.br/tags/github/</loc>
+    <loc>http://www.lucassabreu.net.br/tags/github/</loc>
     <lastmod>2017-05-07T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://lucassabreu.net.br/tags/gitlab/</loc>
+    <loc>http://www.lucassabreu.net.br/tags/gitlab/</loc>
     <lastmod>2017-05-01T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://lucassabreu.net.br/tags/introduction/</loc>
+    <loc>http://www.lucassabreu.net.br/tags/introduction/</loc>
     <lastmod>2017-03-10T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://lucassabreu.net.br/tags/kubernetes/</loc>
+    <loc>http://www.lucassabreu.net.br/tags/kubernetes/</loc>
     <lastmod>2017-03-10T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://lucassabreu.net.br/</loc>
+    <loc>http://www.lucassabreu.net.br/</loc>
     <lastmod>2017-05-07T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://lucassabreu.net.br/tags/new-product-development/</loc>
+    <loc>http://www.lucassabreu.net.br/tags/new-product-development/</loc>
     <lastmod>2017-02-24T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://lucassabreu.net.br/tags/openshift/</loc>
+    <loc>http://www.lucassabreu.net.br/tags/openshift/</loc>
     <lastmod>2017-05-07T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://lucassabreu.net.br/post/</loc>
+    <loc>http://www.lucassabreu.net.br/post/</loc>
     <lastmod>2017-05-07T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://lucassabreu.net.br/tags/product-design/</loc>
+    <loc>http://www.lucassabreu.net.br/tags/product-design/</loc>
     <lastmod>2017-02-24T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://lucassabreu.net.br/tags/project-management/</loc>
+    <loc>http://www.lucassabreu.net.br/tags/project-management/</loc>
     <lastmod>2017-01-10T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://lucassabreu.net.br/tags/pull-request/</loc>
+    <loc>http://www.lucassabreu.net.br/tags/pull-request/</loc>
     <lastmod>2017-05-01T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://lucassabreu.net.br/tags/script/</loc>
+    <loc>http://www.lucassabreu.net.br/tags/script/</loc>
     <lastmod>2017-01-10T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://lucassabreu.net.br/tags/scripting/</loc>
+    <loc>http://www.lucassabreu.net.br/tags/scripting/</loc>
     <lastmod>2017-01-10T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://lucassabreu.net.br/tags/simple/</loc>
+    <loc>http://www.lucassabreu.net.br/tags/simple/</loc>
     <lastmod>2017-03-10T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://lucassabreu.net.br/tags/social-anxiety/</loc>
+    <loc>http://www.lucassabreu.net.br/tags/social-anxiety/</loc>
     <lastmod>2017-02-24T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://lucassabreu.net.br/tags/</loc>
+    <loc>http://www.lucassabreu.net.br/tags/</loc>
     <priority>0</priority>
   </url>
   

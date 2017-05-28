@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Social Anxiety on Lucas dos Santos Abreu</title>
-    <link>https://lucassabreu.net.br/tags/social-anxiety/index.xml</link>
+    <link>http://www.lucassabreu.net.br/tags/social-anxiety/index.xml</link>
     <description>Recent content in Social Anxiety on Lucas dos Santos Abreu</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>pt-BR</language>
-    <atom:link href="https://lucassabreu.net.br/tags/social-anxiety/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://www.lucassabreu.net.br/tags/social-anxiety/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Steps e a concepção de um produto</title>
-      <link>https://lucassabreu.net.br/post/steps-e-a-concepcao-de-um-produto/</link>
+      <link>http://www.lucassabreu.net.br/post/steps-e-a-concepcao-de-um-produto/</link>
       <pubDate>Fri, 24 Feb 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://lucassabreu.net.br/post/steps-e-a-concepcao-de-um-produto/</guid>
+      <guid>http://www.lucassabreu.net.br/post/steps-e-a-concepcao-de-um-produto/</guid>
       <description>&lt;p&gt;&lt;/p&gt;
 
 &lt;p&gt;Recentemente na newsletter do Product Hunt me deparei com um aplicativo bem interessante que se propunha a solucionar um problema bem comum, com uma formula bem simples.&lt;/p&gt;

@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Project Management on Lucas dos Santos Abreu</title>
-    <link>https://lucassabreu.net.br/tags/project-management/index.xml</link>
+    <link>http://www.lucassabreu.net.br/tags/project-management/index.xml</link>
     <description>Recent content in Project Management on Lucas dos Santos Abreu</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>pt-BR</language>
-    <atom:link href="https://lucassabreu.net.br/tags/project-management/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://www.lucassabreu.net.br/tags/project-management/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Simplificando o Setup de Projetos no GitHub</title>
-      <link>https://lucassabreu.net.br/post/simplificando-setup-projetos-github/</link>
+      <link>http://www.lucassabreu.net.br/post/simplificando-setup-projetos-github/</link>
       <pubDate>Tue, 10 Jan 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://lucassabreu.net.br/post/simplificando-setup-projetos-github/</guid>
+      <guid>http://www.lucassabreu.net.br/post/simplificando-setup-projetos-github/</guid>
       <description>&lt;p&gt;&lt;/p&gt;
 
 &lt;p&gt;Na &lt;a href=&#34;http://blog.coderockr.com/&#34;&gt;Coderockr&lt;/a&gt; iniciamos e assumimos vários projetos, sejam para clientes que nos contratam ou para ações internas, e normalmente o &lt;a href=&#34;http://github.com&#34;&gt;GitHub&lt;/a&gt; acaba sendo a ferramenta escolhida para eles.&lt;/p&gt;
