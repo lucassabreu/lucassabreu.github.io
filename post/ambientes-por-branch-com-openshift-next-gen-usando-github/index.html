@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta name="generator" content="Hugo 0.18" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ambientes por Branch com OpenShift Next Gen usando GitHub | Lucas dos Santos Abreu</title>
+    <meta name="description" content="Esta postagem é uma continuação da &#34;Ambientes por Branch com OpenShift Next Gen&#34;, implementando o processo no GitHub usando Buddy.Works e o OpenShift da GetUp Cloud">
+    <meta name="keywords" content="Openshift, Continuous Integration, Continuous Deployment, Github, Buddy Works">
+    
+    
+    
+    
+    
+
+  <meta name="author" content="">
+
+
+    <meta property="og:title" content="Ambientes por Branch com OpenShift Next Gen usando GitHub" />
+<meta property="og:description" content="Esta postagem é uma continuação da &#34;Ambientes por Branch com OpenShift Next Gen&#34;, implementando o processo no GitHub usando Buddy.Works e o OpenShift da GetUp Cloud" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lucassabreu.net.br/post/ambientes-por-branch-com-openshift-next-gen-usando-github/" />
+
+  <meta property="og:image" content="https://lucassabreu.net.br/post/ambientes-por-branch-com-openshift-next-gen-usando-github/header.png" />
+
+
+<meta property="og:updated_time" content="2017-05-07T00:00:00&#43;00:00"/>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <meta name="theme-color" content="#000">
+
+    
+    
+    
+    <link rel="canonical" href="https://lucassabreu.net.br/post/ambientes-por-branch-com-openshift-next-gen-usando-github/">
+    
+    
+    <link rel="icon" sizes="any" href="data:image/svg+xml,%3Csvg%20viewBox='0%200%2046%2045'%20xmlns='http://www.w3.org/2000/svg'%3E%3Ctitle%3EAfter%20Dark%3C/title%3E%3Cpath%20d='M.708%2045L23%20.416%2045.292%2045H.708zM35%2038L23%2019%2011%2038h24z'%20fill='%23000'/%3E%3C/svg%3E">
+
+    <style>
+      html{font-size:12px}*{box-sizing:border-box;text-rendering:geometricPrecision}body{font-size:1rem;line-height:1.5rem;margin:0;font-family:Menlo,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,serif;word-wrap:break-word}h1,h2,h3,h4,h5,h6{line-height:1.3em}fieldset{border:none;padding:0;margin:0}pre{padding:2rem;margin:1.75rem 0;background-color:#fff;border:1px solid #ccc;overflow:auto}code[class*=language-],pre[class*=language-],pre code{font-weight:100;text-shadow:none;margin:1.75rem 0}a{cursor:pointer;color:#ff2e88;text-decoration:none;border-bottom:1px solid #ff2e88}a:hover{background-color:#ff2e88;color:#fff}.grid{display:-ms-flexbox;display:flex;-ms-flex-wrap:wrap;flex-wrap:wrap}.grid.\-top{-ms-flex-align:start;-ms-grid-row-align:flex-start;align-items:flex-start}.grid.\-middle{-ms-flex-align:center;-ms-grid-row-align:center;align-items:center}.grid.\-bottom{-ms-flex-align:end;-ms-grid-row-align:flex-end;align-items:flex-end}.grid.\-stretch{-ms-flex-align:stretch;-ms-grid-row-align:stretch;align-items:stretch}.grid.\-baseline{-ms-flex-align:baseline;-ms-grid-row-align:baseline;align-items:baseline}.grid.\-left{-ms-flex-pack:start;justify-content:flex-start}.grid.\-center{-ms-flex-pack:center;justify-content:center}.grid.\-right{-ms-flex-pack:end;justify-content:flex-end}.grid.\-between{-ms-flex-pack:justify;justify-content:space-between}.grid.\-around{-ms-flex-pack:distribute;justify-content:space-around}.cell{-ms-flex:1;flex:1;box-sizing:border-box}@media screen and (min-width:768px){.cell.\-1of12{-ms-flex:0 0 8.33333%;flex:0 0 8.33333%}.cell.\-2of12{-ms-flex:0 0 16.66667%;flex:0 0 16.66667%}.cell.\-3of12{-ms-flex:0 0 25%;flex:0 0 25%}.cell.\-4of12{-ms-flex:0 0 33.33333%;flex:0 0 33.33333%}.cell.\-5of12{-ms-flex:0 0 41.66667%;flex:0 0 41.66667%}.cell.\-6of12{-ms-flex:0 0 50%;flex:0 0 50%}.cell.\-7of12{-ms-flex:0 0 58.33333%;flex:0 0 58.33333%}.cell.\-8of12{-ms-flex:0 0 66.66667%;flex:0 0 66.66667%}.cell.\-9of12{-ms-flex:0 0 75%;flex:0 0 75%}.cell.\-10of12{-ms-flex:0 0 83.33333%;flex:0 0 83.33333%}.cell.\-11of12{-ms-flex:0 0 91.66667%;flex:0 0 91.66667%}}@media screen and (max-width:768px){.grid{-ms-flex-direction:column;flex-direction:column}.cell{-ms-flex:0 0 auto;flex:0 0 auto}}.hack,.hack blockquote,.hack code,.hack em,.hack h1,.hack h2,.hack h3,.hack h4,.hack h5,.hack h6,.hack strong{font-size:1rem;font-style:normal;font-family:Menlo,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,serif}.hack blockquote,.hack code,.hack em,.hack strong{line-height:20px}.hack blockquote,.hack code,.hack footer,.hack h1,.hack h2,.hack h3,.hack h4,.hack h5,.hack h6,.hack header,.hack li,.hack ol,.hack p,.hack section,.hack ul{float:none;margin:0;padding:0}.hack blockquote,.hack h1,.hack ol,.hack p,.hack ul{margin-top:20px;margin-bottom:20px}.hack h1{position:relative;display:inline-block;display:table-cell;padding:20px 0 30px;margin:0;overflow:hidden}.hack h1:after{content:"====================================================================================================";position:absolute;bottom:10px;left:0}.hack h1+*{margin-top:0}.hack h2,.hack h3,.hack h4,.hack h5,.hack h6{position:relative;margin-bottom:1.75rem}.hack h2:before,.hack h3:before,.hack h4:before,.hack h5:before,.hack h6:before{display:inline}.hack h2:before{content:"## "}.hack h3:before{content:"### "}.hack h4:before{content:"#### "}.hack h5:before{content:"##### "}.hack h6:before{content:"###### "}.hack li{position:relative;display:block;padding-left:20px}.hack li:after{position:absolute;top:0;left:0}.hack ul>li:after{content:"-"}.hack ol{counter-reset:a}.hack ol>li:after{content:counter(a) ".";counter-increment:a}.hack blockquote{position:relative;padding-left:17px;padding-left:2ch;overflow:hidden}.hack blockquote:after{content:">\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>";white-space:pre;position:absolute;top:0;left:0;line-height:20px}.hack em:after,.hack em:before{content:"*";display:inline}.hack pre code:after,.hack pre code:before{content:''}.hack code{font-weight:700}.hack code:after,.hack code:before{content:"`";display:inline}.hack hr{position:relative;height:20px;overflow:hidden;border:0;margin:20px 0}.hack hr:after{content:"----------------------------------------------------------------------------------------------------";position:absolute;top:0;left:0;line-height:20px;width:100%;word-wrap:break-word}@-moz-document url-prefix(){.hack h1{display:block}}.hack-ones ol>li:after{content:"1."}p{margin:0 0 1.75rem}.container{max-width:70rem}.container,.container-fluid{margin:0 auto;padding:0 1rem}.inner{padding:1rem}.inner2x{padding:2rem}.pull-left{float:left}.pull-right{float:right}.progress-bar{height:8px;opacity:.8;background-color:#ccc;margin-top:12px}.progress-bar.progress-bar-show-percent{margin-top:38px}.progress-bar-filled{background-color:gray;height:100%;transition:width .3s ease;position:relative;width:0}.progress-bar-filled:before{content:'';border:6px solid transparent;border-top-color:gray;position:absolute;top:-12px;right:-6px}.progress-bar-filled:after{color:gray;content:attr(data-filled);display:block;font-size:12px;white-space:nowrap;position:absolute;border:6px solid transparent;top:-38px;right:0;-ms-transform:translateX(50%);transform:translateX(50%)}table{width:100%;border-collapse:collapse;margin:1.75rem 0;color:#778087}table td,table th{vertical-align:top;border:1px solid #ccc;line-height:15px;padding:10px}table thead th{font-size:10px}table tbody td:first-child{font-weight:700;color:#333}.form{width:30rem}.form-group{margin-bottom:1.75rem;overflow:auto}.form-group label{border-bottom:2px solid #ccc;color:#333;width:10rem;display:inline-block;height:38px;line-height:38px;padding:0;float:left;position:relative}.form-group.form-success label{color:#4caf50!important;border-color:#4caf50!important}.form-group.form-warning label{color:#ff9800!important;border-color:#ff9800!important}.form-group.form-error label{color:#f44336!important;border-color:#f44336!important}.form-control{outline:none;border:none;border-bottom:2px solid #ccc;padding:.5rem 0;width:20rem;height:38px;background-color:transparent}.form-control:focus{border-color:#555}.form-group.form-textarea label:after{position:absolute;content:'';width:2px;background-color:#fff;right:-2px;top:0;bottom:0}textarea.form-control{height:auto;resize:none;padding:1rem 0;border-bottom:2px solid #ccc;border-left:2px solid #ccc;padding:.5rem}select.form-control{border-radius:0;background-color:transparent;-webkit-appearance:none;-moz-appearance:none;-ms-appearance:none}.help-block{color:#999;margin-top:.5rem}.form-actions{margin-bottom:1.75rem}.btn{display:-ms-inline-flexbox;display:inline-flex;-ms-flex-align:center;align-items:center;-ms-flex-pack:center;justify-content:center;cursor:pointer;outline:none;padding:.65rem 2rem;font-size:1rem;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;position:relative;z-index:1}.btn:active{box-shadow:inset 0 1px 3px rgba(0,0,0,.12)}.btn.btn-ghost{border-color:#757575;color:#757575;background-color:transparent}.btn.btn-ghost:focus,.btn.btn-ghost:hover{border-color:#424242;color:#424242;z-index:2}.btn.btn-ghost:hover{background-color:transparent}.btn-block{width:100%;display:-ms-flexbox;display:flex}.btn-default{color:#fff;background-color:#e0e0e0;border:1px solid #e0e0e0;color:#333}.btn-default:focus:not(.btn-ghost),.btn-default:hover{background-color:#dcdcdc;border-color:#dcdcdc}.btn-success{color:#fff;background-color:#4caf50;border:1px solid #4caf50}.btn-success:focus:not(.btn-ghost),.btn-success:hover{background-color:#43a047;border-color:#43a047}.btn-success.btn-ghost{border-color:#4caf50;color:#4caf50}.btn-success.btn-ghost:focus,.btn-success.btn-ghost:hover{border-color:#388e3c;color:#388e3c;z-index:2}.btn-error{color:#fff;background-color:#f44336;border:1px solid #f44336}.btn-error:focus:not(.btn-ghost),.btn-error:hover{background-color:#e53935;border-color:#e53935}.btn-error.btn-ghost{border-color:#f44336;color:#f44336}.btn-error.btn-ghost:focus,.btn-error.btn-ghost:hover{border-color:#d32f2f;color:#d32f2f;z-index:2}.btn-warning{color:#fff;background-color:#ff9800;border:1px solid #ff9800}.btn-warning:focus:not(.btn-ghost),.btn-warning:hover{background-color:#fb8c00;border-color:#fb8c00}.btn-warning.btn-ghost{border-color:#ff9800;color:#ff9800}.btn-warning.btn-ghost:focus,.btn-warning.btn-ghost:hover{border-color:#f57c00;color:#f57c00;z-index:2}.btn-info{color:#fff;background-color:#00bcd4;border:1px solid #00bcd4}.btn-info:focus:not(.btn-ghost),.btn-info:hover{background-color:#00acc1;border-color:#00acc1}.btn-info.btn-ghost{border-color:#00bcd4;color:#00bcd4}.btn-info.btn-ghost:focus,.btn-info.btn-ghost:hover{border-color:#0097a7;color:#0097a7;z-index:2}.btn-primary{color:#fff;background-color:#2196f3;border:1px solid #2196f3}.btn-primary:focus:not(.btn-ghost),.btn-primary:hover{background-color:#1e88e5;border-color:#1e88e5}.btn-primary.btn-ghost{border-color:#2196f3;color:#2196f3}.btn-primary.btn-ghost:focus,.btn-primary.btn-ghost:hover{border-color:#1976d2;color:#1976d2;z-index:2}.btn-group{overflow:auto}.btn-group .btn{float:left}.btn-group .btn-ghost:not(:first-child){margin-left:-1px}.card{border:1px solid #ccc}.card .card-header{color:#333;text-align:center;background-color:#ddd;padding:.5rem 0}.alert{color:#ccc;padding:1rem;border:1px solid #ccc;margin-bottom:1.75rem}.alert-success{color:#4caf50;border-color:#4caf50}.alert-error{color:#f44336;border-color:#f44336}.alert-info{color:#00bcd4;border-color:#00bcd4}.alert-warning{color:#ff9800;border-color:#ff9800}.media:not(:last-child){margin-bottom:1.25rem}.media-left{padding-right:1rem}.media-left,.media-right{display:table-cell;vertical-align:top}.media-right{padding-left:1rem}.media-body{display:table-cell;vertical-align:top}.media-heading{font-size:1.16667rem;font-weight:700}.media-content{margin-top:.3rem}.avatarholder,.placeholder{background-color:#f0f0f0;text-align:center;color:#b9b9b9;font-size:1rem;border:1px solid #f0f0f0}.avatarholder{width:48px;height:48px;line-height:46px;font-size:2rem;background-size:cover;background-position:50%;background-repeat:no-repeat}.avatarholder.rounded{border-radius:33px}.loading{height:20px;width:20px;animation:a .6s infinite linear;border:2px solid #e91e63;border-right-color:transparent;border-radius:50%}.btn .loading{display:inline-block;float:left;margin-right:.5rem;width:14px;height:14px}@keyframes a{0%{transform:rotate(0deg)}to{transform:rotate(1turn)}}.menu{width:100%}.menu .menu-item{display:block;color:#616161;border-color:#616161}.menu .menu-item.active,.menu .menu-item:hover{color:#000;border-color:#000;background-color:transparent}@media screen and (max-width:768px){.form-group label{display:block;border-bottom:none;width:100%}.form-group.form-textarea label:after{display:none}.form-control{width:100%}textarea.form-control{border-left:none;padding:.5rem 0}pre::-webkit-scrollbar{height:3px}}@media screen and (max-width:480px){.form{width:100%}}
+.dark{color:#ccc}.dark,.dark pre{background-color:#000}.dark pre{padding:0;border:none}.dark pre code{color:#00bcd4}.dark h1 a,.dark h2 a,.dark h3 a,.dark h4 a,.dark h5 a{color:#ccc}.dark code,.dark strong{color:#fff}.dark code{font-weight:100}.dark table{color:#ccc}.dark table td,.dark table th{border-color:#444}.dark table tbody td:first-child{color:#fff}.dark .form-group label{color:#ccc;border-color:rgba(95,95,95,.78)}.dark .form-group.form-textarea label:after{background-color:#000}.dark .form-control{color:#ccc;border-color:rgba(95,95,95,.78)}.dark .form-control:focus{border-color:#ccc;color:#ccc}.dark textarea.form-control{color:#ccc}.dark .card{border-color:rgba(95,95,95,.78)}.dark .card .card-header{background-color:transparent;color:#ccc;border-bottom:1px solid rgba(95,95,95,.78)}.dark .btn.btn-ghost.btn-default{border-color:#ababab;color:#ababab}.dark .btn.btn-ghost.btn-default:focus,.dark .btn.btn-ghost.btn-default:hover{border-color:#9c9c9c;color:#9c9c9c;z-index:1}.dark .btn.btn-ghost.btn-default:focus,.dark .btn.btn-ghost.btn-default:hover{border-color:#e0e0e0;color:#e0e0e0}.dark .btn.btn-ghost.btn-primary:focus,.dark .btn.btn-ghost.btn-primary:hover{border-color:#64b5f6;color:#64b5f6}.dark .btn.btn-ghost.btn-success:focus,.dark .btn.btn-ghost.btn-success:hover{border-color:#81c784;color:#81c784}.dark .btn.btn-ghost.btn-info:focus,.dark .btn.btn-ghost.btn-info:hover{border-color:#4dd0e1;color:#4dd0e1}.dark .btn.btn-ghost.btn-error:focus,.dark .btn.btn-ghost.btn-error:hover{border-color:#e57373;color:#e57373}.dark .btn.btn-ghost.btn-warning:focus,.dark .btn.btn-ghost.btn-warning:hover{border-color:#ffb74d;color:#ffb74d}.dark .avatarholder,.dark .placeholder{background-color:transparent;border-color:#333}.dark .menu .menu-item{color:#ccc;border-color:rgba(95,95,95,.78)}.dark .menu .menu-item.active,.dark .menu .menu-item:hover{color:#fff;border-color:#ccc}
+
+      @keyframes intro {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.muted {
+  color: rgba(255, 255, 255, 0.5);
+}
+main, footer {
+  animation: intro 0.3s both;
+  animation-delay: 0.15s;
+}
+:target {
+  color: #fff;
+}
+/* hack.css overrides and enhancements */
+.hack li ul {
+  margin: 0;
+}
+.main {
+  padding: 20px 10px;
+}
+nav a.active {
+  background-color: #ff2e88;
+  color: #fff;
+}
+
+a.page-summary, a.page-summary:hover {
+    color: #000;
+    text-decoration: none;
+    display: block;
+    border: 0;
+    padding: 1rem;
+}
+
+a.page-summary:hover {
+    background-color: #eee;
+}
+
+a[itemprop="url"] {
+  color: #ff9800;
+}
+a[itemprop="url"]:hover {
+  color: #fff;
+}
+a[href*="//"]::after {
+  /* data uri svg icon. thanks to @Fastidious for the idea */
+  content: " " url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20class='i-external'%20viewBox='0%200%2032%2032'%20width='14'%20height='14'%20fill='none'%20stroke='%23ff9800'%20stroke-linecap='round'%20stroke-linejoin='round'%20stroke-width='9.38%'%3E%3Cpath%20d='M14%209%20L3%209%203%2029%2023%2029%2023%2018%20M18%204%20L28%204%2028%2014%20M28%204%20L14%2018'/%3E%3C/svg%3E");
+}
+html {
+  font-size: 13px;
+}
+.hack pre {
+  font-size: 17px;
+}
+article [itemprop="description"] {
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+@media screen and (min-width: 768px) {
+  html {
+    font-size: 1em;
+  }
+  .container {
+    max-width: 50rem;
+  }
+}
+
+      .highlight,pre.highlight{background:#282c34;color:#abb2bf}.highlight pre{background:#282c34}.highlight .ge{font-style:italic}.highlight .gs{font-weight:700}.highlight .ow{font-weight:700}.highlight .n,.highlight .nf,.highlight .nn,.highlight .o,.highlight .p{color:#abb2bf}.highlight .c,.highlight .c1,.highlight .cm,.highlight .cp,.highlight .cs{color:#5c6370;font-style:italic}.highlight .sr,.highlight .ss{color:#56b6c2}.highlight .k,.highlight .kc,.highlight .kd,.highlight .kn,.highlight .kp,.highlight .kr,.highlight .kt{color:#c678dd}.highlight .l,.highlight .ld,.highlight .s,.highlight .s1,.highlight .s2,.highlight .sb,.highlight .sc,.highlight .sd,.highlight .se,.highlight .sh,.highlight .si,.highlight .sx{color:#98c379}.highlight .nt,.highlight .nx,.highlight .vi{color:#e06c75}.highlight .il,.highlight .m,.highlight .mf,.highlight .mh,.highlight .mi,.highlight .mo,.highlight .na{color:#d19a66}.highlight .bp,.highlight .nb,.highlight .nc,.highlight .nd,.highlight .ne,.highlight .ni,.highlight .nl,.highlight .no,.highlight .nv,.highlight .py,.highlight .vc,.highlight .vg{color:#e5c07b}.highlight .err{color:#fff;background-color:#e05252}.highlight .gd{color:#e05252}.highlight .gi{color:#43d08a}.highlight .w{color:#f8f8f2}.highlight .cpf{color:navy}.highlight .gu{color:#75715e}.highlight .lineno{color:#636d83;user-select:none}.highlight .hll{color:#abb2bf;background-color:#2c313a}.highlight .language-json .w+.s2{color:#e06c75}.highlight .language-json .kc{color:#56b6c2}
+
+/* highlight */
+
+nav a.active, a:hover {
+    background-color: rgba(48, 163, 0, 1);
+}
+
+a.page-summary h2[itemprop="name"] span, a {
+    color: rgba(48, 163, 0, 1);
+    border-bottom: 1px solid rgba(48, 163, 0, 1);
+}
+
+.muted {
+    color: inherit;
+    opacity: .6;
+}
+
+figure {
+    text-align: center;
+    font-size: 80%;
+}
+
+figure img {
+    max-width: 95%;
+}
+
+figure.big {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+figure.big img {
+    max-width: 100%;
+}
+
+.highlight pre, .hack pre {
+    font-size: 1rem;
+    padding: 1rem;
+    line-height: 125%;
+    background-color: #282c34;
+    color: #abb2bf;
+}
+
+p.code-legend {
+    font-size: 85%;
+    margin-top: -1rem;
+    text-align: center;
+    font-weight: 700;
+}
+    </style>
+    
+    
+      <script async src="/js/lazysizes.min.js"></script>
+    
+  </head>
+  
+  <body class="hack main container">
+    <header>
+  
+  <nav itemscope itemtype="http://schema.org/SiteNavigationElement">
+    
+    
+      <a itemprop="url" class="" href="/"><span itemprop="name">Home</span></a>
+    
+      <a itemprop="url" class="" href="https://twitter.com/LucasSantAbreu"><span itemprop="name">Twitter</span></a>
+    
+      <a itemprop="url" class="" href="https://github.com/lucassabreu"><span itemprop="name">GitHub</span></a>
+    
+      <a itemprop="url" class="" href="https://medium.com/@lucassabreu"><span itemprop="name">Medium</span></a>
+    
+      <a itemprop="url" class="" href="https://www.linkedin.com/in/lucassantosabreu"><span itemprop="name">LinkedIn</span></a>
+    
+  </nav>
+
+
+</header>
+    <main>
+  <article itemscope itemtype="http://schema.org/BlogPosting">
+    
+<meta itemprop="name" content="Ambientes por Branch com OpenShift Next Gen usando GitHub">
+<meta itemprop="description" content="Esta postagem é uma continuação da &#34;Ambientes por Branch com OpenShift Next Gen&#34;, implementando o processo no GitHub usando Buddy.Works e o OpenShift da GetUp Cloud">
+
+
+<meta itemprop="dateModified" content="2017-05-07T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="1874">
+
+  <meta itemprop="image" content="https://lucassabreu.net.br/post/ambientes-por-branch-com-openshift-next-gen-usando-github/header.png">
+
+
+
+<meta itemprop="keywords" content="apps,buddy-works,coderockr-way,continuous-deployment,continuous-integration,docker,github,gitlab,introduction,kubernetes,new-product-development,openshift,product-design,project-management,pull-request,script,scripting,simple,social-anxiety," />
+
+    <header>
+      <h1 itemprop="headline">Ambientes por Branch com OpenShift Next Gen usando GitHub</h1>
+      <p class="muted">
+        <svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+  <circle cx="16" cy="16" r="14" />
+  <path d="M16 8 L16 16 20 20" />
+</svg>
+<span>9 minute read</span>
+<svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+  <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z" />
+</svg>
+
+  Published: <time datetime="2017-05-07T00:00:00&#43;00:00">7 May, 2017</time>
+
+
+      </p>
+    </header>
+    
+
+    <div itemprop="articleBody">
+      <p></p>
+
+
+<figure class="big">
+  
+    
+      <img class="lazyload" data-src="/post/ambientes-por-branch-com-openshift-next-gen-usando-github/header.png"  />
+    
+  
+  
+</figure>
+<style media="screen">
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+</style>
+
+
+<p><i>Esta postagem é uma continuação da <a href="/post/ambientes-por-branch-com-openshift-next-gen"><strong>Ambientes por Branch com OpenShift Next Gen</strong></a>, a introdução do problema esta lá e também mostro como implementar o processo de deploy usando o GitLab nele, se não viu da uma conferida, vale o investimento* 😉.</i></p>
+
+<p>Como prometi na outra postagem, vamos criar um processo de deploy de ambientes por branch usando o <a href="https://medium.com/@github">GitHub</a>.</p>
+
+<p>No caso do GitHub, ele cobre &ldquo;apenas&rdquo; a parte de repositório de fontes, ele em si não tem integração direta com o Kubernetes/OpenShift, mas possui uma grande gama de opções no que diz respeito de ferramentas de CI e CD.</p>
+
+<p>A implementação que vou demonstrar usará o <a href="https://medium.com/@BuddyWorks">Buddy</a>, mas pode ser replicada para qualquer outro CI, com dificuldade semelhante. Para o registro de imagens irei usar o <a href="http://hub.docker.com">Docker Hub</a> e novamente o OpenShift da <a href="https://medium.com/@getupcloud">Getup Cloud</a>.</p>
+
+<p>Sobre uma introdução ao Kubernetes/OpenShift pode ver aqui:</p>
+
+<p><a href="/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/"><strong>Um ambiente simples usando Kubernetes e OpenShift Next Gen — Parte 1</strong></a></p>
+
+<p>O cliente de linha de comando do OpenShift pode ser baixado em:</p>
+
+<p><a href="https://github.com/openshift/origin/releases"><strong>openshift/origin</strong> origin - Enterprise Kubernetes for Developers</a></p>
+
+<hr />
+
+<p>O que queremos montar é um ambiente por branch/PR que deve ser facilmente criado e destruído. Para demonstrar criei um repositório no GitHub com uma aplicação bem simples que apenas retorna uma página estática, mas é o suficiente para o objetivo.</p>
+
+
+<figure >
+  
+    
+      <img class="lazyload" data-src="/post/ambientes-por-branch-com-openshift-next-gen-usando-github/helloworld.png"  />
+    
+  
+  
+  <figcaption>
+    <header><b>retorno do serviço helloworld</b></header>
+    
+  </figcaption>
+  
+</figure>
+<style media="screen">
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+</style>
+
+
+<p>E configurei o Buddy para construir uma imagem com base nesse repositório e publicar ela como <a href="https://hub.docker.com/r/lucassabreu/k8s-pr-envs/">lucassabreu/k8s-pr-envs</a> no Docker Hub.</p>
+
+<p>Nesse momento o arquivo <code>buddy.yml</code> esta assim:</p>
+<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">pipeline</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;Build&quot;</span>
+  <span style="color: #ae81ff">trigger_mode</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;ON_EVERY_PUSH&quot;</span>
+  <span style="color: #ae81ff">ref_name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;master&quot;</span>
+  <span style="color: #ae81ff">actions</span><span style="color: #f8f8f2">:</span>
+  <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">action</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;Build</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">Docker</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">image&quot;</span>
+    <span style="color: #ae81ff">type</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;DOCKERFILE&quot;</span>
+    <span style="color: #ae81ff">login</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;${DOCKER_HUB_USER}&quot;</span>
+    <span style="color: #ae81ff">password</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;${DOCKER_HUB_PASSWORD}&quot;</span>
+    <span style="color: #ae81ff">docker_image_tag</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;${execution.to_revision.revision}&quot;</span>
+    <span style="color: #ae81ff">dockerfile_path</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;Dockerfile&quot;</span>
+    <span style="color: #ae81ff">repository</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;lucassabreu/k8s-pr-envs&quot;</span>
+</pre></div>
+
+<p class="code-legend">buddy.yml</p>
+
+<p>O fonte nesse momento pode ser visto em:</p>
+
+<p><a href="https://github.com/lucassabreu/k8s-pr-envs/tree/v1"><strong>lucassabreu/k8s-pr-envs</strong> v1</a></p>
+
+<hr />
+
+<p>Nesse primeiro momento não possuímos nenhum processo de deploy, seja de teste, produção ou por branch.</p>
+
+<p>Então vamos adicionar um processo de deploy no OpenShift para o ambiente de produção e testes, sendo que o ambiente de testes é atualizado automaticamente para os commits na master e o de produção apenas quando um usuário disparar o deploy via interface web do Buddy (<a href="http://app.buddy.works/">http://app.buddy.works/</a>).</p>
+
+<p>Precisamos preparar o OpenShift para montar esse processo, primeiramente criamos um <strong>Namespace</strong>. A forma como criamos um varia de vendor para vendor, no caso do OpenShift da <a href="https://medium.com/@getupcloud">Getup Cloud</a>, basta ir em <a href="https://portal.getupcloud.com/projects">https://portal.getupcloud.com/projects</a> e criar um novo projeto, o nome do projeto será o <strong>Namespace.</strong></p>
+
+
+<figure class="big">
+  
+    
+      <img class="lazyload" data-src="/post/ambientes-por-branch-com-openshift-next-gen-usando-github/getup-dashboard.png"  />
+    
+  
+  
+</figure>
+<style media="screen">
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+</style>
+
+
+<p>Tendo um <strong>Namespace</strong> precisamos de uma forma do Buddy se autenticar contra o OpenShift, para isso podemos criar um ServiceAccount e usar o <strong>Token</strong> do mesmo para isso. O script abaixo mostra como criar uma ServiceAccount e resgatar o <strong>Token</strong> usando o CLI do OpenShift:</p>
+
+<pre>
+<b>$ oc login https://api.getupcloud.com:443</b>
+Authentication required for https://api.getupcloud.com:443 ...
+Username: lucas.s.abreu@gmail.com
+Password:
+Login successful.
+...
+
+<b>$ oc project github-k8s-pr-envs #usar o seu projeto</b>
+Now using project "github-k8s-pr-envs" on server ...
+
+<b>$ oc create serviceaccount github</b>
+serviceaccount "github" created
+
+<b>$ oc policy add-role-to-user admin \
+    system:serviceaccount:github-k8s-pr-envs:github</b>
+
+<b>$ oc describe serviceaccount github</b>
+Name:  github
+Namespace: github-k8s-pr-envs
+Labels:  <none>
+
+Image pull secrets: github-dockercfg-vat7r
+
+Mountable secrets:  github-token-d3u3t
+                    github-dockercfg-vat7r
+
+Tokens:             github-token-2pimz
+                    github-token-d3u3t
+
+<b>$ oc describe secret github-token-d3u3t</b>
+Name:  github-token-d3u3t
+Namespace: github-k8s-pr-envs
+Labels:  <none>
+Annotations: kubernetes.io/service-account.name=github
+  kubernetes.io/service-account.uid=zzz
+
+Type: kubernetes.io/service-account-token
+
+Data
+====
+ca.crt:  1066 bytes
+namespace: 18 bytes
+service-ca.crt: 2182 bytes
+token:  <i>token-do-openshift-que-estou-ocultando</i>
+</pre>
+
+<p>Agora podemos informar no Buddy algumas variáveis para ele disponibilizar para nós depois. Meu painel ficou como abaixo:</p>
+
+
+<figure >
+  
+    
+      <img class="lazyload" data-src="/post/ambientes-por-branch-com-openshift-next-gen-usando-github/buddy-envs.png"  />
+    
+  
+  
+  <figcaption>
+    <header><b>buddy environments</b></header>
+    
+  </figcaption>
+  
+</figure>
+<style media="screen">
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+</style>
+
+
+<p>A URL da API e o domínio que o OpenShift irá utilizar também dependem do seu vendor, no meu caso a API está em <code>https://api.getupcould.com:443</code> e o domínio base é <code>getup.io</code>.</p>
+
+<p>Agora podemos criar os novos pipelines no Buddy. No <code>buddy.yml</code> as linhas abaixo:</p>
+<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">pipeline</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;Deploy</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">Staging&quot;</span>
+  <span style="color: #ae81ff">trigger_mode</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;ON_EVERY_PUSH&quot;</span>
+  <span style="color: #ae81ff">ref_name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;master&quot;</span>
+  <span style="color: #ae81ff">actions</span><span style="color: #f8f8f2">:</span>
+  <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">action</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;Deploy</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">Master</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">to</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">Staging&quot;</span>
+    <span style="color: #ae81ff">type</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;BUILD&quot;</span>
+    <span style="color: #ae81ff">docker_image_name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;lucassabreu/openshift-k8s-cli&quot;</span>
+    <span style="color: #ae81ff">docker_image_tag</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;latest&quot;</span>
+    <span style="color: #ae81ff">execute_commands</span><span style="color: #f8f8f2">:</span>
+    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">TAG=&quot;${execution.to_revision.revision}&quot;</span>
+      <span style="color: #ae81ff">ENV=staging</span>
+      <span style="color: #ae81ff">OPENSHIFT_NAMESPACE=&quot;${OPENSHIFT_NAMESPACE}&quot;</span>
+      <span style="color: #ae81ff">OPENSHIFT_API_URL=&quot;${OPENSHIFT_API_URL}&quot;</span>
+      <span style="color: #ae81ff">OPENSHIFT_TOKEN=&quot;${OPENSHIFT_TOKEN}&quot;</span>
+      <span style="color: #ae81ff">OPENSHIFT_DOMAIN=&quot;${OPENSHIFT_DOMAIN}&quot;</span>
+      <span style="color: #ae81ff">./k8s/deploy</span>
+<span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">pipeline</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;Deploy</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">Production&quot;</span>
+  <span style="color: #ae81ff">trigger_mode</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;MANUAL&quot;</span>
+  <span style="color: #ae81ff">ref_name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;master&quot;</span>
+  <span style="color: #ae81ff">actions</span><span style="color: #f8f8f2">:</span>
+  <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">action</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;Deploy</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">Master</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">to</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">Production&quot;</span>
+    <span style="color: #ae81ff">type</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;BUILD&quot;</span>
+    <span style="color: #ae81ff">docker_image_name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;lucassabreu/openshift-k8s-cli&quot;</span>
+    <span style="color: #ae81ff">docker_image_tag</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;latest&quot;</span>
+    <span style="color: #ae81ff">execute_commands</span><span style="color: #f8f8f2">:</span>
+    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">TAG=&quot;${execution.to_revision.revision}&quot;</span>
+      <span style="color: #ae81ff">ENV=production</span>
+      <span style="color: #ae81ff">OPENSHIFT_NAMESPACE=&quot;${OPENSHIFT_NAMESPACE}&quot;</span>
+      <span style="color: #ae81ff">OPENSHIFT_API_URL=&quot;${OPENSHIFT_API_URL}&quot;</span>
+      <span style="color: #ae81ff">OPENSHIFT_TOKEN=&quot;${OPENSHIFT_TOKEN}&quot;</span>
+      <span style="color: #ae81ff">OPENSHIFT_DOMAIN=&quot;${OPENSHIFT_DOMAIN}&quot;</span>
+      <span style="color: #ae81ff">./k8s/deploy</span>
+</pre></div>
+
+<p class="code-legend">buddy.yml (v2)</p>
+
+<p>Basicamente criei duas novas pipelines, uma chamada <code>Deploy Staging</code> e outra <code>Deploy Production</code> as únicas diferenças entre elas é que a <code>Deploy Staging</code> é automática para todo o commit na master e usa <code>ENV=staging</code> para indicar o ambiente; e <code>Deploy Production</code> é manual e usa <code>ENV=production</code>. Também criei variáveis para injetar os valores que informamos antes no Buddy e uma extra <code>COMMIT</code> para que ele consiga identificar qual imagem deve usar.</p>
+
+<p>Essas duas pipelines basicamente chamam o script abaixo:</p>
+<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #75715e">#!/bin/bash</span>
+
+<span style="color: #f8f8f2">echo</span> <span style="color: #e6db74">&quot;&gt;&gt; Connecting to OpenShift...&quot;</span>
+oc login <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$OPENSHIFT_API_URL</span><span style="color: #e6db74">&quot;</span> --token <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$OPENSHIFT_TOKEN</span><span style="color: #e6db74">&quot;</span>
+oc project <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$OPENSHIFT_NAMESPACE</span><span style="color: #e6db74">&quot;</span>
+
+<span style="color: #f8f8f2">echo</span> <span style="color: #e6db74">&quot;&gt;&gt; Removing old application...&quot;</span>
+oc delete all -l <span style="color: #e6db74">&quot;app=</span><span style="color: #f8f8f2">$ENV</span><span style="color: #e6db74">&quot;</span>
+
+<span style="color: #f8f8f2">IMAGE_TAG</span><span style="color: #f92672">=</span><span style="color: #e6db74">&quot;lucassabreu/k8s-pr-envs:</span><span style="color: #f8f8f2">$TAG</span><span style="color: #e6db74">&quot;</span>
+<span style="color: #f8f8f2">HOSTNAME</span><span style="color: #f92672">=</span><span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$OPENSHIFT_NAMESPACE</span><span style="color: #e6db74">-</span><span style="color: #f8f8f2">$ENV</span><span style="color: #e6db74">.</span><span style="color: #f8f8f2">$OPENSHIFT_DOMAIN</span><span style="color: #e6db74">&quot;</span>
+
+<span style="color: #66d9ef">if</span> <span style="color: #f92672">[</span> <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$ENV</span><span style="color: #e6db74">&quot;</span> <span style="color: #f92672">=</span> <span style="color: #e6db74">&quot;production&quot;</span> <span style="color: #f92672">]</span><span style="color: #f8f8f2">;</span> <span style="color: #66d9ef">then</span>
+    <span style="color: #f8f8f2">HOSTNAME</span><span style="color: #f92672">=</span><span style="color: #f8f8f2">$OPENSHIFT_NAMESPACE</span>.<span style="color: #f8f8f2">$OPENSHIFT_DOMAIN</span>
+<span style="color: #66d9ef">fi</span>
+
+<span style="color: #f8f8f2">echo</span> <span style="color: #e6db74">&quot;&gt;&gt; Deploying application...&quot;</span>
+sed <span style="color: #e6db74">&quot;</span>
+<span style="color: #e6db74">    s|__ENV__|</span><span style="color: #f8f8f2">$ENV</span><span style="color: #e6db74">|;</span>
+<span style="color: #e6db74">    s|__IMAGE_TAG__|</span><span style="color: #f8f8f2">$IMAGE_TAG</span><span style="color: #e6db74">|;</span>
+<span style="color: #e6db74">    s|__HOSTNAME__|</span><span style="color: #f8f8f2">$HOSTNAME</span><span style="color: #e6db74">|;</span>
+<span style="color: #e6db74">    &quot;</span> k8s/full.yml <span style="color: #f8f8f2">|</span> oc apply -f -
+
+<span style="color: #f8f8f2">echo</span> <span style="color: #e6db74">&quot;Enviroment </span><span style="color: #f8f8f2">$ENV</span><span style="color: #e6db74"> deployed to: http://</span><span style="color: #f8f8f2">$HOSTNAME</span><span style="color: #e6db74">/&quot;</span>
+</pre></div>
+
+<p class="code-legend">k8s/deploy</p>
+
+<p>Este script basicamente se autentica contra a API do OpenShift usando o Token que criamos antes, destrói a aplicação antiga e executa o deploy
+de uma nova.</p>
+
+<p>Para poder identificar quais os componentes de cada ambiente estou marcando eles com a label <code>app=$ENV</code>, dessa forma todos os componentes do ambiente <code>staging</code> estão marcados com <code>app=staging</code> e fica fácil eliminá-los e identificá-los.</p>
+
+<p>É importante ressaltar que estou usando uma imagem customizada para rodar esses comandos (<code>lucassabreu/openshift-k8s-cli</code>) que basicamente é um <code>ubuntu</code> com o <code>oc</code> instalado dentro dela.</p>
+
+<p>Também estou usando um truque de &ldquo;<em>templating</em>&rdquo; com o YAML que define os ambientes para poder inserir as variáveis de cada ambiente nele. Existem outras ferramentas mais avançadas como o <a href="https://github.com/kubernetes/helm">Helm</a>, mas para o meu exemplo templating com <code>sed</code> é o suficiente.</p>
+<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #ae81ff">apiVersion</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">extensions/v1beta1</span>
+<span style="color: #ae81ff">kind</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">Deployment</span>
+<span style="color: #ae81ff">metadata</span><span style="color: #f8f8f2">:</span>
+  <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">hw-dpl-__ENV__</span>
+  <span style="color: #ae81ff">labels</span><span style="color: #f8f8f2">:</span>
+    <span style="color: #ae81ff">app</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">__ENV__</span>
+<span style="color: #ae81ff">spec</span><span style="color: #f8f8f2">:</span>
+  <span style="color: #ae81ff">replicas</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">1</span>
+  <span style="color: #ae81ff">template</span><span style="color: #f8f8f2">:</span>
+    <span style="color: #ae81ff">metadata</span><span style="color: #f8f8f2">:</span>
+      <span style="color: #ae81ff">labels</span><span style="color: #f8f8f2">:</span>
+        <span style="color: #ae81ff">app</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">__ENV__</span>
+        <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">hw-pod</span>
+    <span style="color: #ae81ff">spec</span><span style="color: #f8f8f2">:</span>
+      <span style="color: #ae81ff">containers</span><span style="color: #f8f8f2">:</span>
+      <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">hw-container</span>
+        <span style="color: #ae81ff">image</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">__IMAGE_TAG__</span>
+        <span style="color: #ae81ff">imagePullPolicy</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">Always</span>
+        <span style="color: #ae81ff">ports</span><span style="color: #f8f8f2">:</span>
+        <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">web-port</span>
+          <span style="color: #ae81ff">containerPort</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">8080</span>
+<span style="color: #f8f8f2">---</span>
+<span style="color: #ae81ff">apiVersion</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;v1&quot;</span>
+<span style="color: #ae81ff">kind</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">Service</span>
+<span style="color: #ae81ff">metadata</span><span style="color: #f8f8f2">:</span>
+  <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">hw-src-__ENV__</span>
+  <span style="color: #ae81ff">labels</span><span style="color: #f8f8f2">:</span>
+    <span style="color: #ae81ff">app</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">__ENV__</span>
+<span style="color: #ae81ff">spec</span><span style="color: #f8f8f2">:</span>
+  <span style="color: #ae81ff">ports</span><span style="color: #f8f8f2">:</span>
+    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">port</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">80</span>
+      <span style="color: #ae81ff">targetPort</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;web-port&quot;</span>
+      <span style="color: #ae81ff">protocol</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">TCP</span>
+  <span style="color: #ae81ff">selector</span><span style="color: #f8f8f2">:</span>
+    <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">hw-pod</span>
+    <span style="color: #ae81ff">app</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">__ENV__</span>
+<span style="color: #f8f8f2">---</span>
+<span style="color: #ae81ff">apiVersion</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">v1</span>
+<span style="color: #ae81ff">kind</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">Route</span>
+<span style="color: #ae81ff">metadata</span><span style="color: #f8f8f2">:</span>
+  <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">__ENV__</span>
+  <span style="color: #ae81ff">labels</span><span style="color: #f8f8f2">:</span>
+    <span style="color: #ae81ff">app</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">__ENV__</span>
+<span style="color: #ae81ff">spec</span><span style="color: #f8f8f2">:</span>
+  <span style="color: #ae81ff">host</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">__HOSTNAME__</span>
+  <span style="color: #ae81ff">to</span><span style="color: #f8f8f2">:</span>
+    <span style="color: #ae81ff">kind</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">Service</span>
+    <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">hw-src-__ENV__</span>
+</pre></div>
+
+<p class="code-legend">k8s/full.yml</p>
+
+<p>Agora toda vez que é feito commit na master o ambiente de <em>staging</em> é automaticamente atualizado, e ficou bem simples atualizar o ambiente <em>production</em>.</p>
+
+<p>Fonte até agora:</p>
+
+<p><a href="https://github.com/lucassabreu/k8s-pr-envs/tree/v2"><strong>lucassabreu/k8s-pr-envs</strong> v2</a></p>
+
+<hr />
+
+<p>Agora que temos um processo de <em>build</em> e um de <em>deploy automatizado</em>, vamos adicionar a função de deploy por branch.</p>
+
+<p>Basicamente precisamos de duas novas etapas no nosso CI, uma para subir o ambiente para uma branch e outro para destruir esse ambiente.</p>
+
+<p>Primeiro vamos preparar o deploy por branch, para isso adicionei as seguintes linhas do <code>buddy.yml</code>:</p>
+<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">pipeline</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;Review&quot;</span>
+  <span style="color: #ae81ff">trigger_mode</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;ON_EVERY_PUSH&quot;</span>
+  <span style="color: #ae81ff">ref_name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;((?!master).*)&quot;</span>
+  <span style="color: #ae81ff">actions</span><span style="color: #f8f8f2">:</span>
+  <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">action</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;Build</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">Docker</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">image&quot;</span>
+    <span style="color: #ae81ff">type</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;DOCKERFILE&quot;</span>
+    <span style="color: #ae81ff">login</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;${DOCKER_HUB_USER}&quot;</span>
+    <span style="color: #ae81ff">password</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;${DOCKER_HUB_PASSWORD}&quot;</span>
+    <span style="color: #ae81ff">docker_image_tag</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;${execution.branch.name}&quot;</span>
+    <span style="color: #ae81ff">dockerfile_path</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;Dockerfile&quot;</span>
+    <span style="color: #ae81ff">repository</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;lucassabreu/k8s-pr-envs&quot;</span>
+  <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">action</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;Deploy</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">By</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">Branch&quot;</span>
+    <span style="color: #ae81ff">type</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;BUILD&quot;</span>
+    <span style="color: #ae81ff">docker_image_name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;lucassabreu/openshift-k8s-cli&quot;</span>
+    <span style="color: #ae81ff">docker_image_tag</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;latest&quot;</span>
+    <span style="color: #ae81ff">execute_commands</span><span style="color: #f8f8f2">:</span>
+    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">TAG=&quot;${execution.branch.name}&quot;</span>
+      <span style="color: #ae81ff">ENV=&quot;${execution.branch.name}&quot;</span>
+      <span style="color: #ae81ff">GITHUB_TOKEN=&quot;${GITHUB_TOKEN}&quot;</span>
+      <span style="color: #ae81ff">LOG_URL=&quot;${execution.html_url}&quot;</span>
+      <span style="color: #ae81ff">OPENSHIFT_NAMESPACE=&quot;${OPENSHIFT_NAMESPACE}&quot;</span>
+      <span style="color: #ae81ff">OPENSHIFT_API_URL=&quot;${OPENSHIFT_API_URL}&quot;</span>
+      <span style="color: #ae81ff">OPENSHIFT_TOKEN=&quot;${OPENSHIFT_TOKEN}&quot;</span>
+      <span style="color: #ae81ff">OPENSHIFT_DOMAIN=&quot;${OPENSHIFT_DOMAIN}&quot;</span>
+      <span style="color: #ae81ff">./k8s/deploy</span>
+</pre></div>
+
+<p>No novo pipeline <em>Review</em> temos um <em>build</em> da imagem e um deploy de um ambiente para a branch em questão, para uma rota própria.</p>
+
+<p>Eu acabei juntando essas duas ações, pois o build que roda na master vai versionando as imagens por commit, que é uma prática comum e que ajudaria a fazer o deploy para produção mais simples, porém branchs de desenvolvimento tendem a ser mais caóticas e iriam poluir muito o registro de imagens (se usar o do AWS seria um custo maior também), então preferi manter uma imagem por branch, até para não confundir também.</p>
+
+<p>Se eu criar uma nova branch nesse momento, o Buddy automaticamente irá montar uma imagem para ela e inseri-la no OpenShift, se o nome da branch for <code>a-change</code> o nome do ambiente <a href="http://github-k8s-pr-envs-a-change.getup.io">http://github-k8s-pr-envs-a-change.getup.io</a> (talvez ainda esteja acessível).</p>
+
+<p>Eu sei disso porque eu escrevi o script, eu poderia documentar isso no projeto para todos saberem como descobrir as URLs corretas, mas é mais do que natural esperar erros por esse caminho, um &ldquo;o&rdquo; que vira &ldquo;a&rdquo; na hora de digitar, um nome de branch estranho, etc.</p>
+
+<p>Dessa forma fica difícil para a equipe de QA acessar aos ambientes por branch toda a vez correndo o risco de errar. Então fiz algumas alterações no <code>k8s/deploy</code> para utilizar a <a href="https://developer.github.com/v3/repos/deployments/">API de Deployments do GitHub</a> para registrar as URLs diretamente nos commits.</p>
+<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #66d9ef">if</span> <span style="color: #f92672">[</span> ! -z <span style="color: #f8f8f2">$GITHUB_TOKEN</span> <span style="color: #f92672">]</span> <span style="color: #f92672">&amp;&amp;</span> <span style="color: #f92672">[</span> <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$ENV</span><span style="color: #e6db74">&quot;</span> !<span style="color: #f92672">=</span> <span style="color: #e6db74">&quot;production&quot;</span> <span style="color: #f92672">]</span> <span style="color: #f92672">&amp;&amp;</span> <span style="color: #f92672">[</span> <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$ENV</span><span style="color: #e6db74">&quot;</span> !<span style="color: #f92672">=</span> <span style="color: #e6db74">&quot;staging&quot;</span> <span style="color: #f92672">]</span><span style="color: #f8f8f2">;</span> <span style="color: #66d9ef">then</span>
+    <span style="color: #f8f8f2">echo</span> <span style="color: #e6db74">&quot;&gt;&gt; Registering </span><span style="color: #f8f8f2">$ENV</span><span style="color: #e6db74"> deployment...&quot;</span>
+
+    <span style="color: #f8f8f2">ID_DEPLOYMENT</span><span style="color: #f92672">=</span><span style="color: #66d9ef">$(</span>k8s/github-deployment <span style="color: #e6db74">&quot;lucassabreu/k8s-pr-envs&quot;</span> <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$GITHUB_TOKEN</span><span style="color: #e6db74">&quot;</span> create <span style="color: #ae81ff">\</span>
+        <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$ENV</span><span style="color: #e6db74">&quot;</span> <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$ENV</span><span style="color: #e6db74">&quot;</span> <span style="color: #f8f8f2">true</span> <span style="color: #f8f8f2">|</span> jq <span style="color: #e6db74">&quot;.id&quot;</span><span style="color: #66d9ef">)</span>
+    <span style="color: #f8f8f2">RETURN</span><span style="color: #f92672">=</span><span style="color: #66d9ef">$(</span>k8s/github-deployment <span style="color: #e6db74">&quot;lucassabreu/k8s-pr-envs&quot;</span> <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$GITHUB_TOKEN</span><span style="color: #e6db74">&quot;</span> status <span style="color: #f8f8f2">set</span> <span style="color: #ae81ff">\</span>
+        <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$ID_DEPLOYMENT</span><span style="color: #e6db74">&quot;</span> success <span style="color: #e6db74">&quot;http://</span><span style="color: #f8f8f2">$HOSTNAME</span><span style="color: #e6db74">/&quot;</span> <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$LOG_URL</span><span style="color: #e6db74">&quot;</span><span style="color: #66d9ef">)</span>
+    <span style="color: #66d9ef">if</span> <span style="color: #f92672">[</span> <span style="color: #e6db74">&quot;</span><span style="color: #66d9ef">$(</span><span style="color: #f8f8f2">echo</span> <span style="color: #f8f8f2">$RETURN</span> <span style="color: #f8f8f2">|</span> jq <span style="color: #e6db74">&quot;.message&quot;</span><span style="color: #66d9ef">)</span><span style="color: #e6db74">&quot;</span> !<span style="color: #f92672">=</span> <span style="color: #e6db74">&quot;null&quot;</span> <span style="color: #f92672">]</span><span style="color: #f8f8f2">;</span> <span style="color: #66d9ef">then</span>
+        <span style="color: #f8f8f2">echo</span> <span style="color: #f8f8f2">$RETURN</span>
+        <span style="color: #f8f8f2">exit</span> <span style="color: #ae81ff">1</span>
+    <span style="color: #66d9ef">fi</span>
+<span style="color: #66d9ef">fi</span>
+
+<span style="color: #f8f8f2">echo</span> <span style="color: #e6db74">&quot;Enviroment </span><span style="color: #f8f8f2">$ENV</span><span style="color: #e6db74"> deployed to: http://</span><span style="color: #f8f8f2">$HOSTNAME</span><span style="color: #e6db74">/&quot;</span>
+</pre></div>
+
+<p class="code-legend">deploy.sh</p>
+
+<p>Com isso faço algumas chamadas a API do GitHub usando o <code>k8s/github-deployment</code> (que é basicamente um facilitador para a API) e consigo registrar o deploy no GitHub.</p>
+
+<p>O Pull Request da branch <code>a-change</code> fica assim:</p>
+
+
+<figure >
+  
+    
+      <img class="lazyload" data-src="/post/ambientes-por-branch-com-openshift-next-gen-usando-github/github-deployments.png"  />
+    
+  
+  
+</figure>
+<style media="screen">
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+</style>
+
+
+<p>Nesse botão &ldquo;View deployment&rdquo; está o link para a rota que criamos no deploy, e dessa forma fica extremamente fácil para a equipe de QA acessar os ambientes.</p>
+
+<p>Fontes até agora:</p>
+
+<p><a href="https://github.com/lucassabreu/k8s-pr-envs/tree/v3.1"><strong>lucassabreu/k8s-pr-envs</strong> v3.1</a></p>
+
+<hr />
+
+<p>Ainda fica faltando uma última atividade por realizar, que é destruir o ambiente da branch quando os Testers não mais precisarem deles.</p>
+
+<p>Então vamos adicionar uma nova pipeline no <code>buddy.yml</code>:</p>
+<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">pipeline</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;Close</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">Review&quot;</span>
+  <span style="color: #ae81ff">trigger_mode</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;MANUAL&quot;</span>
+  <span style="color: #ae81ff">ref_name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;((?!master).*)&quot;</span>
+  <span style="color: #ae81ff">actions</span><span style="color: #f8f8f2">:</span>
+  <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">action</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;Destroy</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">Branch</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">Environment&quot;</span>
+    <span style="color: #ae81ff">type</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;BUILD&quot;</span>
+    <span style="color: #ae81ff">docker_image_name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;lucassabreu/openshift-k8s-cli&quot;</span>
+    <span style="color: #ae81ff">docker_image_tag</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;latest&quot;</span>
+    <span style="color: #ae81ff">execute_commands</span><span style="color: #f8f8f2">:</span>
+    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">ENV=&quot;${execution.branch.name}&quot;</span>
+      <span style="color: #ae81ff">GITHUB_TOKEN=&quot;${GITHUB_TOKEN}&quot;</span>
+      <span style="color: #ae81ff">OPENSHIFT_NAMESPACE=&quot;${OPENSHIFT_NAMESPACE}&quot;</span>
+      <span style="color: #ae81ff">OPENSHIFT_API_URL=&quot;${OPENSHIFT_API_URL}&quot;</span>
+      <span style="color: #ae81ff">OPENSHIFT_TOKEN=&quot;${OPENSHIFT_TOKEN}&quot;</span>
+      <span style="color: #ae81ff">./k8s/destroy</span>
+</pre></div>
+
+<p>Nesse pipeline manual basicamente chamamos o script <code>k8s/destroy</code> (que esta abaixo) que simplesmente destrói o ambiente inativa ele no GitHub.</p>
+<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #75715e">#!/bin/bash</span>
+
+<span style="color: #f8f8f2">echo</span> <span style="color: #e6db74">&quot;&gt;&gt; Connecting to OpenShift...&quot;</span>
+oc login <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$OPENSHIFT_API_URL</span><span style="color: #e6db74">&quot;</span> --token <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$OPENSHIFT_TOKEN</span><span style="color: #e6db74">&quot;</span>
+oc project <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$OPENSHIFT_NAMESPACE</span><span style="color: #e6db74">&quot;</span>
+
+<span style="color: #f8f8f2">echo</span> <span style="color: #e6db74">&quot;&gt;&gt; Removing old application...&quot;</span>
+oc delete all -l <span style="color: #e6db74">&quot;app=</span><span style="color: #f8f8f2">$ENV</span><span style="color: #e6db74">&quot;</span>
+
+k8s/github-deployment <span style="color: #e6db74">&quot;lucassabreu/k8s-pr-envs&quot;</span> <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$GITHUB_TOKEN</span><span style="color: #e6db74">&quot;</span> inactive <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$ENV</span><span style="color: #e6db74">&quot;</span> &gt;&gt; /dev/null
+</pre></div>
+
+<p>Agora podemos chamar ele para eliminar os ambientes de branch em aberto.</p>
+
+<p>Fontes até o momento:</p>
+
+<p><a href="https://github.com/lucassabreu/k8s-pr-envs/tree/v4"><strong>lucassabreu/k8s-pr-envs</strong> v4</a></p>
+
+<hr />
+
+<p>Um comportamento que ainda não conseguimos reproduzir usando o Buddy e GitHub é destruir os ambientes quando o Pull Request é finalizado.</p>
+
+<p>Para resolver esse problema podemos adicionar um webhook no GitHub e dispararmos o pipeline através desse webhook. Isso pode ser feito de várias formas, usando Lambda Functions ou um endpoint para esse fim.</p>
+
+<p>No caso criei um novo Pod com um contêiner que criei (<code>lucassabreu/buddy-works-pullrequest-webhook</code>) e associei ela no meu projeto no GitHub.</p>
+
+
+<figure class="big">
+  
+    
+      <img class="lazyload" data-src="/post/ambientes-por-branch-com-openshift-next-gen-usando-github/webhooks.png"  />
+    
+  
+  
+</figure>
+<style media="screen">
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+</style>
+
+
+<p>E pronto tenho um processo completo, mesmo que se esqueçam de derrubar o ambiente no momento que o merge acontecer automaticamente o ambiente
+será destruído.</p>
+
+<hr />
+
+<p>Abaixo esta o meu &ldquo;webhook&rdquo; caso opte por um caminho semelhante e poder
+ter uma base de como é a chamada.</p>
+
+<p><a href="https://github.com/lucassabreu/buddy-works-pullrequest-webhook"><strong>lucassabreu/buddy-works-pullrequest-webhook</strong></a></p>
+
+<hr />
+
+<p>Foi mais complexo implementar a integração do OpenShift com o GitHub, mas ainda sim temos um grande ecossistema de integrações que nos permitem contornar essa questão, e o resultado continua sendo o esperado.</p>
+      <section class="share">
+  <hr />
+  <b>Share this post at</b>
+  <a href="https://twitter.com/share?text=Ambientes%20por%20Branch%20com%20OpenShift%20Next%20Gen%20usando%c2%a0GitHub&nbsp;-&nbsp;Lucas%20dos%20Santos%20Abreu&amp;url=https%3a%2f%2flucassabreu.net.br%2fpost%2fambientes-por-branch-com-openshift-next-gen-usando-github%2f"
+      onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      Twitter
+  </a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2flucassabreu.net.br%2fpost%2fambientes-por-branch-com-openshift-next-gen-usando-github%2f"
+      onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      Facebook
+  </a>
+  <a href="http://pinterest.com/pin/create/button/?url=https%3a%2f%2flucassabreu.net.br%2fpost%2fambientes-por-branch-com-openshift-next-gen-usando-github%2f&amp;description=Ambientes%20por%20Branch%20com%20OpenShift%20Next%20Gen%20usando%c2%a0GitHub"
+      onclick="window.open(this.href, 'pinterest-share','width=580,height=296');return false;">
+      Pinterest
+  </a>
+  <a href="https://plus.google.com/share?url=https%3a%2f%2flucassabreu.net.br%2fpost%2fambientes-por-branch-com-openshift-next-gen-usando-github%2f"
+     onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      Google+
+  </a>
+  <hr />
+</section>
+
+    </div>
+    
+      <article>
+        <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'lucas-dos-santos-abreu';
+    var disqus_identifier = 'https:\/\/lucassabreu.net.br\/post\/ambientes-por-branch-com-openshift-next-gen-usando-github\/';
+    var disqus_title = 'Ambientes por Branch com OpenShift Next Gen usando GitHub';
+    var disqus_url = 'https:\/\/lucassabreu.net.br\/post\/ambientes-por-branch-com-openshift-next-gen-usando-github\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      </article>
+    
+    <footer>
+      <hr>
+      <p>
+  Published
+  
+    
+      by <span itemprop="author"></span>
+    
+  
+  <time datetime="2017-05-07T00:00:00&#43;00:00">
+    7 May, 2017
+  </time>
+  
+  
+    and tagged <a href="/tags/buddy-works/">Buddy Works</a>, <a href="/tags/continuous-deployment/">Continuous Deployment</a>, <a href="/tags/continuous-integration/">Continuous Integration</a>, <a href="/tags/github/">Github</a> and <a href="/tags/openshift/">Openshift</a>
+  
+  using <span itemprop="wordCount">1874</span> words.
+</p>
+
+      
+  
+
+
+
+  <aside>
+    <header>Related Content</header>
+    <ul>
+      
+      
+        <li><a href="/post/ambientes-por-branch-com-openshift-next-gen/">Ambientes por Branch com OpenShift Next Gen</a> &ndash; 10 minutes
+      
+        <li><a href="/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4/">Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 4</a> &ndash; 4 minutes
+      
+        <li><a href="/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/">Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 3</a> &ndash; 4 minutes
+      
+        <li><a href="/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2/">Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 2</a> &ndash; 5 minutes
+      
+        <li><a href="/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/">Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 1</a> &ndash; 4 minutes
+      
+        <li><a href="/post/simplificando-setup-projetos-github/">Simplificando o Setup de Projetos no GitHub</a> &ndash; 2 minutes
+      
+    </ul>
+  </aside>
+
+
+    </footer>
+  </article>
+</main>
+    <footer>
+  
+  <p class="muted">
+    This page was generated using
+    <a target="_blank" rel="noopener" href="https://comfusion.github.io/after-dark/">After Dark</a>
+    for
+    <a target="_blank" rel="noopener" href="https://gohugo.io/">Hugo</a>.
+  </p>
+
+
+</footer>
+  </body>
+</html>

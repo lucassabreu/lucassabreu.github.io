@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Pull Request on Lucas dos Santos Abreu</title>
+    <link>https://lucassabreu.net.br/tags/pull-request/index.xml</link>
+    <description>Recent content in Pull Request on Lucas dos Santos Abreu</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>pt-BR</language>
+    <atom:link href="https://lucassabreu.net.br/tags/pull-request/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Ambientes por Branch com OpenShift Next Gen</title>
+      <link>https://lucassabreu.net.br/post/ambientes-por-branch-com-openshift-next-gen/</link>
+      <pubDate>Mon, 01 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://lucassabreu.net.br/post/ambientes-por-branch-com-openshift-next-gen/</guid>
+      <description>&lt;p&gt;&lt;/p&gt;
+
+
+&lt;figure class=&#34;big&#34;&gt;
+  
+    
+      &lt;img class=&#34;lazyload&#34; data-src=&#34;/post/ambientes-por-branch-com-openshift-next-gen/header.png&#34;  /&gt;
+    
+  
+  
+&lt;/figure&gt;
+&lt;style media=&#34;screen&#34;&gt;
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+&lt;/style&gt;
+
+
+&lt;p&gt;Hoje na &lt;a href=&#34;https://blog.coderockr.com&#34;&gt;Coderockr&lt;/a&gt; utilizamos &lt;a href=&#34;https://blog.coderockr.com/a-import%C3%A2ncia-da-revis%C3%A3o-de-c%C3%B3digo-a1a8b41ed7ff&#34;&gt;Pull Requests e Code Reviews&lt;/a&gt; como uma ferramenta de qualidade nos nossos desenvolvimentos, e tem garantido resultados nesse sentido.&lt;/p&gt;
+
+&lt;p&gt;Mas mesmo com esse processo eventualmente temos de lidar com alguns problemas como, por exemplo, funções que interferem umas nas outras depois de aprovadas, permitir que os Testers possam avaliar as melhorias, e garantir que todos as mudanças feitas na branch principal podem ser enviadas para produção.&lt;/p&gt;
+
+&lt;p&gt;Esses problemas podem ser reduzidos, ou até eliminados; se, mesmo antes de aprovar os PRs; os Testers conseguissem trabalhar sobre essas melhorias e só repassadas para a branch principal após a aprovação deles.&lt;/p&gt;
+
+&lt;p&gt;Desse modo o fonte principal não só passou pelo Review de outros desenvolvedores, como foi testado pela equipe de QA, dando ainda mais confiança no mesmo.&lt;/p&gt;
+
+&lt;p&gt;Mas subir ambientes de homologação para cada um dos PRs, automaticamente ou sobre demanda, não é um problema trivial, envolve subir máquinas, garantir que esta rodando a versão atualizada, liberar portas, etc.&lt;/p&gt;
+
+&lt;p&gt;Uma forma que encontramos para resolver esse problema é utilizando um cluster Kubernetes (ou a versão da Red Hat o OpenShift), pois essas ações são bem simples de realizar com ele e ainda mais fáceis se forem automatizadas.&lt;/p&gt;
+
+&lt;p&gt;Agora vou explicar como montar um exemplo simples, um para o GitLab e outro para o GitHub, integrando com o OpenShift da &lt;a href=&#34;https://getupcloud.com.br&#34;&gt;Getup Cloud&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Sobre uma introdução ao Kubernetes/OpenShift pode ver aqui:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/&#34;&gt;&lt;strong&gt;Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 1&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;O cliente de linha de comando pode ser baixado em:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/openshift/origin/releases&#34;&gt;&lt;strong&gt;openshift/origin&lt;/strong&gt; origin - Enterprise Kubernetes for Developers&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;gitlab-integrations-ci-registry-e-environments&#34;&gt;GitLab: Integrations, CI, Registry e Environments&lt;/h4&gt;
+
+
+&lt;figure class=&#34;big&#34;&gt;
+  
+    
+      &lt;img class=&#34;lazyload&#34; data-src=&#34;/post/ambientes-por-branch-com-openshift-next-gen/gitlab.png&#34;  /&gt;
+    
+  
+  
+&lt;/figure&gt;
+&lt;style media=&#34;screen&#34;&gt;
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+&lt;/style&gt;
+
+
+&lt;p&gt;A primeira experiencia que fizemos foi com o &lt;a href=&#34;https://gitlab.com&#34;&gt;GitLab&lt;/a&gt;, principalmente pela integração que ele traz com o Kubernetes, e as outras ferramentas que ele oferece que acabaram cobrindo todo o escopo do problema.&lt;/p&gt;
+
+&lt;p&gt;O que queremos montar é um ambiente por branch/PR que deve ser facilmente criado e destruído. Para demonstrar criei um repositório no GitLab com uma aplicação bem simples que apenas retorna uma página estática, mas é o suficiente para o objetivo.&lt;/p&gt;
+
+
+&lt;figure &gt;
+  
+    
+      &lt;img class=&#34;lazyload&#34; data-src=&#34;/post/ambientes-por-branch-com-openshift-next-gen/helloworld-view.png&#34;  /&gt;
+    
+  
+  
+  &lt;figcaption&gt;
+    &lt;header&gt;&lt;b&gt;retorno do serviço helloworld&lt;/b&gt;&lt;/header&gt;
+    
+  &lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+&lt;style media=&#34;screen&#34;&gt;
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+&lt;/style&gt;
+
+
+&lt;p&gt;Primeiramente criei a base da aplicação usando Docker, a mesma gera uma página com o conteúdo acima. O que vale destacar nesse primeiro momento é que já configurei um processo de CI simples:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;build&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;image&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;docker:latest&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;services&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;docker:dind&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;stage&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;build&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;script&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;docker login -u &amp;quot;gitlab-ci-token&amp;quot; -p &amp;quot;$CI_JOB_TOKEN&amp;quot; $CI_REGISTRY&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;docker build --pull -t &amp;quot;$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME&amp;quot; .&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;docker push &amp;quot;$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME&amp;quot;&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;echo &amp;quot;Pushing image $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME&amp;quot;&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;only&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;branches&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p class=&#34;code-legend&#34;&gt;.gitlab-ci.yml&lt;/p&gt;
+
+&lt;p&gt;Nesse CI eu construo o contêiner da aplicação para cada commit feito e guardo no registro do próprio GitLab por branch, dessa forma tenho uma versão do meu contêiner para cada uma das branchs que forem criadas e vou atualizando essas versões automaticamente a cada alteração.&lt;/p&gt;
+
+&lt;p&gt;Fonte completo até aqui:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://gitlab.com/lucassabreu/k8s-pr-envs/tree/v1&#34;&gt;&lt;strong&gt;Files · v1 · Lucas dos Santos Abreu / k8s-pr-envs&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Nesse momento não tenho nenhum deploy, seja de ambiente de teste, produção ou por branch.&lt;/p&gt;
+
+&lt;p&gt;Então vamos adicionar um processo de deploy no OpenShift para o ambiente de produção e testes, sendo que o ambiente de testes é atualizado automaticamente para os commits na master e o de produção apenas quando um usuário disparar o deploy.&lt;/p&gt;
+
+&lt;p&gt;Para fazer isso primeiramente temos de configurar a integração entre o OpenShift e o GitLab, para isso vamos em &lt;em&gt;Settings&lt;/em&gt; &amp;gt; &lt;em&gt;Integrations&lt;/em&gt; e procuramos &lt;em&gt;Kubernetes&lt;/em&gt; nas opções. O GitLab irá solicitar algumas informações sobre o ambiente, qual o &lt;strong&gt;Namespace&lt;/strong&gt;, o &lt;strong&gt;URL da API&lt;/strong&gt; do &lt;strong&gt;Kubernetes&lt;/strong&gt; e uma forma de autenticação, que pode ser um &lt;strong&gt;Service Token&lt;/strong&gt; ou um &lt;strong&gt;CA Bundle&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;Dessa forma vou criar um novo &lt;strong&gt;Namespace&lt;/strong&gt;, como fazer isso vai depender do seu vendor de Kubernetes, no caso da &lt;a href=&#34;https://getupcloud.com.br&#34;&gt;Getup Cloud&lt;/a&gt;, basta ir em &lt;a href=&#34;https://portal.getupcloud.com/projects&#34;&gt;https://portal.getupcloud.com/projects&lt;/a&gt; e criar um novo projeto, o nome do projeto será o &lt;strong&gt;Namespace.&lt;/strong&gt;&lt;/p&gt;
+
+
+&lt;figure class=&#34;big&#34;&gt;
+  
+    
+      &lt;img class=&#34;lazyload&#34; data-src=&#34;/post/ambientes-por-branch-com-openshift-next-gen/dashboard-getup.png&#34;  /&gt;
+    
+  
+  
+&lt;/figure&gt;
+&lt;style media=&#34;screen&#34;&gt;
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+&lt;/style&gt;
+
+
+&lt;p&gt;Uma vez com o &lt;strong&gt;Namespace&lt;/strong&gt; podemos criar um novo &lt;strong&gt;Service Token&lt;/strong&gt; para ser usado no CI do GitLab, no caso para criar um Service Token é necessário criar uma ServiceAccount e dar permissões a mesma, e então pegar o Service Token dela. O script abaixo realiza essas operações:&lt;/p&gt;
+
+&lt;pre&gt;
+&lt;b&gt;$ oc login https://api.getupcloud.com:443&lt;/b&gt;
+Authentication required for https://api.getupcloud.com:443 ...
+Username: lucas.s.abreu@gmail.com
+Password:
+Login successful.
+...
+
+&lt;b&gt;$ oc project gitlab-k8s-pr-envs #usar o seu projeto&lt;/b&gt;
+Now using project &#34;gitlab-k8s-pr-envs&#34; on server ...
+
+&lt;b&gt;$ oc create serviceaccount gitlab&lt;/b&gt;
+serviceaccount &#34;gitlab&#34; created
+
+&lt;b&gt;$ oc policy add-role-to-user admin \&lt;/b&gt;
+    system:serviceaccount:gitlab-k8s-pr-envs:gitlab
+
+&lt;b&gt;$ oc describe serviceaccount gitlab&lt;/b&gt;
+Name:  gitlab
+Namespace: gitlab-k8s-pr-envs
+Labels:  &lt;none&gt;
+
+Image pull secrets: gitlab-dockercfg-qj9o9
+
+Mountable secrets:  gitlab-token-6ael2
+                    gitlab-dockercfg-qj9o9
+
+Tokens:             gitlab-token-6ael2
+                    gitlab-token-zkk6u
+
+&lt;b&gt;$ oc describe secret gitlab-token-6ael2&lt;/b&gt;
+Name:  gitlab-token-6ael2
+Namespace: gitlab-k8s-pr-envs
+Labels:  &lt;none&gt;
+Annotations: kubernetes.io/service-account.name=gitlab
+  kubernetes.io/service-account.uid=zzz
+
+Type: kubernetes.io/service-account-token
+
+Data
+====
+ca.crt:  1066 bytes
+namespace: 18 bytes
+service-ca.crt: 2182 bytes
+token:  &lt;i&gt;&lt;b&gt;token-do-openshift-que-estou-ocultando&lt;/i&gt;&lt;/b&gt;
+&lt;/pre&gt;
+
+&lt;p&gt;Agora que temos o token gerado basta adicionar essas informações no
+GitLab.&lt;/p&gt;
+
+
+&lt;figure class=&#34;big&#34;&gt;
+  
+    
+      &lt;img class=&#34;lazyload&#34; data-src=&#34;/post/ambientes-por-branch-com-openshift-next-gen/gitlab-k8s-integration.png&#34;  /&gt;
+    
+  
+  
+&lt;/figure&gt;
+&lt;style media=&#34;screen&#34;&gt;
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+&lt;/style&gt;
+
+
+&lt;p&gt;Você pode confirmar se passou os dados corretos com o botão de teste no GitLab.&lt;/p&gt;
+
+&lt;p&gt;Certo, agora o GitLab consegue conversar com o OpenShift. Podemos então alterar nossas regras de CI para criar duas novas etapas: &lt;em&gt;staging&lt;/em&gt; e &lt;em&gt;production&lt;/em&gt;, que irão realizar o deploy dos nossos ambientes padrões, sendo que &lt;em&gt;staging&lt;/em&gt; será disparada automaticamente por commits na master e &lt;em&gt;production&lt;/em&gt; ficará como manual.&lt;/p&gt;
+
+&lt;p&gt;O .&lt;code&gt;gitlab-ci.yml&lt;/code&gt; ficou como abaixo (já usando a integração com OpenShift):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;stages&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;build&lt;/span&gt;
+  &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;staging&lt;/span&gt;
+  &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;production&lt;/span&gt;
+
+&lt;span style=&#34;color: #ae81ff&#34;&gt;variables&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;KUBE_DOMAIN&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;getup.io&lt;/span&gt;
+
+&lt;span style=&#34;color: #ae81ff&#34;&gt;build&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;stage&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;build&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;image&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;docker:latest&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;services&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;docker:dind&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;script&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;docker login -u &amp;quot;gitlab-ci-token&amp;quot; -p &amp;quot;$CI_JOB_TOKEN&amp;quot; $CI_REGISTRY&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;docker build --pull -t &amp;quot;$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME&amp;quot; .&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;docker push &amp;quot;$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME&amp;quot;&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;echo &amp;quot;Pushing image $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME&amp;quot;&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;only&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;branches&lt;/span&gt;
+
+&lt;span style=&#34;color: #ae81ff&#34;&gt;staging&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;stage&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;staging&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;image&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;lucassabreu/openshift-k8s-cli:latest&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;variables&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;CI_ENVIRONMENT_URL&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;http://$CI_PROJECT_NAME-staging.$KUBE_DOMAIN&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;environment&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;staging&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;url&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;http://$CI_PROJECT_NAME-staging.$KUBE_DOMAIN&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;script&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;k8s/deploy&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;only&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;master&lt;/span&gt;
+
+&lt;span style=&#34;color: #ae81ff&#34;&gt;production&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;stage&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;production&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;image&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;lucassabreu/openshift-k8s-cli:latest&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;variables&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;CI_ENVIRONMENT_URL&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;http://$CI_PROJECT_NAME.$KUBE_DOMAIN&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;environment&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;production&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;url&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;http://$CI_PROJECT_NAME.$KUBE_DOMAIN&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;when&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;manual&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;script&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;k8s/deploy&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;only&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;master&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p class=&#34;code-legend&#34;&gt;.gitlab-ci.yml (v2)&lt;/p&gt;
+
+&lt;p&gt;As mudança são os novos stages &lt;code&gt;staging&lt;/code&gt; e &lt;code&gt;production&lt;/code&gt;; as variáveis novas &lt;code&gt;KUBE_DOMAIN&lt;/code&gt; e &lt;code&gt;CI_ENVIRONMENT_URL&lt;/code&gt;; e o script &lt;code&gt;k8s/deploy&lt;/code&gt;. Vamos por partes.&lt;/p&gt;
+
+&lt;p&gt;A variável &lt;code&gt;KUBE_DOMAIN&lt;/code&gt; vai ajudar a deixar o nosso processo de deploy mais simples, basicamente nós colocamos nela o domínio base que o OpenShift usa para expor as rotas dele, no caso da Getup seria &amp;ldquo;&lt;em&gt;getup.io&lt;/em&gt;&amp;rdquo;. A &lt;code&gt;CI_ENVIRONMENT_URL&lt;/code&gt; é completar a &lt;code&gt;KUBE_DOMAIN&lt;/code&gt; e serve para informar o &lt;code&gt;k8s/deploy&lt;/code&gt; qual endereço ele deve expor o ambiente, ele deve sempre terminar com o &lt;code&gt;KUBE_DOMAIN&lt;/code&gt; e deve ser igual a &lt;code&gt;url&lt;/code&gt; da chave &lt;code&gt;environment&lt;/code&gt;, pois é por essa chave que o GitLab sabe onde os ambientes estão expostos.&lt;/p&gt;
+
+&lt;p&gt;As etapas de &lt;code&gt;staging&lt;/code&gt; e &lt;code&gt;production&lt;/code&gt; irão fazer o deploy dos nossos ambientes e como comentei antes o ambiente de &lt;em&gt;staging&lt;/em&gt; terá deploy automático para todo commit na master, enquanto &lt;em&gt;production&lt;/em&gt; irá esperar uma ação do usuário. No mais as duas etapas são iguais mudando apenas a URL que estão sendo expostas. Estou usando a imagem &lt;code&gt;lucassabreu/openshift-k8s-cli&lt;/code&gt; que é basicamente um &lt;code&gt;ubuntu&lt;/code&gt; com o &lt;code&gt;oc&lt;/code&gt; instalado.&lt;/p&gt;
+
+&lt;p&gt;O script &lt;code&gt;k8s/deploy&lt;/code&gt; está abaixo e ele basicamente se autentica contra a API do OpenShift usando o &lt;em&gt;Service Token&lt;/em&gt; que criamos antes, destrói a aplicação antiga e executa o deploy de uma nova.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #75715e&#34;&gt;#!/bin/bash&lt;/span&gt;
+
+oc login &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;$KUBE_URL&lt;/span&gt;&lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;&lt;/span&gt; --token &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;$KUBE_TOKEN&lt;/span&gt;&lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;&lt;/span&gt;
+oc project &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;$KUBE_NAMESPACE&lt;/span&gt;&lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;&lt;/span&gt;
+
+&lt;span style=&#34;color: #f8f8f2&#34;&gt;HOSTNAME&lt;/span&gt;&lt;span style=&#34;color: #f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;$CI_ENVIRONMENT_URL&lt;/span&gt;&lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;&lt;/span&gt;
+
+&lt;span style=&#34;color: #75715e&#34;&gt;# remove protocol from URL&lt;/span&gt;
+&lt;span style=&#34;color: #f8f8f2&#34;&gt;HOSTNAME&lt;/span&gt;&lt;span style=&#34;color: #f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;${&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;HOSTNAME/&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;\h&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;ttp:&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;\/\/&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color: #e6db74&#34;&gt;}&amp;quot;&lt;/span&gt;
+&lt;span style=&#34;color: #f8f8f2&#34;&gt;HOSTNAME&lt;/span&gt;&lt;span style=&#34;color: #f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;${&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;HOSTNAME/&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;\h&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;ttp:&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;\/\/&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color: #e6db74&#34;&gt;}&amp;quot;&lt;/span&gt;
+
+&lt;span style=&#34;color: #f8f8f2&#34;&gt;IMAGE_TAG&lt;/span&gt;&lt;span style=&#34;color: #f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;$CI_REGISTRY_IMAGE&lt;/span&gt;&lt;span style=&#34;color: #e6db74&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;$CI_BUILD_REF_NAME&lt;/span&gt;&lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;&lt;/span&gt;
+&lt;span style=&#34;color: #f8f8f2&#34;&gt;ENV&lt;/span&gt;&lt;span style=&#34;color: #f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;$CI_ENVIRONMENT_SLUG&lt;/span&gt;&lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;&lt;/span&gt;
+
+&lt;span style=&#34;color: #f8f8f2&#34;&gt;echo&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;&amp;gt;&amp;gt; Deleting old application...&amp;quot;&lt;/span&gt;
+oc delete all -l &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;app=&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;$CI_ENVIRONMENT_SLUG&lt;/span&gt;&lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;&lt;/span&gt;
+
+&lt;span style=&#34;color: #f8f8f2&#34;&gt;echo&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;&amp;gt;&amp;gt; Deploying image &lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;$IMAGE_TAG&lt;/span&gt;&lt;span style=&#34;color: #e6db74&#34;&gt; to env &lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;$ENV&lt;/span&gt;&lt;span style=&#34;color: #e6db74&#34;&gt; at &lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;$HOSTNAME&lt;/span&gt;&lt;span style=&#34;color: #e6db74&#34;&gt;...&amp;quot;&lt;/span&gt;
+
+sed &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;&lt;/span&gt;
+&lt;span style=&#34;color: #e6db74&#34;&gt;  s|__HOSTNAME__|&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;$HOSTNAME&lt;/span&gt;&lt;span style=&#34;color: #e6db74&#34;&gt;|;&lt;/span&gt;
+&lt;span style=&#34;color: #e6db74&#34;&gt;  s|__ENV__|&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;$ENV&lt;/span&gt;&lt;span style=&#34;color: #e6db74&#34;&gt;|;&lt;/span&gt;
+&lt;span style=&#34;color: #e6db74&#34;&gt;  s|__IMAGE_TAG__|&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;$IMAGE_TAG&lt;/span&gt;&lt;span style=&#34;color: #e6db74&#34;&gt;|;&lt;/span&gt;
+&lt;span style=&#34;color: #e6db74&#34;&gt;  &amp;quot;&lt;/span&gt; k8s/full.yml &lt;span style=&#34;color: #f8f8f2&#34;&gt;|&lt;/span&gt; oc apply -f -
+&lt;span style=&#34;color: #66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #f92672&#34;&gt;[&lt;/span&gt; &lt;span style=&#34;color: #f8f8f2&#34;&gt;$?&lt;/span&gt; !&lt;span style=&#34;color: #f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color: #f92672&#34;&gt;]&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;;&lt;/span&gt; &lt;span style=&#34;color: #66d9ef&#34;&gt;then&lt;/span&gt;
+  &lt;span style=&#34;color: #f8f8f2&#34;&gt;exit&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;1&lt;/span&gt;
+&lt;span style=&#34;color: #66d9ef&#34;&gt;fi&lt;/span&gt;
+
+&lt;span style=&#34;color: #f8f8f2&#34;&gt;echo&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;&amp;gt;&amp;gt; Deployed to &lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;$CI_ENVIRONMENT_URL&lt;/span&gt;&lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p class=&#34;code-legend&#34;&gt;k8s/deploy&lt;/p&gt;
+
+&lt;p&gt;Vale ressaltar que é importante marcar os componentes do ambiente com &lt;code&gt;app=$CI_ENVIRONMENT_SLUG&lt;/code&gt;, pois é assim que o GitLab consegue encontrar eles e lhe retornar status sobre eles.&lt;/p&gt;
+
+&lt;p&gt;Também estou usando um truque de &amp;ldquo;templating&amp;rdquo; com o YAML que define os ambientes para poder inserir as variáveis de cada ambiente nele. Existem outras ferramentas mais avançadas como o &lt;a href=&#34;https://github.com/kubernetes/helm&#34;&gt;Helm&lt;/a&gt;, mas para o meu exemplo templating com &lt;code&gt;sed&lt;/code&gt; é o suficiente.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;apiVersion&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;extensions/v1beta1&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;kind&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;Deployment&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;hw-dpl-__ENV__&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;labels&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;app&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;__ENV__&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;spec&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;replicas&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;1&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;template&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;labels&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+        &lt;span style=&#34;color: #ae81ff&#34;&gt;app&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;__ENV__&lt;/span&gt;
+        &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;hw-pod&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;spec&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;containers&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+      &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;hw-container&lt;/span&gt;
+        &lt;span style=&#34;color: #ae81ff&#34;&gt;image&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;__IMAGE_TAG__&lt;/span&gt;
+        &lt;span style=&#34;color: #ae81ff&#34;&gt;imagePullPolicy&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;Always&lt;/span&gt;
+        &lt;span style=&#34;color: #ae81ff&#34;&gt;ports&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+        &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;web-port&lt;/span&gt;
+          &lt;span style=&#34;color: #ae81ff&#34;&gt;containerPort&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;8080&lt;/span&gt;
+&lt;span style=&#34;color: #f8f8f2&#34;&gt;---&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;apiVersion&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;v1&amp;quot;&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;kind&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;Service&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;hw-src-__ENV__&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;labels&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;app&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;__ENV__&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;spec&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;ports&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;port&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;80&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;targetPort&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;web-port&amp;quot;&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;protocol&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;TCP&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;selector&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;hw-pod&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;app&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;__ENV__&lt;/span&gt;
+&lt;span style=&#34;color: #f8f8f2&#34;&gt;---&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;apiVersion&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;kind&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;Route&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;__ENV__&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;labels&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;app&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;__ENV__&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;spec&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;host&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;__HOSTNAME__&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;to&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;kind&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;Service&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;hw-src-__ENV__&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p class=&#34;code-legend&#34;&gt;k8s/full.yml&lt;/p&gt;
+
+&lt;p&gt;Agora, depois que do commit das alterações, o GitLab faz o &lt;em&gt;build&lt;/em&gt;, o deploy da &lt;em&gt;staging&lt;/em&gt; e &lt;em&gt;production&lt;/em&gt; (manual); podemos ver na área &lt;em&gt;Environments&lt;/em&gt; do GitLab que os ambientes estão rodando, ele inclusive traz alguns comandos para facilitar a vida: link para a URL do ambiente, terminal dentro do Pod e opção de Re-deploy.&lt;/p&gt;
+
+
+&lt;figure class=&#34;big&#34;&gt;
+  
+    
+      &lt;img class=&#34;lazyload&#34; data-src=&#34;/post/ambientes-por-branch-com-openshift-next-gen/gilab-envs.png&#34;  /&gt;
+    
+  
+  
+&lt;/figure&gt;
+&lt;style media=&#34;screen&#34;&gt;
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+&lt;/style&gt;
+
+
+&lt;p&gt;Fonte completo até agora:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://gitlab.com/lucassabreu/k8s-pr-envs/tree/v2&#34;&gt;&lt;strong&gt;Files · v2 · Lucas dos Santos Abreu / k8s-pr-envs&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Agora que temos o &lt;em&gt;build&lt;/em&gt; da nossa aplicação e um deploy automatizado, vamos adicionar a função de deploy por branch.&lt;/p&gt;
+
+&lt;p&gt;Basicamente precisamos de duas novas etapas no nosso CI, uma para subir o ambiente para uma branch e outro para destruir esse ambiente para evitar consumir recursos sem necessidade.&lt;/p&gt;
+
+&lt;p&gt;Para isso fiz as seguintes alterações nos &lt;code&gt;.gitlab-ci.yml&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;stages&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;build&lt;/span&gt;
+  &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;review&lt;/span&gt;
+  &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;staging&lt;/span&gt;
+  &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;production&lt;/span&gt;
+  &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;cleanup&lt;/span&gt;
+
+&lt;span style=&#34;color: #ae81ff&#34;&gt;review&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;stage&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;review&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;image&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;lucassabreu/openshift-k8s-cli:latest&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;variables&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;CI_ENVIRONMENT_URL&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;http://$CI_PROJECT_NAME-$CI_ENVIRONMENT_SLUG.$KUBE_DOMAIN&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;environment&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;r/$CI_COMMIT_REF_NAME&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;url&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;http://$CI_PROJECT_NAME-$CI_ENVIRONMENT_SLUG.$KUBE_DOMAIN&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;on_stop&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;stop_review&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;script&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;k8s/deploy&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;only&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;branches&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;except&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;master&lt;/span&gt;
+
+&lt;span style=&#34;color: #ae81ff&#34;&gt;stop_review&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;stage&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;cleanup&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;image&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;lucassabreu/openshift-k8s-cli:latest&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;environment&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;r/$CI_COMMIT_REF_NAME&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;action&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;stop&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;when&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;manual&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;variables&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;GIT_STRATEGY&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;none&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;script&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;oc login &amp;quot;$KUBE_URL&amp;quot; --token &amp;quot;$KUBE_TOKEN&amp;quot;&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;oc project &amp;quot;$KUBE_NAMESPACE&amp;quot;&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;oc delete deployments -l &amp;quot;app=$CI_ENVIRONMENT_SLUG&amp;quot;&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;oc delete all -l &amp;quot;app=$CI_ENVIRONMENT_SLUG&amp;quot;&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;only&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;branches&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;except&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;master&lt;/span&gt;
+
+&lt;span style=&#34;color: #f8f8f2&#34;&gt;[...]&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p class=&#34;code-legend&#34;&gt;.gitlab-ci.yml (v3)&lt;/p&gt;
+
+&lt;p&gt;Basicamente adicionei as duas novas etapas, &lt;code&gt;review&lt;/code&gt; basicamente faz a mesma coisa que &lt;code&gt;staging&lt;/code&gt;, mas usa um nome de ambiente dinâmico baseado na branch; e tem um &lt;code&gt;enviroment:on_stop&lt;/code&gt; que basicamente indica o que fazer quando a branch for removida.&lt;/p&gt;
+
+&lt;p&gt;Na etapa &lt;code&gt;stop_review&lt;/code&gt; executo alguns comandos para eliminar o ambiente quando for chamada, é importante deixar essa como &lt;code&gt;manual&lt;/code&gt; para que ela não apague sozinha o ambiente quando terminar as outras etapas.&lt;/p&gt;
+
+&lt;p&gt;Os comandos da etapa &lt;code&gt;stop_review&lt;/code&gt; precisam estar definidos diretamente no &lt;code&gt;.gitlab-ci.yml&lt;/code&gt;, pois quando essa etapa for executada é possível que a branch e commits dela não existam mais, é também por esse motivo que informamos a variável &lt;code&gt;GIT_STRATEGY&lt;/code&gt; como &lt;code&gt;NO&lt;/code&gt; evitando que sequer seja checado se a branch/commit de origem existem.&lt;/p&gt;
+
+&lt;p&gt;Agora quando crio uma nova branch automaticamente é criado um novo ambiente para a mesma no OpenShift.&lt;/p&gt;
+
+&lt;p&gt;Para testar criei a branch &lt;code&gt;a-change&lt;/code&gt; e fiz a seguinte alteração:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;   &amp;lt;img id=&amp;quot;logo&amp;quot; src=&amp;quot;logo.svg&amp;quot;
+     alt=&amp;quot;CodeRocker&amp;quot; title=&amp;quot;CodeRocker&amp;quot; /&amp;gt;
+   &amp;lt;h1&amp;gt;Hello World !&amp;lt;/h1&amp;gt;
+&lt;span style=&#34;color: #a6e22e&#34;&gt;+  &amp;lt;h2&amp;gt;(with a change)&amp;lt;/h2&amp;gt;&lt;/span&gt;
+ &amp;lt;/body&amp;gt;
+ &amp;lt;/html&amp;gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p class=&#34;code-legend&#34;&gt;public/index.html (pr)&lt;/p&gt;
+
+&lt;p&gt;Assim que dei o &lt;code&gt;git push&lt;/code&gt; começou o deploy do novo ambiente &lt;code&gt;r/a-change&lt;/code&gt;, logo que terminou pude verificar na área de ambientes do GitLab que estava rodando, e tem as mesmas operações disponíveis que os outros, mais a opção de parada (&lt;code&gt;stop_review&lt;/code&gt;):&lt;/p&gt;
+
+
+&lt;figure class=&#34;big&#34;&gt;
+  
+    
+      &lt;img class=&#34;lazyload&#34; data-src=&#34;/post/ambientes-por-branch-com-openshift-next-gen/branch-env.png&#34;  /&gt;
+    
+  
+  
+&lt;/figure&gt;
+&lt;style media=&#34;screen&#34;&gt;
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+&lt;/style&gt;
+
+
+&lt;p&gt;Já rodando as alterações:&lt;/p&gt;
+
+
+&lt;figure &gt;
+  
+    
+      &lt;img class=&#34;lazyload&#34; data-src=&#34;/post/ambientes-por-branch-com-openshift-next-gen/a-change.png&#34;  /&gt;
+    
+  
+  
+&lt;/figure&gt;
+&lt;style media=&#34;screen&#34;&gt;
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+&lt;/style&gt;
+
+
+&lt;p&gt;Fontes com essas alterações em:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://gitlab.com/lucassabreu/k8s-pr-envs/tree/v3&#34;&gt;&lt;strong&gt;Files · v3 · Lucas dos Santos Abreu / k8s-pr-envs&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Após essas alterações podemos implementar a regra de merge apenas após testes pela equipe de QA, sem interferência de outras atividades que foram aplicadas no meio do caminho e permitindo um controle melhor sobre o que esta pronto para ir para a produção.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;A postagem acabou ficando bem grande apenas para falar do processo no GitLab, por isso vou criar um segundo post sobre como fazer isso no GitHub, abaixo esta o link para ele:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://lucassabreu.net.br/post/ambientes-por-branch-com-openshift-next-gen-usando-github&#34;&gt;&lt;strong&gt;Ambientes por Branch com OpenShift Next Gen usando GitHub&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

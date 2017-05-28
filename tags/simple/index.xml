@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Simple on Lucas dos Santos Abreu</title>
-    <link>https://lucassabreu.github.io/tags/simple/index.xml</link>
+    <link>https://lucassabreu.net.br/tags/simple/index.xml</link>
     <description>Recent content in Simple on Lucas dos Santos Abreu</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>pt-BR</language>
-    <atom:link href="https://lucassabreu.github.io/tags/simple/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://lucassabreu.net.br/tags/simple/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 4</title>
-      <link>https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4/</link>
+      <link>https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4/</link>
       <pubDate>Fri, 10 Mar 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4/</guid>
+      <guid>https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4/</guid>
       <description>&lt;p&gt;&lt;/p&gt;
 
 
@@ -41,14 +41,14 @@
 &lt;p&gt;Este post é a quarta parte de uma série sobre o básico necessário para usar o Kubernetes, caso você não tenha lido o post anterior recomendo lê-lo e depois voltar aqui para não ficar perdido.&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;Parte 1 - Conceitos Básicos: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Parte 2 - Construindo o Ambiente: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Parte 3 - Volumes Persistentes: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Parte 1 - Conceitos Básicos: &lt;a href=&#34;https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Parte 2 - Construindo o Ambiente: &lt;a href=&#34;https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Parte 3 - Volumes Persistentes: &lt;a href=&#34;https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;hr /&gt;
 
-&lt;p&gt;Como citei no &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3&#34;&gt;post anterior&lt;/a&gt; ainda existe um ponto de desconforto no ambiente, que é o fato das senhas e usuários estarem expostos diretamente nas configurações. O Kubernetes oferece uma solução para esse problema os &lt;a href=&#34;https://kubernetes.io/docs/user-guide/secrets/&#34;&gt;&lt;strong&gt;Secrets&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Como citei no &lt;a href=&#34;https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3&#34;&gt;post anterior&lt;/a&gt; ainda existe um ponto de desconforto no ambiente, que é o fato das senhas e usuários estarem expostos diretamente nas configurações. O Kubernetes oferece uma solução para esse problema os &lt;a href=&#34;https://kubernetes.io/docs/user-guide/secrets/&#34;&gt;&lt;strong&gt;Secrets&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;E agora irei mostrar como adicioná-los ao projeto.&lt;/p&gt;
 
@@ -200,10 +200,10 @@ secret &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;mysql-secrets&amp;qu
     
     <item>
       <title>Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 3</title>
-      <link>https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/</link>
+      <link>https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/</link>
       <pubDate>Thu, 09 Mar 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/</guid>
+      <guid>https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/</guid>
       <description>&lt;p&gt;&lt;/p&gt;
 
 
@@ -233,14 +233,14 @@ usar o Kubernetes, caso você não tenha lido o post anterior recomendo
 lê-lo e depois voltar aqui para não ficar perdido.&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;Parte 1 - Conceitos Básicos: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Parte 2 - Construindo o Ambiente: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Parte 4 - Segredos: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Parte 1 - Conceitos Básicos: &lt;a href=&#34;https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Parte 2 - Construindo o Ambiente: &lt;a href=&#34;https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Parte 4 - Segredos: &lt;a href=&#34;https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;hr /&gt;
 
-&lt;p&gt;Como comentei no &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2&#34;&gt;post anterior&lt;/a&gt; existem alguns problemas no ambiente que construí, e o princípial deles é que os Pods não totalmente efêmeros, ou seja, se eu adicionar novos dados nele, no momento que o Pod fosse destruído os dados iriam junto e sem backup !&lt;/p&gt;
+&lt;p&gt;Como comentei no &lt;a href=&#34;https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2&#34;&gt;post anterior&lt;/a&gt; existem alguns problemas no ambiente que construí, e o princípial deles é que os Pods não totalmente efêmeros, ou seja, se eu adicionar novos dados nele, no momento que o Pod fosse destruído os dados iriam junto e sem backup !&lt;/p&gt;
 
 &lt;p&gt;E agora iremos tratar esse primeiro problema. Caso não tenha mais os fontes até o estado do post anterior, ou prefira acompanhar o meu andamento, pode pode pegá-los aqui: &lt;a href=&#34;https://github.com/lucassabreu/openshift-next-gen/tree/v1&#34;&gt;https://github.com/lucassabreu/openshift-next-gen/tree/v1&lt;/a&gt;; ou executar:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;git clone -b v1 &lt;span style=&#34;color: #ae81ff&#34;&gt;\&lt;/span&gt;
@@ -416,15 +416,15 @@ Query OK, &lt;span style=&#34;color: #ae81ff&#34;&gt;1&lt;/span&gt; row affected
 
 &lt;p&gt;Outro ponto que esta desconfortável no meu ambiente é o fato das senhas e usuários estarem expostas diretamente nas configurações. O Kubernetes oferece uma solução para esse problema, que irei abordar no próximo post.&lt;/p&gt;
 
-&lt;p&gt;Próximo Post: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-usando-kubernetes-e-openshift-parte-4/&#34;&gt;clique aqui&lt;/a&gt;&lt;/p&gt;</description>
+&lt;p&gt;Próximo Post: &lt;a href=&#34;https://lucassabreu.net.br/post/um-ambiente-usando-kubernetes-e-openshift-parte-4/&#34;&gt;clique aqui&lt;/a&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 2</title>
-      <link>https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2/</link>
+      <link>https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2/</link>
       <pubDate>Wed, 08 Mar 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2/</guid>
+      <guid>https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2/</guid>
       <description>&lt;p&gt;&lt;/p&gt;
 
 
@@ -452,14 +452,14 @@ Query OK, &lt;span style=&#34;color: #ae81ff&#34;&gt;1&lt;/span&gt; row affected
 &lt;p&gt;Este post é parte de uma série sobre o básico necessário para usar o Kubernetes, caso você não tenha lido os post anteriores recomendo lê-los e depois voltar aqui para não ficar perdido.&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;Parte 1 - Conceitos Básicos: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Parte 3 - Volumes Persistentes: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Parte 4 - Segredos: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Parte 1 - Conceitos Básicos: &lt;a href=&#34;https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Parte 3 - Volumes Persistentes: &lt;a href=&#34;https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Parte 4 - Segredos: &lt;a href=&#34;https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;hr /&gt;
 
-&lt;p&gt;Conhecendo os componentes básicos explicados no &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1&#34;&gt;post anterior&lt;/a&gt; posso preparar a aplicação que mostrei para o Kubernetes.&lt;/p&gt;
+&lt;p&gt;Conhecendo os componentes básicos explicados no &lt;a href=&#34;https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1&#34;&gt;post anterior&lt;/a&gt; posso preparar a aplicação que mostrei para o Kubernetes.&lt;/p&gt;
 
 &lt;p&gt;O primeiro passo é definir quais são os Pods do meu cluster.&lt;/p&gt;
 
@@ -662,15 +662,15 @@ rodando.&lt;/p&gt;
 
 &lt;p&gt;Irei mostrar como resolver esse problema no próximo post.&lt;/p&gt;
 
-&lt;p&gt;Próximo Post: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/&#34;&gt;clique aqui&lt;/a&gt;&lt;/p&gt;</description>
+&lt;p&gt;Próximo Post: &lt;a href=&#34;https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/&#34;&gt;clique aqui&lt;/a&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 1</title>
-      <link>https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/</link>
+      <link>https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/</link>
       <pubDate>Tue, 07 Mar 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/</guid>
+      <guid>https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/</guid>
       <description>&lt;p&gt;&lt;/p&gt;
 
 
@@ -710,9 +710,9 @@ rodando.&lt;/p&gt;
 &lt;p&gt;Nessa primeira parte vou dar uma introdução aos conceitos básicos do Kubernetes, e nas próximas irei fazer uso desses conceitos.&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;Parte 2 - Construindo o Ambiente: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2/&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Parte 3 - Volumes Persistentes: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Parte 4 - Segredos: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4/&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Parte 2 - Construindo o Ambiente: &lt;a href=&#34;https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2/&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Parte 3 - Volumes Persistentes: &lt;a href=&#34;https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Parte 4 - Segredos: &lt;a href=&#34;https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4/&#34;&gt;clique aqui&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;hr /&gt;
@@ -794,7 +794,7 @@ docker run -d --name app-test --link db-test:db &lt;span style=&#34;color: #ae81
 
 &lt;p&gt;Como comentei no início, estou escrevendo uma série de postagens para mostrar como usar o básico do Kubernetes, e no próximo post irei usar os conceitos que acabei de descrever para implementar o ambiente.&lt;/p&gt;
 
-&lt;p&gt;Próximo Post: &lt;a href=&#34;https://lucassabreu.github.io/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2/&#34;&gt;clique aqui&lt;/a&gt;&lt;/p&gt;</description>
+&lt;p&gt;Próximo Post: &lt;a href=&#34;https://lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2/&#34;&gt;clique aqui&lt;/a&gt;&lt;/p&gt;</description>
     </item>
     
   </channel>
