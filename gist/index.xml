@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Gists on Lucas dos Santos Abreu</title>
+    <link>http://www.lucassabreu.net.br/gist/index.xml</link>
+    <description>Recent content in Gists on Lucas dos Santos Abreu</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>pt-BR</language>
+    <lastBuildDate>Sat, 11 Mar 2017 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://www.lucassabreu.net.br/gist/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Notas Kubernetes - Coderockr Jam 2017-03-11</title>
+      <link>http://www.lucassabreu.net.br/gist/coderockr-jam-2017-03/</link>
+      <pubDate>Sat, 11 Mar 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lucassabreu.net.br/gist/coderockr-jam-2017-03/</guid>
+      <description>&lt;p&gt;&lt;/p&gt;
+
+
+&lt;figure class=&#34;big&#34;&gt;
+  
+    
+      &lt;img class=&#34;lazyload&#34; data-src=&#34;https://upload.wikimedia.org/wikipedia/en/0/00/Kubernetes_%28container_engine%29.png&#34;  /&gt;
+    
+  
+  
+&lt;/figure&gt;
+&lt;style media=&#34;screen&#34;&gt;
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+&lt;/style&gt;
+
+
+&lt;p&gt;Kubernetes ou K8s é uma plataforma open source para gestão de cluster de contêineres, desenvolvido pelo Google e doado a &lt;em&gt;Cloud Native Computing Foundation&lt;/em&gt;, que é uma organização que existe abaixo do &lt;em&gt;Linux Foundation&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;Tem por objetivo a automoção de um conjunto de funções de cluster: deploy, escalagem e executar aplicações de contêineres em vários hosts. Sendo que normalmente funciona usando &lt;em&gt;Docker&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;Alguns conceitos importantes para entender a ferramenta:&lt;/p&gt;
+
+&lt;h2 id=&#34;pods&#34;&gt;Pods&lt;/h2&gt;
+
+&lt;p&gt;São o menor componente do K8s, definindo um nó do cluster, ou seja, uma máquina virtual dedicada apenas as funções definidas nela, com o acréscimo de alguns componentes para verificar estado e vida das aplicações sendo executadas dentro delas.&lt;/p&gt;
+
+&lt;p&gt;Um &lt;code&gt;Pod&lt;/code&gt; irá executar um conjunto de contêineres definidos nele e que devem ter a mesma finalidade ou estão ligados de uma forma tão forte que se um falhar os contêineres relacionados devem ser destruídos também.&lt;/p&gt;
+
+&lt;p&gt;Também tem a caracteristica de serem tratados como efêmeros, de modo que destruí-los e recriá-los deve ser uma tarefa simples e sem remorços.&lt;/p&gt;
+
+&lt;h2 id=&#34;persistent-volume-claim-pvc&#34;&gt;Persistent Volume Claim (PVC)&lt;/h2&gt;
+
+&lt;p&gt;São volumes de dados persistentes, como os &lt;code&gt;Pods&lt;/code&gt; tem a caracterica de serem criados e destruídos a qualquer momento existe o risco de perder seus dados, os &lt;code&gt;Persistent Volume Claims&lt;/code&gt; tem por objetivo cobrir esse problema provendo storages que sobrevivem sem os &lt;code&gt;Pods&lt;/code&gt;, assim quando o &lt;code&gt;Pod&lt;/code&gt; for criado poderá se conectar ao mesmo &lt;code&gt;PVC&lt;/code&gt; e continuar.&lt;/p&gt;
+
+&lt;p&gt;Existem vários tipos de drivers de armazenamento para os &lt;code&gt;PVCs&lt;/code&gt; utilizarem, mas que normalmente dependem do serviço provendo o K8s, por exemplo, o OpenShift apenas provê o EBS do AWS, mas no Google Cloud podem ser usados storages do Google, AWS, locais, etc.&lt;/p&gt;
+
+&lt;h2 id=&#34;cron-jobs&#34;&gt;Cron Jobs&lt;/h2&gt;
+
+&lt;p&gt;Um problema para contêineres é a execução de CRONs, que é por muitos considerado uma má prática gerenciar internamente ao contêiner, que o certo seria o host do contêiner instanciá-lo temporariamente para executar o comando. Assim a responsabidade de schedule da CRON ficaria para o host.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;CRON Jobs&lt;/code&gt; representam a solução do K8s para isso, podem ser criadas schedules de execução de &lt;code&gt;Pods&lt;/code&gt; do tipo &lt;code&gt;Job&lt;/code&gt; que irão ser iniciados, executam uma tarefa e morrem.&lt;/p&gt;
+
+&lt;p&gt;Caso ocorram falhas ou insucesso na execução um novo &lt;code&gt;Job&lt;/code&gt; será criado para tentar concluir a tarefa, se assim for configurado.&lt;/p&gt;
+
+&lt;h2 id=&#34;labels-e-selectors&#34;&gt;Labels e Selectors&lt;/h2&gt;
+
+&lt;p&gt;Labels é a forma pela qual os componentes (principalmente &lt;code&gt;Pods&lt;/code&gt;) são marcados e agrupados, através destas marcações e nada mais Services e Controllers identificam seus &lt;code&gt;Pods&lt;/code&gt;, de forma que uma estruturação ruim de labels/selectors pode levar a Services tentando acessar &lt;code&gt;Pods&lt;/code&gt; inválidos e Controllers competirem por definições de &lt;code&gt;Pods&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;controllers&#34;&gt;Controllers&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;Constrollers&lt;/code&gt; são regras de replicação e deploy que existem para os &lt;code&gt;Pods&lt;/code&gt; dentro do K8s, eles tem por objetivo realizar a tarefa de deployment, escalagem, verificar vida dos contêineres e eventualmente destruí-los quando param de responder.&lt;/p&gt;
+
+&lt;p&gt;Existem alguns tipos de &lt;code&gt;Controllers&lt;/code&gt;, mas de forma geral eles trabalham mantendo conjuntos de contêineres com determidas definições ativos e criar novos de acordo com regras. Os &lt;code&gt;Controllers&lt;/code&gt; irão criar ou adotar conjuntos &lt;code&gt;Pods&lt;/code&gt; que teram uma mesma marcação de &lt;code&gt;labels&lt;/code&gt;/&lt;code&gt;selectors&lt;/code&gt; e possuem um &amp;ldquo;template&amp;rdquo; de &lt;code&gt;Pods&lt;/code&gt; dentro deles para saberem como criá-los quando necessário.&lt;/p&gt;
+
+&lt;p&gt;Os tipos possíveis são:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;ReplicationController&lt;/strong&gt;: é o mais simples dos &lt;code&gt;Controllers&lt;/code&gt;, realizando apenas deploy, escalonamento de Pods e verificando disponibilidade dos mesmos, quando existem &lt;code&gt;Pods&lt;/code&gt; orfãs que se encaixam em seus selectors eles os acolhem e consideram válidos, mesmo que estes não respeitem seu modelo de &lt;code&gt;Pods&lt;/code&gt;. São o tipo mais simples de &lt;code&gt;Controllers&lt;/code&gt; é sugerido dar preferencia aos &lt;code&gt;Deployments&lt;/code&gt; no lugar deles.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Deployment&lt;/strong&gt;: é um &lt;code&gt;Controller&lt;/code&gt; semelhante ao &lt;code&gt;ReplicationController&lt;/code&gt;, porém não irá adotar &lt;code&gt;Pods&lt;/code&gt; que não respeitem a definição de seu template, de modo que caso encontre &lt;code&gt;Pods&lt;/code&gt; orfãs que não coincidam com a sua definição irá destruí-los e criar novos que estejam conforme o contrato. Quando a definição de um &lt;code&gt;Deployment&lt;/code&gt; é alterada ele irá verificar se os &lt;code&gt;Pods&lt;/code&gt; ainda respeitam essa nova definição, caso não respeitem ele irá destruí-los e criar novos &lt;code&gt;Pods&lt;/code&gt; conforme seu contrato. Também mantém um histórico das suas definições, de modo que o usuário pode facilmente retornar a um estado anterior (&lt;code&gt;rollout&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ReplicaSet&lt;/strong&gt;: é muito semelhante ao &lt;code&gt;ReplicationController&lt;/code&gt;, porém permite usar regras de &lt;code&gt;selector&lt;/code&gt; mais completas e pode utilizar a função &amp;ldquo;&lt;code&gt;rolling-update&lt;/code&gt;&amp;rdquo; que irá verificar a definição dos &lt;code&gt;Pods&lt;/code&gt; no &lt;code&gt;selector&lt;/code&gt; e atualizá-los um a um de forma semelhante ao &lt;code&gt;Deployment&lt;/code&gt;. Em verdade o &lt;code&gt;Deployment&lt;/code&gt; usa &lt;code&gt;ReplicaSets&lt;/code&gt; para atualizar o Pods, sendo os itens do seu histórico os &lt;code&gt;ReplicaSets&lt;/code&gt; já utilizados.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;StatefulSet&lt;/strong&gt;: representa &lt;code&gt;Controllers&lt;/code&gt; que devem gerar &lt;code&gt;Pods&lt;/code&gt; com caracteristicas persistentes, ou que a ordem de criação tenha influência. Quando eles são criados é possível definir um template de &lt;code&gt;Persistent Volume Claims&lt;/code&gt; que serão criados para cada um dos nós, de modo que quando os mesmos voltam a ativa podem retormar seus estados no momento que sairam do ar. (acho que pode ser útil para construir &lt;code&gt;Pods&lt;/code&gt; para nós de bancos de dados que funcionam por replicação).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;DaemonSet&lt;/strong&gt;: é um &lt;code&gt;Controller&lt;/code&gt; que garante que um certo tipo de &lt;code&gt;Pod&lt;/code&gt; será adicionado a todos os nós do cluster. Os &lt;code&gt;Pods&lt;/code&gt; que são criados por ele normalmente são do tipo de coleta de logs (&lt;code&gt;fluentd&lt;/code&gt;, &lt;code&gt;logstash&lt;/code&gt;), monitores (&lt;code&gt;New Relic&lt;/code&gt;, &lt;code&gt;Prometheus Exporter&lt;/code&gt;) e serviços semelhantes.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Job&lt;/strong&gt;: é um &lt;code&gt;Controller&lt;/code&gt; para executar &lt;code&gt;Pods&lt;/code&gt; de vida curta, no sentido de pequenos comandos ou execuções que não precisam ser servidas. Normalmente são criados por &lt;code&gt;Cron Jobs&lt;/code&gt; do K8s.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;services&#34;&gt;Services&lt;/h2&gt;
+
+&lt;p&gt;Como os &lt;code&gt;Pods&lt;/code&gt; além de efêmeros, podem existir em números variados por culpa dos &lt;code&gt;Controllers&lt;/code&gt;, não há forma confiável de tentar conectar dois &lt;code&gt;Pods&lt;/code&gt; diretamente, seja porque o &lt;code&gt;Pod&lt;/code&gt; que você está dependendo pode morrer e quando voltar terá outro IP, e provavelmente outro nome, ou porque o &lt;code&gt;Pod&lt;/code&gt; que você &amp;ldquo;fixou&amp;rdquo; pode não ser o mas indicado (menos ocupado ou mais próximo).&lt;/p&gt;
+
+&lt;p&gt;Para resolver esse problema existem os &lt;code&gt;Services&lt;/code&gt;, em vez de tentar fazer as chamadas diretamente para um &lt;code&gt;Pod&lt;/code&gt;, podemos chamar pelo nome de um &lt;code&gt;Service&lt;/code&gt; e este irá rotear para um &lt;code&gt;Pod&lt;/code&gt; que esteja abaixo dele.&lt;/p&gt;
+
+&lt;p&gt;Os &lt;code&gt;Services&lt;/code&gt; também são a forma padrão para se expor serviços do cluster para o mundo exterior.&lt;/p&gt;
+
+&lt;h2 id=&#34;arquitetura&#34;&gt;Arquitetura&lt;/h2&gt;
+
+&lt;p&gt;
+&lt;figure class=&#34;big&#34;&gt;
+  
+    
+      &lt;img class=&#34;lazyload&#34; data-src=&#34;https://upload.wikimedia.org/wikipedia/commons/b/be/Kubernetes.png&#34;  /&gt;
+    
+  
+  
+  &lt;figcaption&gt;
+    &lt;header&gt;&lt;b&gt;arquitetura do kubernetes&lt;/b&gt;&lt;/header&gt;
+    
+  &lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+&lt;style media=&#34;screen&#34;&gt;
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+&lt;/style&gt;
+&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

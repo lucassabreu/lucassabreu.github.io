@@ -17,6 +17,11 @@
   </url>
   
   <url>
+    <loc>http://www.lucassabreu.net.br/gist/coderockr-jam-2017-03/</loc>
+    <lastmod>2017-03-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>http://www.lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4/</loc>
     <lastmod>2017-03-10T00:00:00+00:00</lastmod>
   </url>
@@ -53,8 +58,20 @@
   </url>
   
   <url>
+    <loc>http://www.lucassabreu.net.br/tags/basics/</loc>
+    <lastmod>2017-03-11T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>http://www.lucassabreu.net.br/tags/buddy-works/</loc>
     <lastmod>2017-05-07T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.lucassabreu.net.br/tags/coderockr-jam/</loc>
+    <lastmod>2017-03-11T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -83,6 +100,12 @@
   </url>
   
   <url>
+    <loc>http://www.lucassabreu.net.br/gist/</loc>
+    <lastmod>2017-03-11T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>http://www.lucassabreu.net.br/tags/github/</loc>
     <lastmod>2017-05-07T00:00:00+00:00</lastmod>
     <priority>0</priority>
@@ -102,7 +125,7 @@
   
   <url>
     <loc>http://www.lucassabreu.net.br/tags/kubernetes/</loc>
-    <lastmod>2017-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2017-03-11T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
