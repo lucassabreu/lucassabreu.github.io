@@ -4,28 +4,29 @@
     <meta name="generator" content="Hugo 0.36.1" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tags | Lucas dos Santos Abreu</title>
-    <meta name="description" content="">
-    <meta name="keywords" content="">
+    <title>Aplicando HTTPS para uma SPA na AWS | Lucas dos Santos Abreu</title>
+    <meta name="description" content="Como aplicamos HTTPS para o nosso frontend usando as ferramentas da AWS">
+    <meta name="keywords" content="aws, https, cloudfront, s3">
     
     
     
-    
-      <meta name="robots" content="noindex">
     
     
 
   <meta name="author" content="">
 
 
-    <meta property="og:title" content="Tags" />
-<meta property="og:description" content="" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="http://www.lucassabreu.net.br/tags/" />
+    <meta property="og:title" content="Aplicando HTTPS para uma SPA na AWS" />
+<meta property="og:description" content="Como aplicamos HTTPS para o nosso frontend usando as ferramentas da AWS" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://www.lucassabreu.net.br/post/aplicando-https-para-uma-spa-na-aws/" />
 
 
 
-<meta property="og:updated_time" content="2017-02-24T00:00:00&#43;00:00"/>
+<meta property="article:published_time" content="2018-02-18T14:44:28&#43;00:00"/>
+
+<meta property="article:modified_time" content="2018-02-18T14:44:28&#43;00:00"/>
+
 
 
 
@@ -46,9 +47,7 @@
     
     
     
-      <link href="http://www.lucassabreu.net.br/tags/index.xml" rel="alternate" type="application/rss+xml" title="Lucas dos Santos Abreu" />
-    
-    <link rel="canonical" href="http://www.lucassabreu.net.br/tags/">
+    <link rel="canonical" href="http://www.lucassabreu.net.br/post/aplicando-https-para-uma-spa-na-aws/">
     
     
     <link rel="icon" sizes="any" href="data:image/svg+xml,%3Csvg%20viewBox='0%200%2046%2045'%20xmlns='http://www.w3.org/2000/svg'%3E%3Ctitle%3EAfter%20Dark%3C/title%3E%3Cpath%20d='M.708%2045L23%20.416%2045.292%2045H.708zM35%2038L23%2019%2011%2038h24z'%20fill='%23000'/%3E%3C/svg%3E">
@@ -206,62 +205,114 @@ p.code-legend {
 
 </header>
     <main>
-  <header>
-    <h1>Tags</h1>
-  </header>
-  <ul>
+  <article itemscope itemtype="http://schema.org/BlogPosting">
     
-      <li><a href="apps">apps</a> (1)
+<meta itemprop="name" content="Aplicando HTTPS para uma SPA na AWS">
+<meta itemprop="description" content="Como aplicamos HTTPS para o nosso frontend usando as ferramentas da AWS">
+
+
+<meta itemprop="datePublished" content="2018-02-18T14:44:28&#43;00:00" />
+<meta itemprop="dateModified" content="2018-02-18T14:44:28&#43;00:00" />
+<meta itemprop="wordCount" content="57">
+
+
+
+<meta itemprop="keywords" content="aws,https,cloudfront,s3," />
+
+    <header>
+      <h1 itemprop="headline">Aplicando HTTPS para uma SPA na AWS</h1>
+      <p class="muted">
+        <svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+  <circle cx="16" cy="16" r="14" />
+  <path d="M16 8 L16 16 20 20" />
+</svg>
+<span>1 minute read</span>
+<svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+  <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z" />
+</svg>
+
+  Published: <time datetime="2018-02-18T14:44:28&#43;00:00">18 Feb, 2018</time>
+
+
+      </p>
+    </header>
     
-      <li><a href="aws">aws</a> (1)
+
+    <div itemprop="articleBody">
+      <p>Recentemente alteramos a landing page e o SPA do Planrockr para suportar HTTPS, por muito tempo mantemos apenas o backend executando sobre HTTPS, mas percebemos que seria melhor prover nosso frontend sobre HTTPS também, seja para melhorar o <a href="https://webmasters.googleblog.com/2014/08/https-as-ranking-signal.html">ranking em sites de pesquisa</a>, garantir a segurança nas comunicações ou simplesmente passar mais segurança para os nossos usuários.</p>
+
+      <section class="share">
+  <hr />
+  <b>Share this post at</b>
+  <a href="https://twitter.com/share?text=Aplicando%20HTTPS%20para%20uma%20SPA%20na%c2%a0AWS&nbsp;-&nbsp;Lucas%20dos%20Santos%20Abreu&amp;url=http%3a%2f%2fwww.lucassabreu.net.br%2fpost%2faplicando-https-para-uma-spa-na-aws%2f"
+      onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      Twitter
+  </a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fwww.lucassabreu.net.br%2fpost%2faplicando-https-para-uma-spa-na-aws%2f"
+      onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      Facebook
+  </a>
+  <a href="http://pinterest.com/pin/create/button/?url=http%3a%2f%2fwww.lucassabreu.net.br%2fpost%2faplicando-https-para-uma-spa-na-aws%2f&amp;description=Aplicando%20HTTPS%20para%20uma%20SPA%20na%c2%a0AWS"
+      onclick="window.open(this.href, 'pinterest-share','width=580,height=296');return false;">
+      Pinterest
+  </a>
+  <a href="https://plus.google.com/share?url=http%3a%2f%2fwww.lucassabreu.net.br%2fpost%2faplicando-https-para-uma-spa-na-aws%2f"
+     onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      Google+
+  </a>
+  <hr />
+</section>
+
+    </div>
     
-      <li><a href="basics">basics</a> (1)
+      <article>
+        <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
     
-      <li><a href="buddy-works">buddy-works</a> (1)
     
-      <li><a href="cloudfront">cloudfront</a> (1)
     
-      <li><a href="coderockr-jam">coderockr-jam</a> (1)
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "lucas-dos-santos-abreu" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      </article>
     
-      <li><a href="coderockr-way">coderockr-way</a> (1)
+    <footer>
+      <hr>
+      <p>
+  Published
+  
     
-      <li><a href="continuous-deployment">continuous-deployment</a> (1)
+      by <span itemprop="author"></span>
     
-      <li><a href="continuous-integration">continuous-integration</a> (2)
-    
-      <li><a href="docker">docker</a> (4)
-    
-      <li><a href="github">github</a> (3)
-    
-      <li><a href="gitlab">gitlab</a> (1)
-    
-      <li><a href="https">https</a> (1)
-    
-      <li><a href="introduction">introduction</a> (4)
-    
-      <li><a href="kubernetes">kubernetes</a> (5)
-    
-      <li><a href="new-product-development">new-product-development</a> (1)
-    
-      <li><a href="openshift">openshift</a> (6)
-    
-      <li><a href="product-design">product-design</a> (1)
-    
-      <li><a href="project-management">project-management</a> (1)
-    
-      <li><a href="pull-request">pull-request</a> (1)
-    
-      <li><a href="s3">s3</a> (1)
-    
-      <li><a href="script">script</a> (1)
-    
-      <li><a href="scripting">scripting</a> (1)
-    
-      <li><a href="simple">simple</a> (4)
-    
-      <li><a href="social-anxiety">social-anxiety</a> (1)
-    
-  </ul>
+  
+  <time datetime="2018-02-18T14:44:28&#43;00:00">
+    18 Feb, 2018
+  </time>
+  
+  
+    and tagged <a href="/tags/aws/">aws</a>, <a href="/tags/cloudfront/">cloudfront</a>, <a href="/tags/https/">https</a> and <a href="/tags/s3/">s3</a>
+  
+  using <span itemprop="wordCount">57</span> words.
+</p>
+
+      
+
+
+
+    </footer>
+  </article>
 </main>
     <footer>
   
