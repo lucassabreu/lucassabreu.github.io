@@ -3,11 +3,6 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>http://www.lucassabreu.net.br/post/aplicando-https-para-uma-spa-na-aws/</loc>
-    <lastmod>2018-02-18T14:44:28+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>http://www.lucassabreu.net.br/about/</loc>
     <lastmod>2017-05-20T22:05:52+00:00</lastmod>
   </url>
@@ -64,12 +59,6 @@
   </url>
   
   <url>
-    <loc>http://www.lucassabreu.net.br/tags/aws/</loc>
-    <lastmod>2018-02-18T14:44:28+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>http://www.lucassabreu.net.br/tags/basics/</loc>
     <lastmod>2017-03-11T00:00:00+00:00</lastmod>
     <priority>0</priority>
@@ -83,12 +72,6 @@
   
   <url>
     <loc>http://www.lucassabreu.net.br/categories/</loc>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.lucassabreu.net.br/tags/cloudfront/</loc>
-    <lastmod>2018-02-18T14:44:28+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -141,12 +124,6 @@
   </url>
   
   <url>
-    <loc>http://www.lucassabreu.net.br/tags/https/</loc>
-    <lastmod>2018-02-18T14:44:28+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>http://www.lucassabreu.net.br/tags/introduction/</loc>
     <lastmod>2017-03-10T00:00:00+00:00</lastmod>
     <priority>0</priority>
@@ -160,7 +137,7 @@
   
   <url>
     <loc>http://www.lucassabreu.net.br/</loc>
-    <lastmod>2018-02-18T14:44:28+00:00</lastmod>
+    <lastmod>2017-05-07T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -178,7 +155,7 @@
   
   <url>
     <loc>http://www.lucassabreu.net.br/post/</loc>
-    <lastmod>2018-02-18T14:44:28+00:00</lastmod>
+    <lastmod>2017-05-07T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -197,12 +174,6 @@
   <url>
     <loc>http://www.lucassabreu.net.br/tags/pull-request/</loc>
     <lastmod>2017-05-01T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.lucassabreu.net.br/tags/s3/</loc>
-    <lastmod>2018-02-18T14:44:28+00:00</lastmod>
     <priority>0</priority>
   </url>
   
