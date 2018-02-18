@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
-    <meta name="generator" content="Hugo 0.18" />
+    <meta name="generator" content="Hugo 0.37-DEV" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 1 | Lucas dos Santos Abreu</title>
@@ -24,7 +24,11 @@
   <meta property="og:image" content="http://www.lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png" />
 
 
-<meta property="og:updated_time" content="2017-03-07T00:00:00&#43;00:00"/>
+
+<meta property="article:published_time" content="2017-03-07T00:00:00&#43;00:00"/>
+
+<meta property="article:modified_time" content="2017-03-07T00:00:00&#43;00:00"/>
+
 
 
 
@@ -213,6 +217,7 @@ p.code-legend {
 <meta itemprop="description" content="Como parte das minhas metas dentro da Coderockr está a construção de um cluster usando algumas das ferramentas de orquestração de contêineres que existem no mercado; como o Docker Swarm, Kubernetes, Apache Mesos, etc. Optei pelo **Kubernetes**...">
 
 
+<meta itemprop="datePublished" content="2017-03-07T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2017-03-07T00:00:00&#43;00:00" />
 <meta itemprop="wordCount" content="808">
 
@@ -220,7 +225,7 @@ p.code-legend {
 
 
 
-<meta itemprop="keywords" content="apps,basics,buddy-works,coderockr-jam,coderockr-way,continuous-deployment,continuous-integration,docker,github,gitlab,introduction,kubernetes,new-product-development,openshift,product-design,project-management,pull-request,script,scripting,simple,social-anxiety," />
+<meta itemprop="keywords" content="Kubernetes,Openshift,Introduction,Simple,Docker," />
 
     <header>
       <h1 itemprop="headline">Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 1</h1>
@@ -320,17 +325,15 @@ p.code-legend {
 <p>Então publiquei no <a href="http://hub.docker.com">Docker Hub</a> uma imagem para a aplicação (<a href="https://hub.docker.com/r/lucassabreu/openshift-app-test/">lucassabreu/openshift-app-test</a>) e outra para o banco de dados (<a href="https://hub.docker.com/r/lucassabreu/openshift-mysql-test/">lucassabreu/openshift-mysql-test</a>) - essa imagem é um MySQL normal, mas que adicionei um dump da base que vou usar para facilitar o deploy.</p>
 
 <p>Agora se eu quiser executar essa aplicação na minha máquina, posso simplesmente executar os seguintes comando do Docker e terei o servidor me respondendo em <code>http://localhost</code>:</p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #75715e">#!/bin/bash</span>
-docker run -d --name db-test <span style="color: #ae81ff">\</span>
-  -e <span style="color: #f8f8f2">MYSQL_ROOT_PASSWORD</span><span style="color: #f92672">=</span>root -e <span style="color: #f8f8f2">MYSQL_DATABASE</span><span style="color: #f92672">=</span>appointments <span style="color: #ae81ff">\</span>
-  -e <span style="color: #f8f8f2">MYSQL_USER</span><span style="color: #f92672">=</span>appoint -e <span style="color: #f8f8f2">MYSQL_PASSWORD</span><span style="color: #f92672">=</span><span style="color: #ae81ff">123</span> <span style="color: #ae81ff">\</span>
-  lucassabreu/openshift-mysql-test
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#!/bin/bash
+</span><span style="color:#75715e"></span>docker run -d --name db-test <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  -e MYSQL_ROOT_PASSWORD<span style="color:#f92672">=</span>root -e MYSQL_DATABASE<span style="color:#f92672">=</span>appointments <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  -e MYSQL_USER<span style="color:#f92672">=</span>appoint -e MYSQL_PASSWORD<span style="color:#f92672">=</span><span style="color:#ae81ff">123</span> <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  lucassabreu/openshift-mysql-test
 
-docker run -d --name app-test --link db-test:db <span style="color: #ae81ff">\</span>
-  -e <span style="color: #f8f8f2">DATABASE_CONNECTION</span><span style="color: #f92672">=</span>mysql://appoint:123@<span style="color: #f8f8f2">$db</span>:3306/appointments <span style="color: #ae81ff">\</span>
-  -p <span style="color: #ae81ff">80</span>:8080 lucassabreu/openshift-app-test
-</pre></div>
-
+docker run -d --name app-test --link db-test:db <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  -e DATABASE_CONNECTION<span style="color:#f92672">=</span>mysql://appoint:123@$db:3306/appointments <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  -p <span style="color:#ae81ff">80</span>:8080 lucassabreu/openshift-app-test</code></pre></div>
 <p>Certo, agora que tenho certeza de que a minha aplicação está operacional, comecei a criar os objetos do Kubernetes, mas antes é importante entender alguns conceitos da plataforma para não ficar muito perdido:</p>
 
 <h4 id="pod-https-kubernetes-io-docs-user-guide-pods"><a href="https://kubernetes.io/docs/user-guide/pods/">Pod</a></h4>
@@ -392,20 +395,25 @@ docker run -d --name app-test --link db-test:db <span style="color: #ae81ff">\</
     
       <article>
         <div id="disqus_thread"></div>
-<script type="text/javascript">
-    var disqus_shortname = 'lucas-dos-santos-abreu';
-    var disqus_identifier = 'http:\/\/www.lucassabreu.net.br\/post\/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1\/';
-    var disqus_title = 'Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 1';
-    var disqus_url = 'http:\/\/www.lucassabreu.net.br\/post\/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1\/';
-
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
     (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "lucas-dos-santos-abreu" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
     })();
 </script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
       </article>
     
     <footer>

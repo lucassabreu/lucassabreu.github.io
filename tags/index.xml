@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on Lucas dos Santos Abreu</title>
+    <link>http://www.lucassabreu.net.br/tags/</link>
+    <description>Recent content in Tags on Lucas dos Santos Abreu</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>pt-BR</language>
+    <lastBuildDate>Fri, 24 Feb 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://www.lucassabreu.net.br/tags/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Apps</title>
+      <link>http://www.lucassabreu.net.br/tags/apps/</link>
+      <pubDate>Fri, 24 Feb 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lucassabreu.net.br/tags/apps/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Basics</title>
+      <link>http://www.lucassabreu.net.br/tags/basics/</link>
+      <pubDate>Sat, 11 Mar 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lucassabreu.net.br/tags/basics/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Buddy Works</title>
+      <link>http://www.lucassabreu.net.br/tags/buddy-works/</link>
+      <pubDate>Sun, 07 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lucassabreu.net.br/tags/buddy-works/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Coderockr Jam</title>
+      <link>http://www.lucassabreu.net.br/tags/coderockr-jam/</link>
+      <pubDate>Sat, 11 Mar 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lucassabreu.net.br/tags/coderockr-jam/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Coderockr Way</title>
+      <link>http://www.lucassabreu.net.br/tags/coderockr-way/</link>
+      <pubDate>Tue, 10 Jan 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lucassabreu.net.br/tags/coderockr-way/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Continuous Deployment</title>
+      <link>http://www.lucassabreu.net.br/tags/continuous-deployment/</link>
+      <pubDate>Sun, 07 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lucassabreu.net.br/tags/continuous-deployment/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Continuous Integration</title>
+      <link>http://www.lucassabreu.net.br/tags/continuous-integration/</link>
+      <pubDate>Sun, 07 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lucassabreu.net.br/tags/continuous-integration/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Docker</title>
+      <link>http://www.lucassabreu.net.br/tags/docker/</link>
+      <pubDate>Fri, 10 Mar 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lucassabreu.net.br/tags/docker/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Github</title>
+      <link>http://www.lucassabreu.net.br/tags/github/</link>
+      <pubDate>Sun, 07 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lucassabreu.net.br/tags/github/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Gitlab</title>
+      <link>http://www.lucassabreu.net.br/tags/gitlab/</link>
+      <pubDate>Mon, 01 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lucassabreu.net.br/tags/gitlab/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Introduction</title>
+      <link>http://www.lucassabreu.net.br/tags/introduction/</link>
+      <pubDate>Fri, 10 Mar 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lucassabreu.net.br/tags/introduction/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Kubernetes</title>
+      <link>http://www.lucassabreu.net.br/tags/kubernetes/</link>
+      <pubDate>Sat, 11 Mar 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lucassabreu.net.br/tags/kubernetes/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>New Product Development</title>
+      <link>http://www.lucassabreu.net.br/tags/new-product-development/</link>
+      <pubDate>Fri, 24 Feb 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lucassabreu.net.br/tags/new-product-development/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Openshift</title>
+      <link>http://www.lucassabreu.net.br/tags/openshift/</link>
+      <pubDate>Sun, 07 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lucassabreu.net.br/tags/openshift/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Product Design</title>
+      <link>http://www.lucassabreu.net.br/tags/product-design/</link>
+      <pubDate>Fri, 24 Feb 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lucassabreu.net.br/tags/product-design/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Project Management</title>
+      <link>http://www.lucassabreu.net.br/tags/project-management/</link>
+      <pubDate>Tue, 10 Jan 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lucassabreu.net.br/tags/project-management/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Pull Request</title>
+      <link>http://www.lucassabreu.net.br/tags/pull-request/</link>
+      <pubDate>Mon, 01 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lucassabreu.net.br/tags/pull-request/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Script</title>
+      <link>http://www.lucassabreu.net.br/tags/script/</link>
+      <pubDate>Tue, 10 Jan 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lucassabreu.net.br/tags/script/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Scripting</title>
+      <link>http://www.lucassabreu.net.br/tags/scripting/</link>
+      <pubDate>Tue, 10 Jan 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lucassabreu.net.br/tags/scripting/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Simple</title>
+      <link>http://www.lucassabreu.net.br/tags/simple/</link>
+      <pubDate>Fri, 10 Mar 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lucassabreu.net.br/tags/simple/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Social Anxiety</title>
+      <link>http://www.lucassabreu.net.br/tags/social-anxiety/</link>
+      <pubDate>Fri, 24 Feb 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.lucassabreu.net.br/tags/social-anxiety/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

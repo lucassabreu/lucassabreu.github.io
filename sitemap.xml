@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
     <loc>http://www.lucassabreu.net.br/about/</loc>
@@ -66,6 +67,11 @@
   <url>
     <loc>http://www.lucassabreu.net.br/tags/buddy-works/</loc>
     <lastmod>2017-05-07T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.lucassabreu.net.br/categories/</loc>
     <priority>0</priority>
   </url>
   
@@ -197,6 +203,7 @@
   
   <url>
     <loc>http://www.lucassabreu.net.br/tags/</loc>
+    <lastmod>2017-02-24T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

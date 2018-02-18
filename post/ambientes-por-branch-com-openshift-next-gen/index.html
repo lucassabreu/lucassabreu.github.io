@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
-    <meta name="generator" content="Hugo 0.18" />
+    <meta name="generator" content="Hugo 0.37-DEV" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ambientes por Branch com OpenShift Next Gen | Lucas dos Santos Abreu</title>
@@ -24,7 +24,11 @@
   <meta property="og:image" content="http://www.lucassabreu.net.br/post/ambientes-por-branch-com-openshift-next-gen/header.png" />
 
 
-<meta property="og:updated_time" content="2017-05-01T00:00:00&#43;00:00"/>
+
+<meta property="article:published_time" content="2017-05-01T00:00:00&#43;00:00"/>
+
+<meta property="article:modified_time" content="2017-05-01T00:00:00&#43;00:00"/>
+
 
 
 
@@ -211,6 +215,7 @@ p.code-legend {
 <meta itemprop="description" content="Como melhorar o processo de Pull Request usando deploys por branch usando OpenShift Next Gen e Continuous Integration">
 
 
+<meta itemprop="datePublished" content="2017-05-01T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2017-05-01T00:00:00&#43;00:00" />
 <meta itemprop="wordCount" content="2035">
 
@@ -218,7 +223,7 @@ p.code-legend {
 
 
 
-<meta itemprop="keywords" content="apps,basics,buddy-works,coderockr-jam,coderockr-way,continuous-deployment,continuous-integration,docker,github,gitlab,introduction,kubernetes,new-product-development,openshift,product-design,project-management,pull-request,script,scripting,simple,social-anxiety," />
+<meta itemprop="keywords" content="Openshift,Gitlab,Continuous Integration,Pull Request,Github," />
 
     <header>
       <h1 itemprop="headline">Ambientes por Branch com OpenShift Next Gen</h1>
@@ -342,20 +347,18 @@ p.code-legend {
 
 
 <p>Primeiramente criei a base da aplicação usando Docker, a mesma gera uma página com o conteúdo acima. O que vale destacar nesse primeiro momento é que já configurei um processo de CI simples:</p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #ae81ff">build</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">image</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">docker:latest</span>
-  <span style="color: #ae81ff">services</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">docker:dind</span>
-  <span style="color: #ae81ff">stage</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">build</span>
-  <span style="color: #ae81ff">script</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">docker login -u &quot;gitlab-ci-token&quot; -p &quot;$CI_JOB_TOKEN&quot; $CI_REGISTRY</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">docker build --pull -t &quot;$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME&quot; .</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">docker push &quot;$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME&quot;</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">echo &quot;Pushing image $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME&quot;</span>
-  <span style="color: #ae81ff">only</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">branches</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">build:
+  image: docker:latest
+  services:
+    - docker:dind
+  stage: build
+  script:
+    - docker login -u <span style="color:#e6db74">&#34;gitlab-ci-token&#34;</span> -p <span style="color:#e6db74">&#34;$CI_JOB_TOKEN&#34;</span> $CI_REGISTRY
+    - docker build --pull -t <span style="color:#e6db74">&#34;$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME&#34;</span> .
+    - docker push <span style="color:#e6db74">&#34;$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME&#34;</span>
+    - echo <span style="color:#e6db74">&#34;Pushing image $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME&#34;</span>
+  only:
+    - branches</code></pre></div>
 <p class="code-legend">.gitlab-ci.yml</p>
 
 <p>Nesse CI eu construo o contêiner da aplicação para cada commit feito e guardo no registro do próprio GitLab por branch, dessa forma tenho uma versão do meu contêiner para cada uma das branchs que forem criadas e vou atualizando essas versões automaticamente a cada alteração.</p>
@@ -475,55 +478,53 @@ GitLab.</p>
 <p>Certo, agora o GitLab consegue conversar com o OpenShift. Podemos então alterar nossas regras de CI para criar duas novas etapas: <em>staging</em> e <em>production</em>, que irão realizar o deploy dos nossos ambientes padrões, sendo que <em>staging</em> será disparada automaticamente por commits na master e <em>production</em> ficará como manual.</p>
 
 <p>O .<code>gitlab-ci.yml</code> ficou como abaixo (já usando a integração com OpenShift):</p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #ae81ff">stages</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">build</span>
-  <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">staging</span>
-  <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">production</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">stages:
+  - build
+  - staging
+  - production
 
-<span style="color: #ae81ff">variables</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">KUBE_DOMAIN</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">getup.io</span>
+variables:
+  KUBE_DOMAIN: getup.io
 
-<span style="color: #ae81ff">build</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">stage</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">build</span>
-  <span style="color: #ae81ff">image</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">docker:latest</span>
-  <span style="color: #ae81ff">services</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">docker:dind</span>
-  <span style="color: #ae81ff">script</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">docker login -u &quot;gitlab-ci-token&quot; -p &quot;$CI_JOB_TOKEN&quot; $CI_REGISTRY</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">docker build --pull -t &quot;$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME&quot; .</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">docker push &quot;$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME&quot;</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">echo &quot;Pushing image $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME&quot;</span>
-  <span style="color: #ae81ff">only</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">branches</span>
+build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker login -u <span style="color:#e6db74">&#34;gitlab-ci-token&#34;</span> -p <span style="color:#e6db74">&#34;$CI_JOB_TOKEN&#34;</span> $CI_REGISTRY
+    - docker build --pull -t <span style="color:#e6db74">&#34;$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME&#34;</span> .
+    - docker push <span style="color:#e6db74">&#34;$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME&#34;</span>
+    - echo <span style="color:#e6db74">&#34;Pushing image $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME&#34;</span>
+  only:
+    - branches
 
-<span style="color: #ae81ff">staging</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">stage</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">staging</span>
-  <span style="color: #ae81ff">image</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">lucassabreu/openshift-k8s-cli:latest</span>
-  <span style="color: #ae81ff">variables</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #ae81ff">CI_ENVIRONMENT_URL</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">http://$CI_PROJECT_NAME-staging.$KUBE_DOMAIN</span>
-  <span style="color: #ae81ff">environment</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">staging</span>
-    <span style="color: #ae81ff">url</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">http://$CI_PROJECT_NAME-staging.$KUBE_DOMAIN</span>
-  <span style="color: #ae81ff">script</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">k8s/deploy</span>
-  <span style="color: #ae81ff">only</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">master</span>
+staging:
+  stage: staging
+  image: lucassabreu/openshift-k8s-cli:latest
+  variables:
+    CI_ENVIRONMENT_URL: http://$CI_PROJECT_NAME-staging.$KUBE_DOMAIN
+  environment:
+    name: staging
+    url: http://$CI_PROJECT_NAME-staging.$KUBE_DOMAIN
+  script:
+    - k8s/deploy
+  only:
+    - master
 
-<span style="color: #ae81ff">production</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">stage</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">production</span>
-  <span style="color: #ae81ff">image</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">lucassabreu/openshift-k8s-cli:latest</span>
-  <span style="color: #ae81ff">variables</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #ae81ff">CI_ENVIRONMENT_URL</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">http://$CI_PROJECT_NAME.$KUBE_DOMAIN</span>
-  <span style="color: #ae81ff">environment</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">production</span>
-    <span style="color: #ae81ff">url</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">http://$CI_PROJECT_NAME.$KUBE_DOMAIN</span>
-  <span style="color: #ae81ff">when</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">manual</span>
-  <span style="color: #ae81ff">script</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">k8s/deploy</span>
-  <span style="color: #ae81ff">only</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">master</span>
-</pre></div>
-
+production:
+  stage: production
+  image: lucassabreu/openshift-k8s-cli:latest
+  variables:
+    CI_ENVIRONMENT_URL: http://$CI_PROJECT_NAME.$KUBE_DOMAIN
+  environment:
+    name: production
+    url: http://$CI_PROJECT_NAME.$KUBE_DOMAIN
+  when: manual
+  script:
+    - k8s/deploy
+  only:
+    - master</code></pre></div>
 <p class="code-legend">.gitlab-ci.yml (v2)</p>
 
 <p>As mudança são os novos stages <code>staging</code> e <code>production</code>; as variáveis novas <code>KUBE_DOMAIN</code> e <code>CI_ENVIRONMENT_URL</code>; e o script <code>k8s/deploy</code>. Vamos por partes.</p>
@@ -533,92 +534,88 @@ GitLab.</p>
 <p>As etapas de <code>staging</code> e <code>production</code> irão fazer o deploy dos nossos ambientes e como comentei antes o ambiente de <em>staging</em> terá deploy automático para todo commit na master, enquanto <em>production</em> irá esperar uma ação do usuário. No mais as duas etapas são iguais mudando apenas a URL que estão sendo expostas. Estou usando a imagem <code>lucassabreu/openshift-k8s-cli</code> que é basicamente um <code>ubuntu</code> com o <code>oc</code> instalado.</p>
 
 <p>O script <code>k8s/deploy</code> está abaixo e ele basicamente se autentica contra a API do OpenShift usando o <em>Service Token</em> que criamos antes, destrói a aplicação antiga e executa o deploy de uma nova.</p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #75715e">#!/bin/bash</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#!/bin/bash
+</span><span style="color:#75715e"></span>
+oc login <span style="color:#e6db74">&#34;</span>$KUBE_URL<span style="color:#e6db74">&#34;</span> --token <span style="color:#e6db74">&#34;</span>$KUBE_TOKEN<span style="color:#e6db74">&#34;</span>
+oc project <span style="color:#e6db74">&#34;</span>$KUBE_NAMESPACE<span style="color:#e6db74">&#34;</span>
 
-oc login <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$KUBE_URL</span><span style="color: #e6db74">&quot;</span> --token <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$KUBE_TOKEN</span><span style="color: #e6db74">&quot;</span>
-oc project <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$KUBE_NAMESPACE</span><span style="color: #e6db74">&quot;</span>
+HOSTNAME<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$CI_ENVIRONMENT_URL<span style="color:#e6db74">&#34;</span>
 
-<span style="color: #f8f8f2">HOSTNAME</span><span style="color: #f92672">=</span><span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$CI_ENVIRONMENT_URL</span><span style="color: #e6db74">&quot;</span>
+<span style="color:#75715e"># remove protocol from URL
+</span><span style="color:#75715e"></span>HOSTNAME<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>HOSTNAME/<span style="color:#ae81ff">\h</span>ttp:<span style="color:#ae81ff">\/\/</span>/<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+HOSTNAME<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>HOSTNAME/<span style="color:#ae81ff">\h</span>ttp:<span style="color:#ae81ff">\/\/</span>/<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
 
-<span style="color: #75715e"># remove protocol from URL</span>
-<span style="color: #f8f8f2">HOSTNAME</span><span style="color: #f92672">=</span><span style="color: #e6db74">&quot;${</span><span style="color: #f8f8f2">HOSTNAME/</span><span style="color: #ae81ff">\h</span><span style="color: #f8f8f2">ttp:</span><span style="color: #ae81ff">\/\/</span><span style="color: #f8f8f2">/</span><span style="color: #e6db74">}&quot;</span>
-<span style="color: #f8f8f2">HOSTNAME</span><span style="color: #f92672">=</span><span style="color: #e6db74">&quot;${</span><span style="color: #f8f8f2">HOSTNAME/</span><span style="color: #ae81ff">\h</span><span style="color: #f8f8f2">ttp:</span><span style="color: #ae81ff">\/\/</span><span style="color: #f8f8f2">/</span><span style="color: #e6db74">}&quot;</span>
+IMAGE_TAG<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$CI_REGISTRY_IMAGE<span style="color:#e6db74">:</span>$CI_BUILD_REF_NAME<span style="color:#e6db74">&#34;</span>
+ENV<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$CI_ENVIRONMENT_SLUG<span style="color:#e6db74">&#34;</span>
 
-<span style="color: #f8f8f2">IMAGE_TAG</span><span style="color: #f92672">=</span><span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$CI_REGISTRY_IMAGE</span><span style="color: #e6db74">:</span><span style="color: #f8f8f2">$CI_BUILD_REF_NAME</span><span style="color: #e6db74">&quot;</span>
-<span style="color: #f8f8f2">ENV</span><span style="color: #f92672">=</span><span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$CI_ENVIRONMENT_SLUG</span><span style="color: #e6db74">&quot;</span>
+echo <span style="color:#e6db74">&#34;&gt;&gt; Deleting old application...&#34;</span>
+oc delete all -l <span style="color:#e6db74">&#34;app=</span>$CI_ENVIRONMENT_SLUG<span style="color:#e6db74">&#34;</span>
 
-<span style="color: #f8f8f2">echo</span> <span style="color: #e6db74">&quot;&gt;&gt; Deleting old application...&quot;</span>
-oc delete all -l <span style="color: #e6db74">&quot;app=</span><span style="color: #f8f8f2">$CI_ENVIRONMENT_SLUG</span><span style="color: #e6db74">&quot;</span>
+echo <span style="color:#e6db74">&#34;&gt;&gt; Deploying image </span>$IMAGE_TAG<span style="color:#e6db74"> to env </span>$ENV<span style="color:#e6db74"> at </span>$HOSTNAME<span style="color:#e6db74">...&#34;</span>
 
-<span style="color: #f8f8f2">echo</span> <span style="color: #e6db74">&quot;&gt;&gt; Deploying image </span><span style="color: #f8f8f2">$IMAGE_TAG</span><span style="color: #e6db74"> to env </span><span style="color: #f8f8f2">$ENV</span><span style="color: #e6db74"> at </span><span style="color: #f8f8f2">$HOSTNAME</span><span style="color: #e6db74">...&quot;</span>
+sed <span style="color:#e6db74">&#34;
+</span><span style="color:#e6db74">  s|__HOSTNAME__|</span>$HOSTNAME<span style="color:#e6db74">|;
+</span><span style="color:#e6db74">  s|__ENV__|</span>$ENV<span style="color:#e6db74">|;
+</span><span style="color:#e6db74">  s|__IMAGE_TAG__|</span>$IMAGE_TAG<span style="color:#e6db74">|;
+</span><span style="color:#e6db74">  &#34;</span> k8s/full.yml | oc apply -f -
+<span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> $? !<span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
+  exit <span style="color:#ae81ff">1</span>
+<span style="color:#66d9ef">fi</span>
 
-sed <span style="color: #e6db74">&quot;</span>
-<span style="color: #e6db74">  s|__HOSTNAME__|</span><span style="color: #f8f8f2">$HOSTNAME</span><span style="color: #e6db74">|;</span>
-<span style="color: #e6db74">  s|__ENV__|</span><span style="color: #f8f8f2">$ENV</span><span style="color: #e6db74">|;</span>
-<span style="color: #e6db74">  s|__IMAGE_TAG__|</span><span style="color: #f8f8f2">$IMAGE_TAG</span><span style="color: #e6db74">|;</span>
-<span style="color: #e6db74">  &quot;</span> k8s/full.yml <span style="color: #f8f8f2">|</span> oc apply -f -
-<span style="color: #66d9ef">if</span> <span style="color: #f92672">[</span> <span style="color: #f8f8f2">$?</span> !<span style="color: #f92672">=</span> <span style="color: #ae81ff">0</span> <span style="color: #f92672">]</span><span style="color: #f8f8f2">;</span> <span style="color: #66d9ef">then</span>
-  <span style="color: #f8f8f2">exit</span> <span style="color: #ae81ff">1</span>
-<span style="color: #66d9ef">fi</span>
-
-<span style="color: #f8f8f2">echo</span> <span style="color: #e6db74">&quot;&gt;&gt; Deployed to </span><span style="color: #f8f8f2">$CI_ENVIRONMENT_URL</span><span style="color: #e6db74">&quot;</span>
-</pre></div>
-
+echo <span style="color:#e6db74">&#34;&gt;&gt; Deployed to </span>$CI_ENVIRONMENT_URL<span style="color:#e6db74">&#34;</span></code></pre></div>
 <p class="code-legend">k8s/deploy</p>
 
 <p>Vale ressaltar que é importante marcar os componentes do ambiente com <code>app=$CI_ENVIRONMENT_SLUG</code>, pois é assim que o GitLab consegue encontrar eles e lhe retornar status sobre eles.</p>
 
 <p>Também estou usando um truque de &ldquo;templating&rdquo; com o YAML que define os ambientes para poder inserir as variáveis de cada ambiente nele. Existem outras ferramentas mais avançadas como o <a href="https://github.com/kubernetes/helm">Helm</a>, mas para o meu exemplo templating com <code>sed</code> é o suficiente.</p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #ae81ff">apiVersion</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">extensions/v1beta1</span>
-<span style="color: #ae81ff">kind</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">Deployment</span>
-<span style="color: #ae81ff">metadata</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">hw-dpl-__ENV__</span>
-  <span style="color: #ae81ff">labels</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #ae81ff">app</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">__ENV__</span>
-<span style="color: #ae81ff">spec</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">replicas</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">1</span>
-  <span style="color: #ae81ff">template</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #ae81ff">metadata</span><span style="color: #f8f8f2">:</span>
-      <span style="color: #ae81ff">labels</span><span style="color: #f8f8f2">:</span>
-        <span style="color: #ae81ff">app</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">__ENV__</span>
-        <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">hw-pod</span>
-    <span style="color: #ae81ff">spec</span><span style="color: #f8f8f2">:</span>
-      <span style="color: #ae81ff">containers</span><span style="color: #f8f8f2">:</span>
-      <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">hw-container</span>
-        <span style="color: #ae81ff">image</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">__IMAGE_TAG__</span>
-        <span style="color: #ae81ff">imagePullPolicy</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">Always</span>
-        <span style="color: #ae81ff">ports</span><span style="color: #f8f8f2">:</span>
-        <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">web-port</span>
-          <span style="color: #ae81ff">containerPort</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">8080</span>
-<span style="color: #f8f8f2">---</span>
-<span style="color: #ae81ff">apiVersion</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;v1&quot;</span>
-<span style="color: #ae81ff">kind</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">Service</span>
-<span style="color: #ae81ff">metadata</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">hw-src-__ENV__</span>
-  <span style="color: #ae81ff">labels</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #ae81ff">app</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">__ENV__</span>
-<span style="color: #ae81ff">spec</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">ports</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">port</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">80</span>
-      <span style="color: #ae81ff">targetPort</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;web-port&quot;</span>
-      <span style="color: #ae81ff">protocol</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">TCP</span>
-  <span style="color: #ae81ff">selector</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">hw-pod</span>
-    <span style="color: #ae81ff">app</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">__ENV__</span>
-<span style="color: #f8f8f2">---</span>
-<span style="color: #ae81ff">apiVersion</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">v1</span>
-<span style="color: #ae81ff">kind</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">Route</span>
-<span style="color: #ae81ff">metadata</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">__ENV__</span>
-  <span style="color: #ae81ff">labels</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #ae81ff">app</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">__ENV__</span>
-<span style="color: #ae81ff">spec</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">host</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">__HOSTNAME__</span>
-  <span style="color: #ae81ff">to</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #ae81ff">kind</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">Service</span>
-    <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">hw-src-__ENV__</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: hw-dpl-__ENV__
+  labels:
+    app: __ENV__
+spec:
+  replicas: <span style="color:#ae81ff">1</span>
+  template:
+    metadata:
+      labels:
+        app: __ENV__
+        name: hw-pod
+    spec:
+      containers:
+      - name: hw-container
+        image: __IMAGE_TAG__
+        imagePullPolicy: Always
+        ports:
+        - name: web-port
+          containerPort: <span style="color:#ae81ff">8080</span>
+---
+apiVersion: <span style="color:#e6db74">&#34;v1&#34;</span>
+kind: Service
+metadata:
+  name: hw-src-__ENV__
+  labels:
+    app: __ENV__
+spec:
+  ports:
+    - port: <span style="color:#ae81ff">80</span>
+      targetPort: <span style="color:#e6db74">&#34;web-port&#34;</span>
+      protocol: TCP
+  selector:
+    name: hw-pod
+    app: __ENV__
+---
+apiVersion: v1
+kind: Route
+metadata:
+  name: __ENV__
+  labels:
+    app: __ENV__
+spec:
+  host: __HOSTNAME__
+  to:
+    kind: Service
+    name: hw-src-__ENV__</code></pre></div>
 <p class="code-legend">k8s/full.yml</p>
 
 <p>Agora, depois que do commit das alterações, o GitLab faz o <em>build</em>, o deploy da <em>staging</em> e <em>production</em> (manual); podemos ver na área <em>Environments</em> do GitLab que os ambientes estão rodando, ele inclusive traz alguns comandos para facilitar a vida: link para a URL do ambiente, terminal dentro do Pod e opção de Re-deploy.</p>
@@ -656,51 +653,49 @@ sed <span style="color: #e6db74">&quot;</span>
 <p>Basicamente precisamos de duas novas etapas no nosso CI, uma para subir o ambiente para uma branch e outro para destruir esse ambiente para evitar consumir recursos sem necessidade.</p>
 
 <p>Para isso fiz as seguintes alterações nos <code>.gitlab-ci.yml</code>:</p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #ae81ff">stages</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">build</span>
-  <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">review</span>
-  <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">staging</span>
-  <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">production</span>
-  <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">cleanup</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">stages:
+  - build
+  - review
+  - staging
+  - production
+  - cleanup
 
-<span style="color: #ae81ff">review</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">stage</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">review</span>
-  <span style="color: #ae81ff">image</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">lucassabreu/openshift-k8s-cli:latest</span>
-  <span style="color: #ae81ff">variables</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #ae81ff">CI_ENVIRONMENT_URL</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">http://$CI_PROJECT_NAME-$CI_ENVIRONMENT_SLUG.$KUBE_DOMAIN</span>
-  <span style="color: #ae81ff">environment</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">r/$CI_COMMIT_REF_NAME</span>
-    <span style="color: #ae81ff">url</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">http://$CI_PROJECT_NAME-$CI_ENVIRONMENT_SLUG.$KUBE_DOMAIN</span>
-    <span style="color: #ae81ff">on_stop</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">stop_review</span>
-  <span style="color: #ae81ff">script</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">k8s/deploy</span>
-  <span style="color: #ae81ff">only</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">branches</span>
-  <span style="color: #ae81ff">except</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">master</span>
+review:
+  stage: review
+  image: lucassabreu/openshift-k8s-cli:latest
+  variables:
+    CI_ENVIRONMENT_URL: http://$CI_PROJECT_NAME-$CI_ENVIRONMENT_SLUG.$KUBE_DOMAIN
+  environment:
+    name: r/$CI_COMMIT_REF_NAME
+    url: http://$CI_PROJECT_NAME-$CI_ENVIRONMENT_SLUG.$KUBE_DOMAIN
+    on_stop: stop_review
+  script:
+    - k8s/deploy
+  only:
+    - branches
+  except:
+    - master
 
-<span style="color: #ae81ff">stop_review</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">stage</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">cleanup</span>
-  <span style="color: #ae81ff">image</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">lucassabreu/openshift-k8s-cli:latest</span>
-  <span style="color: #ae81ff">environment</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">r/$CI_COMMIT_REF_NAME</span>
-    <span style="color: #ae81ff">action</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">stop</span>
-  <span style="color: #ae81ff">when</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">manual</span>
-  <span style="color: #ae81ff">variables</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #ae81ff">GIT_STRATEGY</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">none</span>
-  <span style="color: #ae81ff">script</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">oc login &quot;$KUBE_URL&quot; --token &quot;$KUBE_TOKEN&quot;</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">oc project &quot;$KUBE_NAMESPACE&quot;</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">oc delete deployments -l &quot;app=$CI_ENVIRONMENT_SLUG&quot;</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">oc delete all -l &quot;app=$CI_ENVIRONMENT_SLUG&quot;</span>
-  <span style="color: #ae81ff">only</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">branches</span>
-  <span style="color: #ae81ff">except</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">master</span>
+stop_review:
+  stage: cleanup
+  image: lucassabreu/openshift-k8s-cli:latest
+  environment:
+    name: r/$CI_COMMIT_REF_NAME
+    action: stop
+  when: manual
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - oc login <span style="color:#e6db74">&#34;$KUBE_URL&#34;</span> --token <span style="color:#e6db74">&#34;$KUBE_TOKEN&#34;</span>
+    - oc project <span style="color:#e6db74">&#34;$KUBE_NAMESPACE&#34;</span>
+    - oc delete deployments -l <span style="color:#e6db74">&#34;app=$CI_ENVIRONMENT_SLUG&#34;</span>
+    - oc delete all -l <span style="color:#e6db74">&#34;app=$CI_ENVIRONMENT_SLUG&#34;</span>
+  only:
+    - branches
+  except:
+    - master
 
-<span style="color: #f8f8f2">[...]</span>
-</pre></div>
-
+[...]</code></pre></div>
 <p class="code-legend">.gitlab-ci.yml (v3)</p>
 
 <p>Basicamente adicionei as duas novas etapas, <code>review</code> basicamente faz a mesma coisa que <code>staging</code>, mas usa um nome de ambiente dinâmico baseado na branch; e tem um <code>enviroment:on_stop</code> que basicamente indica o que fazer quando a branch for removida.</p>
@@ -712,14 +707,13 @@ sed <span style="color: #e6db74">&quot;</span>
 <p>Agora quando crio uma nova branch automaticamente é criado um novo ambiente para a mesma no OpenShift.</p>
 
 <p>Para testar criei a branch <code>a-change</code> e fiz a seguinte alteração:</p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span>   &lt;img id=&quot;logo&quot; src=&quot;logo.svg&quot;
-     alt=&quot;CodeRocker&quot; title=&quot;CodeRocker&quot; /&gt;
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-diff" data-lang="diff">   &lt;img id=&#34;logo&#34; src=&#34;logo.svg&#34;
+     alt=&#34;CodeRocker&#34; title=&#34;CodeRocker&#34; /&gt;
    &lt;h1&gt;Hello World !&lt;/h1&gt;
-<span style="color: #a6e22e">+  &lt;h2&gt;(with a change)&lt;/h2&gt;</span>
- &lt;/body&gt;
+<span style="color:#a6e22e">+  &lt;h2&gt;(with a change)&lt;/h2&gt;
+</span><span style="color:#a6e22e"></span> &lt;/body&gt;
  &lt;/html&gt;
-</pre></div>
-
+</code></pre></div>
 <p class="code-legend">public/index.html (pr)</p>
 
 <p>Assim que dei o <code>git push</code> começou o deploy do novo ambiente <code>r/a-change</code>, logo que terminou pude verificar na área de ambientes do GitLab que estava rodando, e tem as mesmas operações disponíveis que os outros, mais a opção de parada (<code>stop_review</code>):</p>
@@ -809,20 +803,25 @@ sed <span style="color: #e6db74">&quot;</span>
     
       <article>
         <div id="disqus_thread"></div>
-<script type="text/javascript">
-    var disqus_shortname = 'lucas-dos-santos-abreu';
-    var disqus_identifier = 'http:\/\/www.lucassabreu.net.br\/post\/ambientes-por-branch-com-openshift-next-gen\/';
-    var disqus_title = 'Ambientes por Branch com OpenShift Next Gen';
-    var disqus_url = 'http:\/\/www.lucassabreu.net.br\/post\/ambientes-por-branch-com-openshift-next-gen\/';
-
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
     (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "lucas-dos-santos-abreu" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
     })();
 </script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
       </article>
     
     <footer>

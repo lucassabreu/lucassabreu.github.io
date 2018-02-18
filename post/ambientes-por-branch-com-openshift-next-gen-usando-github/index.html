@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
-    <meta name="generator" content="Hugo 0.18" />
+    <meta name="generator" content="Hugo 0.37-DEV" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ambientes por Branch com OpenShift Next Gen usando GitHub | Lucas dos Santos Abreu</title>
@@ -24,7 +24,11 @@
   <meta property="og:image" content="http://www.lucassabreu.net.br/post/ambientes-por-branch-com-openshift-next-gen-usando-github/header.png" />
 
 
-<meta property="og:updated_time" content="2017-05-07T00:00:00&#43;00:00"/>
+
+<meta property="article:published_time" content="2017-05-07T00:00:00&#43;00:00"/>
+
+<meta property="article:modified_time" content="2017-05-07T00:00:00&#43;00:00"/>
+
 
 
 
@@ -211,14 +215,15 @@ p.code-legend {
 <meta itemprop="description" content="Esta postagem é uma continuação da &#34;Ambientes por Branch com OpenShift Next Gen&#34;, implementando o processo no GitHub usando Buddy.Works e o OpenShift da GetUp Cloud">
 
 
+<meta itemprop="datePublished" content="2017-05-07T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2017-05-07T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="1874">
+<meta itemprop="wordCount" content="1891">
 
   <meta itemprop="image" content="http://www.lucassabreu.net.br/post/ambientes-por-branch-com-openshift-next-gen-usando-github/header.png">
 
 
 
-<meta itemprop="keywords" content="apps,basics,buddy-works,coderockr-jam,coderockr-way,continuous-deployment,continuous-integration,docker,github,gitlab,introduction,kubernetes,new-product-development,openshift,product-design,project-management,pull-request,script,scripting,simple,social-anxiety," />
+<meta itemprop="keywords" content="Openshift,Continuous Integration,Continuous Deployment,Github,Buddy Works," />
 
     <header>
       <h1 itemprop="headline">Ambientes por Branch com OpenShift Next Gen usando GitHub</h1>
@@ -314,19 +319,17 @@ p.code-legend {
 <p>E configurei o Buddy para construir uma imagem com base nesse repositório e publicar ela como <a href="https://hub.docker.com/r/lucassabreu/k8s-pr-envs/">lucassabreu/k8s-pr-envs</a> no Docker Hub.</p>
 
 <p>Nesse momento o arquivo <code>buddy.yml</code> esta assim:</p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">pipeline</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;Build&quot;</span>
-  <span style="color: #ae81ff">trigger_mode</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;ON_EVERY_PUSH&quot;</span>
-  <span style="color: #ae81ff">ref_name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;master&quot;</span>
-  <span style="color: #ae81ff">actions</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">action</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;Build</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">Docker</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">image&quot;</span>
-    <span style="color: #ae81ff">type</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;DOCKERFILE&quot;</span>
-    <span style="color: #ae81ff">login</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;${DOCKER_HUB_USER}&quot;</span>
-    <span style="color: #ae81ff">password</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;${DOCKER_HUB_PASSWORD}&quot;</span>
-    <span style="color: #ae81ff">docker_image_tag</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;${execution.to_revision.revision}&quot;</span>
-    <span style="color: #ae81ff">dockerfile_path</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;Dockerfile&quot;</span>
-    <span style="color: #ae81ff">repository</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;lucassabreu/k8s-pr-envs&quot;</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">- pipeline: <span style="color:#e6db74">&#34;Build&#34;</span>
+  trigger_mode: <span style="color:#e6db74">&#34;ON_EVERY_PUSH&#34;</span>
+  ref_name: <span style="color:#e6db74">&#34;master&#34;</span>
+  actions:
+  - action: <span style="color:#e6db74">&#34;Build Docker image&#34;</span>
+    type: <span style="color:#e6db74">&#34;DOCKERFILE&#34;</span>
+    login: <span style="color:#e6db74">&#34;${DOCKER_HUB_USER}&#34;</span>
+    password: <span style="color:#e6db74">&#34;${DOCKER_HUB_PASSWORD}&#34;</span>
+    docker_image_tag: <span style="color:#e6db74">&#34;${execution.to_revision.revision}&#34;</span>
+    dockerfile_path: <span style="color:#e6db74">&#34;Dockerfile&#34;</span>
+    repository: <span style="color:#e6db74">&#34;lucassabreu/k8s-pr-envs&#34;</span></code></pre></div>
 <p class="code-legend">buddy.yml</p>
 
 <p>O fonte nesse momento pode ser visto em:</p>
@@ -444,71 +447,67 @@ token:  <i>token-do-openshift-que-estou-ocultando</i>
 <p>A URL da API e o domínio que o OpenShift irá utilizar também dependem do seu vendor, no meu caso a API está em <code>https://api.getupcould.com:443</code> e o domínio base é <code>getup.io</code>.</p>
 
 <p>Agora podemos criar os novos pipelines no Buddy. No <code>buddy.yml</code> as linhas abaixo:</p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">pipeline</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;Deploy</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">Staging&quot;</span>
-  <span style="color: #ae81ff">trigger_mode</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;ON_EVERY_PUSH&quot;</span>
-  <span style="color: #ae81ff">ref_name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;master&quot;</span>
-  <span style="color: #ae81ff">actions</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">action</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;Deploy</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">Master</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">to</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">Staging&quot;</span>
-    <span style="color: #ae81ff">type</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;BUILD&quot;</span>
-    <span style="color: #ae81ff">docker_image_name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;lucassabreu/openshift-k8s-cli&quot;</span>
-    <span style="color: #ae81ff">docker_image_tag</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;latest&quot;</span>
-    <span style="color: #ae81ff">execute_commands</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">TAG=&quot;${execution.to_revision.revision}&quot;</span>
-      <span style="color: #ae81ff">ENV=staging</span>
-      <span style="color: #ae81ff">OPENSHIFT_NAMESPACE=&quot;${OPENSHIFT_NAMESPACE}&quot;</span>
-      <span style="color: #ae81ff">OPENSHIFT_API_URL=&quot;${OPENSHIFT_API_URL}&quot;</span>
-      <span style="color: #ae81ff">OPENSHIFT_TOKEN=&quot;${OPENSHIFT_TOKEN}&quot;</span>
-      <span style="color: #ae81ff">OPENSHIFT_DOMAIN=&quot;${OPENSHIFT_DOMAIN}&quot;</span>
-      <span style="color: #ae81ff">./k8s/deploy</span>
-<span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">pipeline</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;Deploy</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">Production&quot;</span>
-  <span style="color: #ae81ff">trigger_mode</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;MANUAL&quot;</span>
-  <span style="color: #ae81ff">ref_name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;master&quot;</span>
-  <span style="color: #ae81ff">actions</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">action</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;Deploy</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">Master</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">to</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">Production&quot;</span>
-    <span style="color: #ae81ff">type</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;BUILD&quot;</span>
-    <span style="color: #ae81ff">docker_image_name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;lucassabreu/openshift-k8s-cli&quot;</span>
-    <span style="color: #ae81ff">docker_image_tag</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;latest&quot;</span>
-    <span style="color: #ae81ff">execute_commands</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">TAG=&quot;${execution.to_revision.revision}&quot;</span>
-      <span style="color: #ae81ff">ENV=production</span>
-      <span style="color: #ae81ff">OPENSHIFT_NAMESPACE=&quot;${OPENSHIFT_NAMESPACE}&quot;</span>
-      <span style="color: #ae81ff">OPENSHIFT_API_URL=&quot;${OPENSHIFT_API_URL}&quot;</span>
-      <span style="color: #ae81ff">OPENSHIFT_TOKEN=&quot;${OPENSHIFT_TOKEN}&quot;</span>
-      <span style="color: #ae81ff">OPENSHIFT_DOMAIN=&quot;${OPENSHIFT_DOMAIN}&quot;</span>
-      <span style="color: #ae81ff">./k8s/deploy</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">- pipeline: <span style="color:#e6db74">&#34;Deploy Staging&#34;</span>
+  trigger_mode: <span style="color:#e6db74">&#34;ON_EVERY_PUSH&#34;</span>
+  ref_name: <span style="color:#e6db74">&#34;master&#34;</span>
+  actions:
+  - action: <span style="color:#e6db74">&#34;Deploy Master to Staging&#34;</span>
+    type: <span style="color:#e6db74">&#34;BUILD&#34;</span>
+    docker_image_name: <span style="color:#e6db74">&#34;lucassabreu/openshift-k8s-cli&#34;</span>
+    docker_image_tag: <span style="color:#e6db74">&#34;latest&#34;</span>
+    execute_commands:
+    - TAG=<span style="color:#e6db74">&#34;${execution.to_revision.revision}&#34;</span>
+      ENV=staging
+      OPENSHIFT_NAMESPACE=<span style="color:#e6db74">&#34;${OPENSHIFT_NAMESPACE}&#34;</span>
+      OPENSHIFT_API_URL=<span style="color:#e6db74">&#34;${OPENSHIFT_API_URL}&#34;</span>
+      OPENSHIFT_TOKEN=<span style="color:#e6db74">&#34;${OPENSHIFT_TOKEN}&#34;</span>
+      OPENSHIFT_DOMAIN=<span style="color:#e6db74">&#34;${OPENSHIFT_DOMAIN}&#34;</span>
+      ./k8s/deploy
+- pipeline: <span style="color:#e6db74">&#34;Deploy Production&#34;</span>
+  trigger_mode: <span style="color:#e6db74">&#34;MANUAL&#34;</span>
+  ref_name: <span style="color:#e6db74">&#34;master&#34;</span>
+  actions:
+  - action: <span style="color:#e6db74">&#34;Deploy Master to Production&#34;</span>
+    type: <span style="color:#e6db74">&#34;BUILD&#34;</span>
+    docker_image_name: <span style="color:#e6db74">&#34;lucassabreu/openshift-k8s-cli&#34;</span>
+    docker_image_tag: <span style="color:#e6db74">&#34;latest&#34;</span>
+    execute_commands:
+    - TAG=<span style="color:#e6db74">&#34;${execution.to_revision.revision}&#34;</span>
+      ENV=production
+      OPENSHIFT_NAMESPACE=<span style="color:#e6db74">&#34;${OPENSHIFT_NAMESPACE}&#34;</span>
+      OPENSHIFT_API_URL=<span style="color:#e6db74">&#34;${OPENSHIFT_API_URL}&#34;</span>
+      OPENSHIFT_TOKEN=<span style="color:#e6db74">&#34;${OPENSHIFT_TOKEN}&#34;</span>
+      OPENSHIFT_DOMAIN=<span style="color:#e6db74">&#34;${OPENSHIFT_DOMAIN}&#34;</span>
+      ./k8s/deploy</code></pre></div>
 <p class="code-legend">buddy.yml (v2)</p>
 
 <p>Basicamente criei duas novas pipelines, uma chamada <code>Deploy Staging</code> e outra <code>Deploy Production</code> as únicas diferenças entre elas é que a <code>Deploy Staging</code> é automática para todo o commit na master e usa <code>ENV=staging</code> para indicar o ambiente; e <code>Deploy Production</code> é manual e usa <code>ENV=production</code>. Também criei variáveis para injetar os valores que informamos antes no Buddy e uma extra <code>COMMIT</code> para que ele consiga identificar qual imagem deve usar.</p>
 
 <p>Essas duas pipelines basicamente chamam o script abaixo:</p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #75715e">#!/bin/bash</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#!/bin/bash
+</span><span style="color:#75715e"></span>
+echo <span style="color:#e6db74">&#34;&gt;&gt; Connecting to OpenShift...&#34;</span>
+oc login <span style="color:#e6db74">&#34;</span>$OPENSHIFT_API_URL<span style="color:#e6db74">&#34;</span> --token <span style="color:#e6db74">&#34;</span>$OPENSHIFT_TOKEN<span style="color:#e6db74">&#34;</span>
+oc project <span style="color:#e6db74">&#34;</span>$OPENSHIFT_NAMESPACE<span style="color:#e6db74">&#34;</span>
 
-<span style="color: #f8f8f2">echo</span> <span style="color: #e6db74">&quot;&gt;&gt; Connecting to OpenShift...&quot;</span>
-oc login <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$OPENSHIFT_API_URL</span><span style="color: #e6db74">&quot;</span> --token <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$OPENSHIFT_TOKEN</span><span style="color: #e6db74">&quot;</span>
-oc project <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$OPENSHIFT_NAMESPACE</span><span style="color: #e6db74">&quot;</span>
+echo <span style="color:#e6db74">&#34;&gt;&gt; Removing old application...&#34;</span>
+oc delete all -l <span style="color:#e6db74">&#34;app=</span>$ENV<span style="color:#e6db74">&#34;</span>
 
-<span style="color: #f8f8f2">echo</span> <span style="color: #e6db74">&quot;&gt;&gt; Removing old application...&quot;</span>
-oc delete all -l <span style="color: #e6db74">&quot;app=</span><span style="color: #f8f8f2">$ENV</span><span style="color: #e6db74">&quot;</span>
+IMAGE_TAG<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;lucassabreu/k8s-pr-envs:</span>$TAG<span style="color:#e6db74">&#34;</span>
+HOSTNAME<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$OPENSHIFT_NAMESPACE<span style="color:#e6db74">-</span>$ENV<span style="color:#e6db74">.</span>$OPENSHIFT_DOMAIN<span style="color:#e6db74">&#34;</span>
 
-<span style="color: #f8f8f2">IMAGE_TAG</span><span style="color: #f92672">=</span><span style="color: #e6db74">&quot;lucassabreu/k8s-pr-envs:</span><span style="color: #f8f8f2">$TAG</span><span style="color: #e6db74">&quot;</span>
-<span style="color: #f8f8f2">HOSTNAME</span><span style="color: #f92672">=</span><span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$OPENSHIFT_NAMESPACE</span><span style="color: #e6db74">-</span><span style="color: #f8f8f2">$ENV</span><span style="color: #e6db74">.</span><span style="color: #f8f8f2">$OPENSHIFT_DOMAIN</span><span style="color: #e6db74">&quot;</span>
+<span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> <span style="color:#e6db74">&#34;</span>$ENV<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;production&#34;</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
+    HOSTNAME<span style="color:#f92672">=</span>$OPENSHIFT_NAMESPACE.$OPENSHIFT_DOMAIN
+<span style="color:#66d9ef">fi</span>
 
-<span style="color: #66d9ef">if</span> <span style="color: #f92672">[</span> <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$ENV</span><span style="color: #e6db74">&quot;</span> <span style="color: #f92672">=</span> <span style="color: #e6db74">&quot;production&quot;</span> <span style="color: #f92672">]</span><span style="color: #f8f8f2">;</span> <span style="color: #66d9ef">then</span>
-    <span style="color: #f8f8f2">HOSTNAME</span><span style="color: #f92672">=</span><span style="color: #f8f8f2">$OPENSHIFT_NAMESPACE</span>.<span style="color: #f8f8f2">$OPENSHIFT_DOMAIN</span>
-<span style="color: #66d9ef">fi</span>
+echo <span style="color:#e6db74">&#34;&gt;&gt; Deploying application...&#34;</span>
+sed <span style="color:#e6db74">&#34;
+</span><span style="color:#e6db74">    s|__ENV__|</span>$ENV<span style="color:#e6db74">|;
+</span><span style="color:#e6db74">    s|__IMAGE_TAG__|</span>$IMAGE_TAG<span style="color:#e6db74">|;
+</span><span style="color:#e6db74">    s|__HOSTNAME__|</span>$HOSTNAME<span style="color:#e6db74">|;
+</span><span style="color:#e6db74">    &#34;</span> k8s/full.yml | oc apply -f -
 
-<span style="color: #f8f8f2">echo</span> <span style="color: #e6db74">&quot;&gt;&gt; Deploying application...&quot;</span>
-sed <span style="color: #e6db74">&quot;</span>
-<span style="color: #e6db74">    s|__ENV__|</span><span style="color: #f8f8f2">$ENV</span><span style="color: #e6db74">|;</span>
-<span style="color: #e6db74">    s|__IMAGE_TAG__|</span><span style="color: #f8f8f2">$IMAGE_TAG</span><span style="color: #e6db74">|;</span>
-<span style="color: #e6db74">    s|__HOSTNAME__|</span><span style="color: #f8f8f2">$HOSTNAME</span><span style="color: #e6db74">|;</span>
-<span style="color: #e6db74">    &quot;</span> k8s/full.yml <span style="color: #f8f8f2">|</span> oc apply -f -
-
-<span style="color: #f8f8f2">echo</span> <span style="color: #e6db74">&quot;Enviroment </span><span style="color: #f8f8f2">$ENV</span><span style="color: #e6db74"> deployed to: http://</span><span style="color: #f8f8f2">$HOSTNAME</span><span style="color: #e6db74">/&quot;</span>
-</pre></div>
-
+echo <span style="color:#e6db74">&#34;Enviroment </span>$ENV<span style="color:#e6db74"> deployed to: http://</span>$HOSTNAME<span style="color:#e6db74">/&#34;</span></code></pre></div>
 <p class="code-legend">k8s/deploy</p>
 
 <p>Este script basicamente se autentica contra a API do OpenShift usando o Token que criamos antes, destrói a aplicação antiga e executa o deploy
@@ -519,56 +518,54 @@ de uma nova.</p>
 <p>É importante ressaltar que estou usando uma imagem customizada para rodar esses comandos (<code>lucassabreu/openshift-k8s-cli</code>) que basicamente é um <code>ubuntu</code> com o <code>oc</code> instalado dentro dela.</p>
 
 <p>Também estou usando um truque de &ldquo;<em>templating</em>&rdquo; com o YAML que define os ambientes para poder inserir as variáveis de cada ambiente nele. Existem outras ferramentas mais avançadas como o <a href="https://github.com/kubernetes/helm">Helm</a>, mas para o meu exemplo templating com <code>sed</code> é o suficiente.</p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #ae81ff">apiVersion</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">extensions/v1beta1</span>
-<span style="color: #ae81ff">kind</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">Deployment</span>
-<span style="color: #ae81ff">metadata</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">hw-dpl-__ENV__</span>
-  <span style="color: #ae81ff">labels</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #ae81ff">app</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">__ENV__</span>
-<span style="color: #ae81ff">spec</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">replicas</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">1</span>
-  <span style="color: #ae81ff">template</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #ae81ff">metadata</span><span style="color: #f8f8f2">:</span>
-      <span style="color: #ae81ff">labels</span><span style="color: #f8f8f2">:</span>
-        <span style="color: #ae81ff">app</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">__ENV__</span>
-        <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">hw-pod</span>
-    <span style="color: #ae81ff">spec</span><span style="color: #f8f8f2">:</span>
-      <span style="color: #ae81ff">containers</span><span style="color: #f8f8f2">:</span>
-      <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">hw-container</span>
-        <span style="color: #ae81ff">image</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">__IMAGE_TAG__</span>
-        <span style="color: #ae81ff">imagePullPolicy</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">Always</span>
-        <span style="color: #ae81ff">ports</span><span style="color: #f8f8f2">:</span>
-        <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">web-port</span>
-          <span style="color: #ae81ff">containerPort</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">8080</span>
-<span style="color: #f8f8f2">---</span>
-<span style="color: #ae81ff">apiVersion</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;v1&quot;</span>
-<span style="color: #ae81ff">kind</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">Service</span>
-<span style="color: #ae81ff">metadata</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">hw-src-__ENV__</span>
-  <span style="color: #ae81ff">labels</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #ae81ff">app</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">__ENV__</span>
-<span style="color: #ae81ff">spec</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">ports</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">port</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">80</span>
-      <span style="color: #ae81ff">targetPort</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;web-port&quot;</span>
-      <span style="color: #ae81ff">protocol</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">TCP</span>
-  <span style="color: #ae81ff">selector</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">hw-pod</span>
-    <span style="color: #ae81ff">app</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">__ENV__</span>
-<span style="color: #f8f8f2">---</span>
-<span style="color: #ae81ff">apiVersion</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">v1</span>
-<span style="color: #ae81ff">kind</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">Route</span>
-<span style="color: #ae81ff">metadata</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">__ENV__</span>
-  <span style="color: #ae81ff">labels</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #ae81ff">app</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">__ENV__</span>
-<span style="color: #ae81ff">spec</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">host</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">__HOSTNAME__</span>
-  <span style="color: #ae81ff">to</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #ae81ff">kind</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">Service</span>
-    <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">hw-src-__ENV__</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: hw-dpl-__ENV__
+  labels:
+    app: __ENV__
+spec:
+  replicas: <span style="color:#ae81ff">1</span>
+  template:
+    metadata:
+      labels:
+        app: __ENV__
+        name: hw-pod
+    spec:
+      containers:
+      - name: hw-container
+        image: __IMAGE_TAG__
+        imagePullPolicy: Always
+        ports:
+        - name: web-port
+          containerPort: <span style="color:#ae81ff">8080</span>
+---
+apiVersion: <span style="color:#e6db74">&#34;v1&#34;</span>
+kind: Service
+metadata:
+  name: hw-src-__ENV__
+  labels:
+    app: __ENV__
+spec:
+  ports:
+    - port: <span style="color:#ae81ff">80</span>
+      targetPort: <span style="color:#e6db74">&#34;web-port&#34;</span>
+      protocol: TCP
+  selector:
+    name: hw-pod
+    app: __ENV__
+---
+apiVersion: v1
+kind: Route
+metadata:
+  name: __ENV__
+  labels:
+    app: __ENV__
+spec:
+  host: __HOSTNAME__
+  to:
+    kind: Service
+    name: hw-src-__ENV__</code></pre></div>
 <p class="code-legend">k8s/full.yml</p>
 
 <p>Agora toda vez que é feito commit na master o ambiente de <em>staging</em> é automaticamente atualizado, e ficou bem simples atualizar o ambiente <em>production</em>.</p>
@@ -584,33 +581,31 @@ de uma nova.</p>
 <p>Basicamente precisamos de duas novas etapas no nosso CI, uma para subir o ambiente para uma branch e outro para destruir esse ambiente.</p>
 
 <p>Primeiro vamos preparar o deploy por branch, para isso adicionei as seguintes linhas do <code>buddy.yml</code>:</p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">pipeline</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;Review&quot;</span>
-  <span style="color: #ae81ff">trigger_mode</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;ON_EVERY_PUSH&quot;</span>
-  <span style="color: #ae81ff">ref_name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;((?!master).*)&quot;</span>
-  <span style="color: #ae81ff">actions</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">action</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;Build</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">Docker</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">image&quot;</span>
-    <span style="color: #ae81ff">type</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;DOCKERFILE&quot;</span>
-    <span style="color: #ae81ff">login</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;${DOCKER_HUB_USER}&quot;</span>
-    <span style="color: #ae81ff">password</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;${DOCKER_HUB_PASSWORD}&quot;</span>
-    <span style="color: #ae81ff">docker_image_tag</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;${execution.branch.name}&quot;</span>
-    <span style="color: #ae81ff">dockerfile_path</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;Dockerfile&quot;</span>
-    <span style="color: #ae81ff">repository</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;lucassabreu/k8s-pr-envs&quot;</span>
-  <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">action</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;Deploy</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">By</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">Branch&quot;</span>
-    <span style="color: #ae81ff">type</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;BUILD&quot;</span>
-    <span style="color: #ae81ff">docker_image_name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;lucassabreu/openshift-k8s-cli&quot;</span>
-    <span style="color: #ae81ff">docker_image_tag</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;latest&quot;</span>
-    <span style="color: #ae81ff">execute_commands</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">TAG=&quot;${execution.branch.name}&quot;</span>
-      <span style="color: #ae81ff">ENV=&quot;${execution.branch.name}&quot;</span>
-      <span style="color: #ae81ff">GITHUB_TOKEN=&quot;${GITHUB_TOKEN}&quot;</span>
-      <span style="color: #ae81ff">LOG_URL=&quot;${execution.html_url}&quot;</span>
-      <span style="color: #ae81ff">OPENSHIFT_NAMESPACE=&quot;${OPENSHIFT_NAMESPACE}&quot;</span>
-      <span style="color: #ae81ff">OPENSHIFT_API_URL=&quot;${OPENSHIFT_API_URL}&quot;</span>
-      <span style="color: #ae81ff">OPENSHIFT_TOKEN=&quot;${OPENSHIFT_TOKEN}&quot;</span>
-      <span style="color: #ae81ff">OPENSHIFT_DOMAIN=&quot;${OPENSHIFT_DOMAIN}&quot;</span>
-      <span style="color: #ae81ff">./k8s/deploy</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">- pipeline: <span style="color:#e6db74">&#34;Review&#34;</span>
+  trigger_mode: <span style="color:#e6db74">&#34;ON_EVERY_PUSH&#34;</span>
+  ref_name: <span style="color:#e6db74">&#34;((?!master).*)&#34;</span>
+  actions:
+  - action: <span style="color:#e6db74">&#34;Build Docker image&#34;</span>
+    type: <span style="color:#e6db74">&#34;DOCKERFILE&#34;</span>
+    login: <span style="color:#e6db74">&#34;${DOCKER_HUB_USER}&#34;</span>
+    password: <span style="color:#e6db74">&#34;${DOCKER_HUB_PASSWORD}&#34;</span>
+    docker_image_tag: <span style="color:#e6db74">&#34;${execution.branch.name}&#34;</span>
+    dockerfile_path: <span style="color:#e6db74">&#34;Dockerfile&#34;</span>
+    repository: <span style="color:#e6db74">&#34;lucassabreu/k8s-pr-envs&#34;</span>
+  - action: <span style="color:#e6db74">&#34;Deploy By Branch&#34;</span>
+    type: <span style="color:#e6db74">&#34;BUILD&#34;</span>
+    docker_image_name: <span style="color:#e6db74">&#34;lucassabreu/openshift-k8s-cli&#34;</span>
+    docker_image_tag: <span style="color:#e6db74">&#34;latest&#34;</span>
+    execute_commands:
+    - TAG=<span style="color:#e6db74">&#34;${execution.branch.name}&#34;</span>
+      ENV=<span style="color:#e6db74">&#34;${execution.branch.name}&#34;</span>
+      GITHUB_TOKEN=<span style="color:#e6db74">&#34;${GITHUB_TOKEN}&#34;</span>
+      LOG_URL=<span style="color:#e6db74">&#34;${execution.html_url}&#34;</span>
+      OPENSHIFT_NAMESPACE=<span style="color:#e6db74">&#34;${OPENSHIFT_NAMESPACE}&#34;</span>
+      OPENSHIFT_API_URL=<span style="color:#e6db74">&#34;${OPENSHIFT_API_URL}&#34;</span>
+      OPENSHIFT_TOKEN=<span style="color:#e6db74">&#34;${OPENSHIFT_TOKEN}&#34;</span>
+      OPENSHIFT_DOMAIN=<span style="color:#e6db74">&#34;${OPENSHIFT_DOMAIN}&#34;</span>
+      ./k8s/deploy</code></pre></div>
 <p>No novo pipeline <em>Review</em> temos um <em>build</em> da imagem e um deploy de um ambiente para a branch em questão, para uma rota própria.</p>
 
 <p>Eu acabei juntando essas duas ações, pois o build que roda na master vai versionando as imagens por commit, que é uma prática comum e que ajudaria a fazer o deploy para produção mais simples, porém branchs de desenvolvimento tendem a ser mais caóticas e iriam poluir muito o registro de imagens (se usar o do AWS seria um custo maior também), então preferi manter uma imagem por branch, até para não confundir também.</p>
@@ -620,22 +615,20 @@ de uma nova.</p>
 <p>Eu sei disso porque eu escrevi o script, eu poderia documentar isso no projeto para todos saberem como descobrir as URLs corretas, mas é mais do que natural esperar erros por esse caminho, um &ldquo;o&rdquo; que vira &ldquo;a&rdquo; na hora de digitar, um nome de branch estranho, etc.</p>
 
 <p>Dessa forma fica difícil para a equipe de QA acessar aos ambientes por branch toda a vez correndo o risco de errar. Então fiz algumas alterações no <code>k8s/deploy</code> para utilizar a <a href="https://developer.github.com/v3/repos/deployments/">API de Deployments do GitHub</a> para registrar as URLs diretamente nos commits.</p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #66d9ef">if</span> <span style="color: #f92672">[</span> ! -z <span style="color: #f8f8f2">$GITHUB_TOKEN</span> <span style="color: #f92672">]</span> <span style="color: #f92672">&amp;&amp;</span> <span style="color: #f92672">[</span> <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$ENV</span><span style="color: #e6db74">&quot;</span> !<span style="color: #f92672">=</span> <span style="color: #e6db74">&quot;production&quot;</span> <span style="color: #f92672">]</span> <span style="color: #f92672">&amp;&amp;</span> <span style="color: #f92672">[</span> <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$ENV</span><span style="color: #e6db74">&quot;</span> !<span style="color: #f92672">=</span> <span style="color: #e6db74">&quot;staging&quot;</span> <span style="color: #f92672">]</span><span style="color: #f8f8f2">;</span> <span style="color: #66d9ef">then</span>
-    <span style="color: #f8f8f2">echo</span> <span style="color: #e6db74">&quot;&gt;&gt; Registering </span><span style="color: #f8f8f2">$ENV</span><span style="color: #e6db74"> deployment...&quot;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> ! -z $GITHUB_TOKEN <span style="color:#f92672">]</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#f92672">[</span> <span style="color:#e6db74">&#34;</span>$ENV<span style="color:#e6db74">&#34;</span> !<span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;production&#34;</span> <span style="color:#f92672">]</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#f92672">[</span> <span style="color:#e6db74">&#34;</span>$ENV<span style="color:#e6db74">&#34;</span> !<span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;staging&#34;</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
+    echo <span style="color:#e6db74">&#34;&gt;&gt; Registering </span>$ENV<span style="color:#e6db74"> deployment...&#34;</span>
 
-    <span style="color: #f8f8f2">ID_DEPLOYMENT</span><span style="color: #f92672">=</span><span style="color: #66d9ef">$(</span>k8s/github-deployment <span style="color: #e6db74">&quot;lucassabreu/k8s-pr-envs&quot;</span> <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$GITHUB_TOKEN</span><span style="color: #e6db74">&quot;</span> create <span style="color: #ae81ff">\</span>
-        <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$ENV</span><span style="color: #e6db74">&quot;</span> <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$ENV</span><span style="color: #e6db74">&quot;</span> <span style="color: #f8f8f2">true</span> <span style="color: #f8f8f2">|</span> jq <span style="color: #e6db74">&quot;.id&quot;</span><span style="color: #66d9ef">)</span>
-    <span style="color: #f8f8f2">RETURN</span><span style="color: #f92672">=</span><span style="color: #66d9ef">$(</span>k8s/github-deployment <span style="color: #e6db74">&quot;lucassabreu/k8s-pr-envs&quot;</span> <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$GITHUB_TOKEN</span><span style="color: #e6db74">&quot;</span> status <span style="color: #f8f8f2">set</span> <span style="color: #ae81ff">\</span>
-        <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$ID_DEPLOYMENT</span><span style="color: #e6db74">&quot;</span> success <span style="color: #e6db74">&quot;http://</span><span style="color: #f8f8f2">$HOSTNAME</span><span style="color: #e6db74">/&quot;</span> <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$LOG_URL</span><span style="color: #e6db74">&quot;</span><span style="color: #66d9ef">)</span>
-    <span style="color: #66d9ef">if</span> <span style="color: #f92672">[</span> <span style="color: #e6db74">&quot;</span><span style="color: #66d9ef">$(</span><span style="color: #f8f8f2">echo</span> <span style="color: #f8f8f2">$RETURN</span> <span style="color: #f8f8f2">|</span> jq <span style="color: #e6db74">&quot;.message&quot;</span><span style="color: #66d9ef">)</span><span style="color: #e6db74">&quot;</span> !<span style="color: #f92672">=</span> <span style="color: #e6db74">&quot;null&quot;</span> <span style="color: #f92672">]</span><span style="color: #f8f8f2">;</span> <span style="color: #66d9ef">then</span>
-        <span style="color: #f8f8f2">echo</span> <span style="color: #f8f8f2">$RETURN</span>
-        <span style="color: #f8f8f2">exit</span> <span style="color: #ae81ff">1</span>
-    <span style="color: #66d9ef">fi</span>
-<span style="color: #66d9ef">fi</span>
+    ID_DEPLOYMENT<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>k8s/github-deployment <span style="color:#e6db74">&#34;lucassabreu/k8s-pr-envs&#34;</span> <span style="color:#e6db74">&#34;</span>$GITHUB_TOKEN<span style="color:#e6db74">&#34;</span> create <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>        <span style="color:#e6db74">&#34;</span>$ENV<span style="color:#e6db74">&#34;</span> <span style="color:#e6db74">&#34;</span>$ENV<span style="color:#e6db74">&#34;</span> true | jq <span style="color:#e6db74">&#34;.id&#34;</span><span style="color:#66d9ef">)</span>
+    RETURN<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>k8s/github-deployment <span style="color:#e6db74">&#34;lucassabreu/k8s-pr-envs&#34;</span> <span style="color:#e6db74">&#34;</span>$GITHUB_TOKEN<span style="color:#e6db74">&#34;</span> status set <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>        <span style="color:#e6db74">&#34;</span>$ID_DEPLOYMENT<span style="color:#e6db74">&#34;</span> success <span style="color:#e6db74">&#34;http://</span>$HOSTNAME<span style="color:#e6db74">/&#34;</span> <span style="color:#e6db74">&#34;</span>$LOG_URL<span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">)</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> <span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>echo $RETURN | jq <span style="color:#e6db74">&#34;.message&#34;</span><span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span> !<span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;null&#34;</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
+        echo $RETURN
+        exit <span style="color:#ae81ff">1</span>
+    <span style="color:#66d9ef">fi</span>
+<span style="color:#66d9ef">fi</span>
 
-<span style="color: #f8f8f2">echo</span> <span style="color: #e6db74">&quot;Enviroment </span><span style="color: #f8f8f2">$ENV</span><span style="color: #e6db74"> deployed to: http://</span><span style="color: #f8f8f2">$HOSTNAME</span><span style="color: #e6db74">/&quot;</span>
-</pre></div>
-
+echo <span style="color:#e6db74">&#34;Enviroment </span>$ENV<span style="color:#e6db74"> deployed to: http://</span>$HOSTNAME<span style="color:#e6db74">/&#34;</span></code></pre></div>
 <p class="code-legend">deploy.sh</p>
 
 <p>Com isso faço algumas chamadas a API do GitHub usando o <code>k8s/github-deployment</code> (que é basicamente um facilitador para a API) e consigo registrar o deploy no GitHub.</p>
@@ -675,36 +668,32 @@ de uma nova.</p>
 <p>Ainda fica faltando uma última atividade por realizar, que é destruir o ambiente da branch quando os Testers não mais precisarem deles.</p>
 
 <p>Então vamos adicionar uma nova pipeline no <code>buddy.yml</code>:</p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">pipeline</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;Close</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">Review&quot;</span>
-  <span style="color: #ae81ff">trigger_mode</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;MANUAL&quot;</span>
-  <span style="color: #ae81ff">ref_name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;((?!master).*)&quot;</span>
-  <span style="color: #ae81ff">actions</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">action</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;Destroy</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">Branch</span><span style="color: #f8f8f2"> </span><span style="color: #e6db74">Environment&quot;</span>
-    <span style="color: #ae81ff">type</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;BUILD&quot;</span>
-    <span style="color: #ae81ff">docker_image_name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;lucassabreu/openshift-k8s-cli&quot;</span>
-    <span style="color: #ae81ff">docker_image_tag</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;latest&quot;</span>
-    <span style="color: #ae81ff">execute_commands</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">ENV=&quot;${execution.branch.name}&quot;</span>
-      <span style="color: #ae81ff">GITHUB_TOKEN=&quot;${GITHUB_TOKEN}&quot;</span>
-      <span style="color: #ae81ff">OPENSHIFT_NAMESPACE=&quot;${OPENSHIFT_NAMESPACE}&quot;</span>
-      <span style="color: #ae81ff">OPENSHIFT_API_URL=&quot;${OPENSHIFT_API_URL}&quot;</span>
-      <span style="color: #ae81ff">OPENSHIFT_TOKEN=&quot;${OPENSHIFT_TOKEN}&quot;</span>
-      <span style="color: #ae81ff">./k8s/destroy</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">- pipeline: <span style="color:#e6db74">&#34;Close Review&#34;</span>
+  trigger_mode: <span style="color:#e6db74">&#34;MANUAL&#34;</span>
+  ref_name: <span style="color:#e6db74">&#34;((?!master).*)&#34;</span>
+  actions:
+  - action: <span style="color:#e6db74">&#34;Destroy Branch Environment&#34;</span>
+    type: <span style="color:#e6db74">&#34;BUILD&#34;</span>
+    docker_image_name: <span style="color:#e6db74">&#34;lucassabreu/openshift-k8s-cli&#34;</span>
+    docker_image_tag: <span style="color:#e6db74">&#34;latest&#34;</span>
+    execute_commands:
+    - ENV=<span style="color:#e6db74">&#34;${execution.branch.name}&#34;</span>
+      GITHUB_TOKEN=<span style="color:#e6db74">&#34;${GITHUB_TOKEN}&#34;</span>
+      OPENSHIFT_NAMESPACE=<span style="color:#e6db74">&#34;${OPENSHIFT_NAMESPACE}&#34;</span>
+      OPENSHIFT_API_URL=<span style="color:#e6db74">&#34;${OPENSHIFT_API_URL}&#34;</span>
+      OPENSHIFT_TOKEN=<span style="color:#e6db74">&#34;${OPENSHIFT_TOKEN}&#34;</span>
+      ./k8s/destroy</code></pre></div>
 <p>Nesse pipeline manual basicamente chamamos o script <code>k8s/destroy</code> (que esta abaixo) que simplesmente destrói o ambiente inativa ele no GitHub.</p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #75715e">#!/bin/bash</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#!/bin/bash
+</span><span style="color:#75715e"></span>
+echo <span style="color:#e6db74">&#34;&gt;&gt; Connecting to OpenShift...&#34;</span>
+oc login <span style="color:#e6db74">&#34;</span>$OPENSHIFT_API_URL<span style="color:#e6db74">&#34;</span> --token <span style="color:#e6db74">&#34;</span>$OPENSHIFT_TOKEN<span style="color:#e6db74">&#34;</span>
+oc project <span style="color:#e6db74">&#34;</span>$OPENSHIFT_NAMESPACE<span style="color:#e6db74">&#34;</span>
 
-<span style="color: #f8f8f2">echo</span> <span style="color: #e6db74">&quot;&gt;&gt; Connecting to OpenShift...&quot;</span>
-oc login <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$OPENSHIFT_API_URL</span><span style="color: #e6db74">&quot;</span> --token <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$OPENSHIFT_TOKEN</span><span style="color: #e6db74">&quot;</span>
-oc project <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$OPENSHIFT_NAMESPACE</span><span style="color: #e6db74">&quot;</span>
+echo <span style="color:#e6db74">&#34;&gt;&gt; Removing old application...&#34;</span>
+oc delete all -l <span style="color:#e6db74">&#34;app=</span>$ENV<span style="color:#e6db74">&#34;</span>
 
-<span style="color: #f8f8f2">echo</span> <span style="color: #e6db74">&quot;&gt;&gt; Removing old application...&quot;</span>
-oc delete all -l <span style="color: #e6db74">&quot;app=</span><span style="color: #f8f8f2">$ENV</span><span style="color: #e6db74">&quot;</span>
-
-k8s/github-deployment <span style="color: #e6db74">&quot;lucassabreu/k8s-pr-envs&quot;</span> <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$GITHUB_TOKEN</span><span style="color: #e6db74">&quot;</span> inactive <span style="color: #e6db74">&quot;</span><span style="color: #f8f8f2">$ENV</span><span style="color: #e6db74">&quot;</span> &gt;&gt; /dev/null
-</pre></div>
-
+k8s/github-deployment <span style="color:#e6db74">&#34;lucassabreu/k8s-pr-envs&#34;</span> <span style="color:#e6db74">&#34;</span>$GITHUB_TOKEN<span style="color:#e6db74">&#34;</span> inactive <span style="color:#e6db74">&#34;</span>$ENV<span style="color:#e6db74">&#34;</span> &gt;&gt; /dev/null</code></pre></div>
 <p>Agora podemos chamar ele para eliminar os ambientes de branch em aberto.</p>
 
 <p>Fontes até o momento:</p>
@@ -780,20 +769,25 @@ ter uma base de como é a chamada.</p>
     
       <article>
         <div id="disqus_thread"></div>
-<script type="text/javascript">
-    var disqus_shortname = 'lucas-dos-santos-abreu';
-    var disqus_identifier = 'http:\/\/www.lucassabreu.net.br\/post\/ambientes-por-branch-com-openshift-next-gen-usando-github\/';
-    var disqus_title = 'Ambientes por Branch com OpenShift Next Gen usando GitHub';
-    var disqus_url = 'http:\/\/www.lucassabreu.net.br\/post\/ambientes-por-branch-com-openshift-next-gen-usando-github\/';
-
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
     (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "lucas-dos-santos-abreu" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
     })();
 </script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
       </article>
     
     <footer>
@@ -812,7 +806,7 @@ ter uma base de como é a chamada.</p>
   
     and tagged <a href="/tags/buddy-works/">Buddy Works</a>, <a href="/tags/continuous-deployment/">Continuous Deployment</a>, <a href="/tags/continuous-integration/">Continuous Integration</a>, <a href="/tags/github/">Github</a> and <a href="/tags/openshift/">Openshift</a>
   
-  using <span itemprop="wordCount">1874</span> words.
+  using <span itemprop="wordCount">1891</span> words.
 </p>
 
       

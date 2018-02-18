@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
-    <meta name="generator" content="Hugo 0.18" />
+    <meta name="generator" content="Hugo 0.37-DEV" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 3 | Lucas dos Santos Abreu</title>
@@ -24,7 +24,11 @@
   <meta property="og:image" content="http://www.lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png" />
 
 
-<meta property="og:updated_time" content="2017-03-09T00:00:00&#43;00:00"/>
+
+<meta property="article:published_time" content="2017-03-09T00:00:00&#43;00:00"/>
+
+<meta property="article:modified_time" content="2017-03-09T00:00:00&#43;00:00"/>
+
 
 
 
@@ -215,6 +219,7 @@ p.code-legend {
 <meta itemprop="description" content="Agora que sabemos os conceitos por traz do Kubernetes e vimos um exemplo básico de utilização, vamos ver como lidamos com contêiners que precisam de persistência.">
 
 
+<meta itemprop="datePublished" content="2017-03-09T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2017-03-09T00:00:00&#43;00:00" />
 <meta itemprop="wordCount" content="756">
 
@@ -222,7 +227,7 @@ p.code-legend {
 
 
 
-<meta itemprop="keywords" content="apps,basics,buddy-works,coderockr-jam,coderockr-way,continuous-deployment,continuous-integration,docker,github,gitlab,introduction,kubernetes,new-product-development,openshift,product-design,project-management,pull-request,script,scripting,simple,social-anxiety," />
+<meta itemprop="keywords" content="Kubernetes,Openshift,Introduction,Simple,Docker," />
 
     <header>
       <h1 itemprop="headline">Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 3</h1>
@@ -283,10 +288,8 @@ lê-lo e depois voltar aqui para não ficar perdido.</p>
 <p>Como comentei no <a href="/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2">post anterior</a> existem alguns problemas no ambiente que construí, e o princípial deles é que os Pods não totalmente efêmeros, ou seja, se eu adicionar novos dados nele, no momento que o Pod fosse destruído os dados iriam junto e sem backup !</p>
 
 <p>E agora iremos tratar esse primeiro problema. Caso não tenha mais os fontes até o estado do post anterior, ou prefira acompanhar o meu andamento, pode pode pegá-los aqui: <a href="https://github.com/lucassabreu/openshift-next-gen/tree/v1">https://github.com/lucassabreu/openshift-next-gen/tree/v1</a>; ou executar:</p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span>git clone -b v1 <span style="color: #ae81ff">\</span>
-    https://github.com/lucassabreu/openshift-next-gen.git
-</pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">git clone -b v1 <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    https://github.com/lucassabreu/openshift-next-gen.git</code></pre></div>
 <hr />
 
 <h4 id="a297 .graf .graf--h4 .graf--leading name="a297"">Volumes Persistentes</h4>
@@ -321,15 +324,13 @@ lê-lo e depois voltar aqui para não ficar perdido.</p>
 
 
 <p>Para acessar o Pod usa-se o comando <code>oc rsh &lt;pod-name&gt;</code>, e para encontrar o nome do Pod posso usar o comando <code>oc get pods -l &lt;selector&gt;</code>, então é só acessar o MySQL e inserir os dados:</p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span>$ oc get pods -l <span style="color: #f8f8f2">name</span><span style="color: #f92672">=</span>db-pod
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ oc get pods -l name<span style="color:#f92672">=</span>db-pod
 NAME                             READY     STATUS    RESTARTS   AGE
-db-deployment-3618823556-zrje2   <span style="color: #ae81ff">1</span>/1       Running   <span style="color: #ae81ff">0</span>          14m
+db-deployment-3618823556-zrje2   <span style="color:#ae81ff">1</span>/1       Running   <span style="color:#ae81ff">0</span>          14m
 $ oc rsh db-deployment-3618823556-zrje2 bash
-&lt;dentro contêiner&gt;:/$ mysql -u<span style="color: #f8f8f2">$MYSQL_USER</span> -p<span style="color: #f8f8f2">$MYSQL_PASSWORD</span> appointments
-mysql&gt; insert into appointments values<span style="color: #f92672">(</span><span style="color: #ae81ff">21</span>, <span style="color: #e6db74">&#39;M&#39;</span>, <span style="color: #e6db74">&#39;2017-03-05&#39;</span>, <span style="color: #e6db74">&#39;Sunday&#39;</span>, <span style="color: #ae81ff">1</span>, null<span style="color: #f92672">)</span><span style="color: #f8f8f2">;</span>
-Query OK, <span style="color: #ae81ff">1</span> row affected <span style="color: #f92672">(</span><span style="color: #ae81ff">0</span>.00 sec<span style="color: #f92672">)</span>
-</pre></div>
-
+&lt;dentro contêiner&gt;:/$ mysql -u$MYSQL_USER -p$MYSQL_PASSWORD appointments
+mysql&gt; insert into appointments values<span style="color:#f92672">(</span><span style="color:#ae81ff">21</span>, <span style="color:#e6db74">&#39;M&#39;</span>, <span style="color:#e6db74">&#39;2017-03-05&#39;</span>, <span style="color:#e6db74">&#39;Sunday&#39;</span>, <span style="color:#ae81ff">1</span>, null<span style="color:#f92672">)</span>;
+Query OK, <span style="color:#ae81ff">1</span> row affected <span style="color:#f92672">(</span><span style="color:#ae81ff">0</span>.00 sec<span style="color:#f92672">)</span></code></pre></div>
 <p>Entrando novamente na aplicação e indo em &ldquo;Sunday&rdquo;, tenho um gráfico com dados para os Homens.</p>
 
 
@@ -393,54 +394,50 @@ Query OK, <span style="color: #ae81ff">1</span> row affected <span style="color:
 <p>Podemos utilizar vários tipos de volumes em um PVC para armazenar os dados, no caso do OpenShift o padrão é <a href="https://kubernetes.io/docs/user-guide/persistent-volumes/#aws">EBS</a>, que são volumes armazenados dentro do <a href="https://aws.amazon.com/">AWS da Amazon</a>, mas existe a opção de usar volumes do Google Cloud, do Azure, Locais, etc; no Kubernetes.</p>
 
 <p>Mas no momento o OpenShift esta ofertando apenas o EBS. Abaixo esta a definição do PVC:</p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #ae81ff">apiVersion</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">v1</span>
-<span style="color: #ae81ff">kind</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">PersistentVolumeClaim</span>
-<span style="color: #ae81ff">metadata</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">mysql-pv-claim</span>
-<span style="color: #ae81ff">spec</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">accessModes</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">ReadWriteOnce</span>
-  <span style="color: #ae81ff">resources</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #ae81ff">requests</span><span style="color: #f8f8f2">:</span>
-      <span style="color: #ae81ff">storage</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">1Gi</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pv-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi</code></pre></div>
 <p>Depois de um momento o OpenShift irá criar um volume e disponibilizá-lo, agora é preciso vincular ele com os <code>db-pods</code>, para isso basta alterar os volumes no <code>db-deployment</code>:</p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #ae81ff">apiVersion</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">extensions/v1beta1</span>
-<span style="color: #ae81ff">kind</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">Deployment</span>
-<span style="color: #ae81ff">metadata</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;db-deployment&quot;</span>
-<span style="color: #ae81ff">spec</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">replicas</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">1</span>
-  <span style="color: #ae81ff">template</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #ae81ff">metadata</span><span style="color: #f8f8f2">:</span>
-      <span style="color: #ae81ff">labels</span><span style="color: #f8f8f2">:</span>
-        <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;db-pod&quot;</span>
-    <span style="color: #ae81ff">spec</span><span style="color: #f8f8f2">:</span>
-      <span style="color: #ae81ff">containers</span><span style="color: #f8f8f2">:</span>
-        <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;db&quot;</span>
-          <span style="color: #ae81ff">image</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;lucassabreu/openshift-mysql-test&quot;</span>
-          <span style="color: #ae81ff">ports</span><span style="color: #f8f8f2">:</span>
-            <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;mysql-port&quot;</span>
-              <span style="color: #ae81ff">containerPort</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">3306</span>
-          <span style="color: #ae81ff">env</span><span style="color: #f8f8f2">:</span>
-            <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">MYSQL_DATABASE</span>
-              <span style="color: #ae81ff">value</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">appointments</span>
-            <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">MYSQL_ROOT_PASSWORD</span>
-              <span style="color: #ae81ff">value</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;root&quot;</span>
-            <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">MYSQL_USER</span>
-              <span style="color: #ae81ff">value</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;appoint&quot;</span>
-            <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">MYSQL_PASSWORD</span>
-              <span style="color: #ae81ff">value</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;123&quot;</span>
-          <span style="color: #ae81ff">volumeMounts</span><span style="color: #f8f8f2">:</span>
-            <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;mysql-persistent-volume&quot;</span> <span style="color: #75715e"># mudou aqui</span>
-              <span style="color: #ae81ff">mountPath</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;/var/lib/mysql&quot;</span>
-      <span style="color: #ae81ff">volumes</span><span style="color: #f8f8f2">:</span>
-        <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;mysql-persistent-volume&quot;</span> <span style="color: #75715e"># e aqui</span>
-          <span style="color: #ae81ff">persistentVolumeClaim</span><span style="color: #f8f8f2">:</span>
-            <span style="color: #ae81ff">claimName</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">mysql-pv-claim</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: <span style="color:#e6db74">&#34;db-deployment&#34;</span>
+spec:
+  replicas: <span style="color:#ae81ff">1</span>
+  template:
+    metadata:
+      labels:
+        name: <span style="color:#e6db74">&#34;db-pod&#34;</span>
+    spec:
+      containers:
+        - name: <span style="color:#e6db74">&#34;db&#34;</span>
+          image: <span style="color:#e6db74">&#34;lucassabreu/openshift-mysql-test&#34;</span>
+          ports:
+            - name: <span style="color:#e6db74">&#34;mysql-port&#34;</span>
+              containerPort: <span style="color:#ae81ff">3306</span>
+          env:
+            - name: MYSQL_DATABASE
+              value: appointments
+            - name: MYSQL_ROOT_PASSWORD
+              value: <span style="color:#e6db74">&#34;root&#34;</span>
+            - name: MYSQL_USER
+              value: <span style="color:#e6db74">&#34;appoint&#34;</span>
+            - name: MYSQL_PASSWORD
+              value: <span style="color:#e6db74">&#34;123&#34;</span>
+          volumeMounts:
+            - name: <span style="color:#e6db74">&#34;mysql-persistent-volume&#34;</span> <span style="color:#75715e"># mudou aqui</span>
+              mountPath: <span style="color:#e6db74">&#34;/var/lib/mysql&#34;</span>
+      volumes:
+        - name: <span style="color:#e6db74">&#34;mysql-persistent-volume&#34;</span> <span style="color:#75715e"># e aqui</span>
+          persistentVolumeClaim:
+            claimName: mysql-pv-claim</code></pre></div>
 <p>Duas coisas foram alteradas no <code>db-deployment</code>:</p>
 
 <ul>
@@ -483,20 +480,25 @@ Query OK, <span style="color: #ae81ff">1</span> row affected <span style="color:
     
       <article>
         <div id="disqus_thread"></div>
-<script type="text/javascript">
-    var disqus_shortname = 'lucas-dos-santos-abreu';
-    var disqus_identifier = 'http:\/\/www.lucassabreu.net.br\/post\/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3\/';
-    var disqus_title = 'Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 3';
-    var disqus_url = 'http:\/\/www.lucassabreu.net.br\/post\/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3\/';
-
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
     (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "lucas-dos-santos-abreu" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
     })();
 </script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
       </article>
     
     <footer>

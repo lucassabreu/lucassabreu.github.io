@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
-    <meta name="generator" content="Hugo 0.18" />
+    <meta name="generator" content="Hugo 0.37-DEV" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 4 | Lucas dos Santos Abreu</title>
@@ -24,7 +24,11 @@
   <meta property="og:image" content="http://www.lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png" />
 
 
-<meta property="og:updated_time" content="2017-03-10T00:00:00&#43;00:00"/>
+
+<meta property="article:published_time" content="2017-03-10T00:00:00&#43;00:00"/>
+
+<meta property="article:modified_time" content="2017-03-10T00:00:00&#43;00:00"/>
+
 
 
 
@@ -213,6 +217,7 @@ p.code-legend {
 <meta itemprop="description" content="Para completar a jornada vamos ver como o Kubernetes lida com dados sensíveis dentro da plataforma">
 
 
+<meta itemprop="datePublished" content="2017-03-10T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2017-03-10T00:00:00&#43;00:00" />
 <meta itemprop="wordCount" content="675">
 
@@ -220,7 +225,7 @@ p.code-legend {
 
 
 
-<meta itemprop="keywords" content="apps,basics,buddy-works,coderockr-jam,coderockr-way,continuous-deployment,continuous-integration,docker,github,gitlab,introduction,kubernetes,new-product-development,openshift,product-design,project-management,pull-request,script,scripting,simple,social-anxiety," />
+<meta itemprop="keywords" content="Kubernetes,Openshift,Introduction,Simple,Docker," />
 
     <header>
       <h1 itemprop="headline">Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 4</h1>
@@ -281,10 +286,8 @@ p.code-legend {
 <p>E agora irei mostrar como adicioná-los ao projeto.</p>
 
 <p>Caso não tenha mais os fontes até o estado do post anterior, ou prefira acompanhar o meu andamento, pode pode pegá-los aqui: <a href="https://github.com/lucassabreu/openshift-next-gen/tree/v2">https://github.com/lucassabreu/openshift-next-gen/tree/v2</a>; ou executar:</p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span>git clone -b v2 <span style="color: #ae81ff">\</span>
-    https://github.com/lucassabreu/openshift-next-gen.git
-</pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">git clone -b v2 <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    https://github.com/lucassabreu/openshift-next-gen.git</code></pre></div>
 <hr />
 
 <h4 id="secrets">Secrets</h4>
@@ -292,129 +295,117 @@ p.code-legend {
 <p>Existem algumas formas de criar e usar os mesmos, criá-los diretamente de arquivos, ou usando configurações, e expô-los aos contêineres usando volumes ou variáveis de ambiente.</p>
 
 <p>Para essa aplicação vou utilizar um YAML para definir um Secret e vou modificar os Pods para alimentarem as variáveis de ambiente com eles. A estrutura básica do Secret é como segue:</p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #ae81ff">apiVersion</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">v1</span>
-<span style="color: #ae81ff">kind</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">Secret</span>
-<span style="color: #ae81ff">metadata</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">mysql-secrets</span>
-<span style="color: #ae81ff">type</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">Opaque</span>
-<span style="color: #ae81ff">data</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">mysql-root-password</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">&lt;hash base64&gt;</span>
-  <span style="color: #ae81ff">mysql-user</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">&lt;hash base64&gt;</span>
-  <span style="color: #ae81ff">mysql-password</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">&lt;hash base64&gt;</span>
-  <span style="color: #ae81ff">mysql-database-connection</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">&lt;hash base64&gt;</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: v1
+kind: Secret
+metadata:
+  name: mysql-secrets
+type: Opaque
+data:
+  mysql-root-password: &lt;hash base64<span style="color:#e6db74">&gt;
+</span><span style="color:#e6db74">  mysql-user: &lt;hash base64&gt;
+</span><span style="color:#e6db74">  mysql-password: &lt;hash base64&gt;
+</span><span style="color:#e6db74">  mysql-database-connection: &lt;hash base64&gt;</span></code></pre></div>
 <p>Nele estou criando o Secret <code>mysql-secrets</code> e definindo quatro chaves que representam as três variáveis do MySQL e uma do servidor HTTP. No lugar do <code>&lt;hash base64&gt;</code> deve ir o conteúdo do segredo em Base 64, que pode ser gerado usando o comando <code>echo -n &quot;meusegredo&quot; | base64 -w0</code>.</p>
 
 <p>Eu não gostei muito da ideia de guardar o Base 64 dentro da definição do Secret, então fiz a seguinte modificação no meu <code>mysql-secrets.yml</code>:</p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #ae81ff">apiVersion</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">v1</span>
-<span style="color: #ae81ff">kind</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">Secret</span>
-<span style="color: #ae81ff">metadata</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">mysql-secrets</span>
-<span style="color: #ae81ff">type</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">Opaque</span>
-<span style="color: #ae81ff">data</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">mysql-root-password</span><span style="color: #f8f8f2">:</span> <span style="color: #960050; background-color: #1e0010">%</span><span style="color: #ae81ff">MYSQL_ROOT_PASSWORD</span>
-  <span style="color: #ae81ff">mysql-user</span><span style="color: #f8f8f2">:</span> <span style="color: #960050; background-color: #1e0010">%</span><span style="color: #ae81ff">MYSQL_USER</span>
-  <span style="color: #ae81ff">mysql-password</span><span style="color: #f8f8f2">:</span> <span style="color: #960050; background-color: #1e0010">%</span><span style="color: #ae81ff">MYSQL_PASSWORD</span>
-  <span style="color: #ae81ff">mysql-database-connection</span><span style="color: #f8f8f2">:</span> <span style="color: #960050; background-color: #1e0010">%</span><span style="color: #ae81ff">DATABASE_CONNECTION</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: v1
+kind: Secret
+metadata:
+  name: mysql-secrets
+type: Opaque
+data:
+  mysql-root-password: %MYSQL_ROOT_PASSWORD
+  mysql-user: %MYSQL_USER
+  mysql-password: %MYSQL_PASSWORD
+  mysql-database-connection: %DATABASE_CONNECTION</code></pre></div>
 <p>E quando vou aplicar o Secret no Kubernetes uso este script:</p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #f8f8f2">MYSQL_ROOT_PASSWORD</span><span style="color: #f92672">=</span><span style="color: #66d9ef">$(</span>&lt; /dev/urandom tr -dc _A-Z-a-z-0-9 <span style="color: #f8f8f2">|</span> head -c<span style="color: #e6db74">${</span><span style="color: #f8f8f2">1</span><span style="color: #66d9ef">:-</span><span style="color: #f8f8f2">32</span><span style="color: #e6db74">}</span><span style="color: #66d9ef">)</span>
-<span style="color: #f8f8f2">B64_MYSQL_ROOT_PASSWORD</span><span style="color: #f92672">=</span><span style="color: #66d9ef">$(</span><span style="color: #f8f8f2">echo</span> -n <span style="color: #f8f8f2">$MYSQL_ROOT_PASSWORD</span> <span style="color: #f8f8f2">|</span> base64 -w0<span style="color: #66d9ef">)</span>
-<span style="color: #f8f8f2">B64_DATABASE_USER</span><span style="color: #f92672">=</span><span style="color: #66d9ef">$(</span><span style="color: #f8f8f2">echo</span> -n <span style="color: #f8f8f2">$DATABASE_USER</span> <span style="color: #f8f8f2">|</span> base64 -w0<span style="color: #66d9ef">)</span>
-<span style="color: #f8f8f2">B64_DATABASE_PASSWORD</span><span style="color: #f92672">=</span><span style="color: #66d9ef">$(</span><span style="color: #f8f8f2">echo</span> -n <span style="color: #f8f8f2">$DATABASE_PASSWORD</span> <span style="color: #f8f8f2">|</span> base64 -w0<span style="color: #66d9ef">)</span>
-<span style="color: #f8f8f2">B64_DATABASE_CONNECTION</span><span style="color: #f92672">=</span><span style="color: #66d9ef">$(</span><span style="color: #f8f8f2">echo</span> -n <span style="color: #ae81ff">\</span>
-    <span style="color: #e6db74">&quot;mysql://</span><span style="color: #f8f8f2">$DATABASE_USER</span><span style="color: #e6db74">:</span><span style="color: #f8f8f2">$DATABASE_PASSWORD</span><span style="color: #e6db74">@db-service:3306/appointments&quot;</span> <span style="color: #ae81ff">\</span>
-    <span style="color: #f8f8f2">|</span> base64 -w0<span style="color: #66d9ef">)</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">MYSQL_ROOT_PASSWORD<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>&lt; /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c<span style="color:#e6db74">${</span>1<span style="color:#66d9ef">:-</span>32<span style="color:#e6db74">}</span><span style="color:#66d9ef">)</span>
+B64_MYSQL_ROOT_PASSWORD<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>echo -n $MYSQL_ROOT_PASSWORD | base64 -w0<span style="color:#66d9ef">)</span>
+B64_DATABASE_USER<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>echo -n $DATABASE_USER | base64 -w0<span style="color:#66d9ef">)</span>
+B64_DATABASE_PASSWORD<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>echo -n $DATABASE_PASSWORD | base64 -w0<span style="color:#66d9ef">)</span>
+B64_DATABASE_CONNECTION<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>echo -n <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    <span style="color:#e6db74">&#34;mysql://</span>$DATABASE_USER<span style="color:#e6db74">:</span>$DATABASE_PASSWORD<span style="color:#e6db74">@db-service:3306/appointments&#34;</span> <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    | base64 -w0<span style="color:#66d9ef">)</span>
 
-sed <span style="color: #e6db74">&quot;\</span>
-<span style="color: #e6db74">  s|%MYSQL_ROOT_PASSWORD|</span><span style="color: #f8f8f2">$B64_MYSQL_ROOT_PASSWORD</span><span style="color: #e6db74">|;\</span>
-<span style="color: #e6db74">  s|%MYSQL_USER|</span><span style="color: #f8f8f2">$B64_DATABASE_USER</span><span style="color: #e6db74">|;\</span>
-<span style="color: #e6db74">  s|%MYSQL_PASSWORD|</span><span style="color: #f8f8f2">$B64_DATABASE_PASSWORD</span><span style="color: #e6db74">|;\</span>
-<span style="color: #e6db74">  s|%DATABASE_CONNECTION|</span><span style="color: #f8f8f2">$B64_DATABASE_CONNECTION</span><span style="color: #e6db74">|&quot;</span> <span style="color: #ae81ff">\</span>
-  mysql-secrets.yml <span style="color: #f8f8f2">|</span> oc apply -f -
-</pre></div>
-
+sed <span style="color:#e6db74">&#34;\
+</span><span style="color:#e6db74">  s|%MYSQL_ROOT_PASSWORD|</span>$B64_MYSQL_ROOT_PASSWORD<span style="color:#e6db74">|;\
+</span><span style="color:#e6db74">  s|%MYSQL_USER|</span>$B64_DATABASE_USER<span style="color:#e6db74">|;\
+</span><span style="color:#e6db74">  s|%MYSQL_PASSWORD|</span>$B64_DATABASE_PASSWORD<span style="color:#e6db74">|;\
+</span><span style="color:#e6db74">  s|%DATABASE_CONNECTION|</span>$B64_DATABASE_CONNECTION<span style="color:#e6db74">|&#34;</span> <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  mysql-secrets.yml | oc apply -f -</code></pre></div>
 <p>Esse script cria uma senha aleatória para o root e usa duas variáveis de ambiente para definir o usuário e senha do MySQL, faz o Base 64 deles, injeta eles no arquivo via <code>sed</code> no Secret e aplica no Kubernetes com <code>oc apply -f -</code> que irá ler a saída do <code>sed</code> e aplicá-la. Na hora de executar fica assim:</p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span>$ <span style="color: #f8f8f2">export</span> <span style="color: #f8f8f2">DATABASE_USER</span><span style="color: #f92672">=</span>appoint
-$ <span style="color: #f8f8f2">export</span> <span style="color: #f8f8f2">DATABASE_PASSWORD</span><span style="color: #f92672">=</span><span style="color: #ae81ff">123</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ export DATABASE_USER<span style="color:#f92672">=</span>appoint
+$ export DATABASE_PASSWORD<span style="color:#f92672">=</span><span style="color:#ae81ff">123</span>
 $ ./env-set-oc.sh
-secret <span style="color: #e6db74">&quot;mysql-secrets&quot;</span> configured
-</pre></div>
-
+secret <span style="color:#e6db74">&#34;mysql-secrets&#34;</span> configured</code></pre></div>
 <p>Altero os Deployments para considerarem o Secret que criei:</p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #ae81ff">apiVersion</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">extensions/v1beta1</span>
-<span style="color: #ae81ff">kind</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">Deployment</span>
-<span style="color: #ae81ff">metadata</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;db-deployment&quot;</span>
-<span style="color: #ae81ff">spec</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">replicas</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">1</span>
-  <span style="color: #ae81ff">template</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #ae81ff">metadata</span><span style="color: #f8f8f2">:</span>
-      <span style="color: #ae81ff">labels</span><span style="color: #f8f8f2">:</span>
-        <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;db-pod&quot;</span>
-    <span style="color: #ae81ff">spec</span><span style="color: #f8f8f2">:</span>
-      <span style="color: #ae81ff">containers</span><span style="color: #f8f8f2">:</span>
-        <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;db&quot;</span>
-          <span style="color: #ae81ff">image</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;lucassabreu/openshift-mysql-test&quot;</span>
-          <span style="color: #ae81ff">ports</span><span style="color: #f8f8f2">:</span>
-            <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;mysql-port&quot;</span>
-              <span style="color: #ae81ff">containerPort</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">3306</span>
-          <span style="color: #ae81ff">env</span><span style="color: #f8f8f2">:</span>
-            <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">MYSQL_DATABASE</span>
-              <span style="color: #ae81ff">value</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">appointments</span>
-            <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">MYSQL_ROOT_PASSWORD</span>
-              <span style="color: #ae81ff">valueFrom</span><span style="color: #f8f8f2">:</span>
-                <span style="color: #ae81ff">secretKeyRef</span><span style="color: #f8f8f2">:</span>
-                  <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">mysql-secrets</span>
-                  <span style="color: #ae81ff">key</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">mysql-root-password</span>
-            <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">MYSQL_USER</span>
-              <span style="color: #ae81ff">valueFrom</span><span style="color: #f8f8f2">:</span>
-                <span style="color: #ae81ff">secretKeyRef</span><span style="color: #f8f8f2">:</span>
-                  <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">mysql-secrets</span>
-                  <span style="color: #ae81ff">key</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">mysql-user</span>
-            <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">MYSQL_PASSWORD</span>
-              <span style="color: #ae81ff">valueFrom</span><span style="color: #f8f8f2">:</span>
-                <span style="color: #ae81ff">secretKeyRef</span><span style="color: #f8f8f2">:</span>
-                  <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">mysql-secrets</span>
-                  <span style="color: #ae81ff">key</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">mysql-password</span>
-          <span style="color: #ae81ff">volumeMounts</span><span style="color: #f8f8f2">:</span>
-            <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;mysql-persistent-volume&quot;</span>
-              <span style="color: #ae81ff">mountPath</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;/var/lib/mysql&quot;</span>
-      <span style="color: #ae81ff">volumes</span><span style="color: #f8f8f2">:</span>
-        <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;mysql-persistent-volume&quot;</span>
-          <span style="color: #ae81ff">persistentVolumeClaim</span><span style="color: #f8f8f2">:</span>
-            <span style="color: #ae81ff">claimName</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">mysql-pv-claim</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: <span style="color:#e6db74">&#34;db-deployment&#34;</span>
+spec:
+  replicas: <span style="color:#ae81ff">1</span>
+  template:
+    metadata:
+      labels:
+        name: <span style="color:#e6db74">&#34;db-pod&#34;</span>
+    spec:
+      containers:
+        - name: <span style="color:#e6db74">&#34;db&#34;</span>
+          image: <span style="color:#e6db74">&#34;lucassabreu/openshift-mysql-test&#34;</span>
+          ports:
+            - name: <span style="color:#e6db74">&#34;mysql-port&#34;</span>
+              containerPort: <span style="color:#ae81ff">3306</span>
+          env:
+            - name: MYSQL_DATABASE
+              value: appointments
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: mysql-root-password
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: mysql-user
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: mysql-password
+          volumeMounts:
+            - name: <span style="color:#e6db74">&#34;mysql-persistent-volume&#34;</span>
+              mountPath: <span style="color:#e6db74">&#34;/var/lib/mysql&#34;</span>
+      volumes:
+        - name: <span style="color:#e6db74">&#34;mysql-persistent-volume&#34;</span>
+          persistentVolumeClaim:
+            claimName: mysql-pv-claim</code></pre></div>
 <p><small><center>db-deployment.yml</center></small></p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #ae81ff">apiVersion</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">extensions/v1beta1</span>
-<span style="color: #ae81ff">kind</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">Deployment</span>
-<span style="color: #ae81ff">metadata</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;node-deployment&quot;</span>
-<span style="color: #ae81ff">spec</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">replicas</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">1</span>
-  <span style="color: #ae81ff">template</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #ae81ff">metadata</span><span style="color: #f8f8f2">:</span>
-      <span style="color: #ae81ff">labels</span><span style="color: #f8f8f2">:</span>
-        <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;node-pod&quot;</span>
-    <span style="color: #ae81ff">spec</span><span style="color: #f8f8f2">:</span>
-      <span style="color: #ae81ff">containers</span><span style="color: #f8f8f2">:</span>
-        <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;node&quot;</span>
-          <span style="color: #ae81ff">image</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;lucassabreu/openshift-app-test&quot;</span>
-          <span style="color: #ae81ff">ports</span><span style="color: #f8f8f2">:</span>
-            <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">node-port</span>
-              <span style="color: #ae81ff">containerPort</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">8080</span>
-              <span style="color: #ae81ff">protocol</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">TCP</span>
-          <span style="color: #ae81ff">env</span><span style="color: #f8f8f2">:</span>
-            <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">DATABASE_CONNECTION</span>
-              <span style="color: #ae81ff">valueFrom</span><span style="color: #f8f8f2">:</span>
-                <span style="color: #ae81ff">secretKeyRef</span><span style="color: #f8f8f2">:</span>
-                  <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">mysql-secrets</span>
-                  <span style="color: #ae81ff">key</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">mysql-database-connection</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: <span style="color:#e6db74">&#34;node-deployment&#34;</span>
+spec:
+  replicas: <span style="color:#ae81ff">1</span>
+  template:
+    metadata:
+      labels:
+        name: <span style="color:#e6db74">&#34;node-pod&#34;</span>
+    spec:
+      containers:
+        - name: <span style="color:#e6db74">&#34;node&#34;</span>
+          image: <span style="color:#e6db74">&#34;lucassabreu/openshift-app-test&#34;</span>
+          ports:
+            - name: node-port
+              containerPort: <span style="color:#ae81ff">8080</span>
+              protocol: TCP
+          env:
+            - name: DATABASE_CONNECTION
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: mysql-database-connection</code></pre></div>
 <p><small><center>node-deployment.yml</center></small></p>
 
 <p>A alteração consiste de trocar a chave <code>value</code> das variáveis por <code>valueFrom</code> e apontar para as chaves corretas dentro do Secret.</p>
@@ -450,20 +441,25 @@ secret <span style="color: #e6db74">&quot;mysql-secrets&quot;</span> configured
     
       <article>
         <div id="disqus_thread"></div>
-<script type="text/javascript">
-    var disqus_shortname = 'lucas-dos-santos-abreu';
-    var disqus_identifier = 'http:\/\/www.lucassabreu.net.br\/post\/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4\/';
-    var disqus_title = 'Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 4';
-    var disqus_url = 'http:\/\/www.lucassabreu.net.br\/post\/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4\/';
-
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
     (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "lucas-dos-santos-abreu" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
     })();
 </script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
       </article>
     
     <footer>

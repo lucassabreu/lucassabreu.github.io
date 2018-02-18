@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
-    <meta name="generator" content="Hugo 0.18" />
+    <meta name="generator" content="Hugo 0.37-DEV" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 2 | Lucas dos Santos Abreu</title>
@@ -24,7 +24,11 @@
   <meta property="og:image" content="http://www.lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png" />
 
 
-<meta property="og:updated_time" content="2017-03-08T00:00:00&#43;00:00"/>
+
+<meta property="article:published_time" content="2017-03-08T00:00:00&#43;00:00"/>
+
+<meta property="article:modified_time" content="2017-03-08T00:00:00&#43;00:00"/>
+
 
 
 
@@ -215,6 +219,7 @@ p.code-legend {
 <meta itemprop="description" content="Uma vez que entendemos os conceitos básicos do Kubernetes na postagem anterior, vamos para uma demonstração de como utilizá-lo para montar uma aplicação simples">
 
 
+<meta itemprop="datePublished" content="2017-03-08T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2017-03-08T00:00:00&#43;00:00" />
 <meta itemprop="wordCount" content="994">
 
@@ -222,7 +227,7 @@ p.code-legend {
 
 
 
-<meta itemprop="keywords" content="apps,basics,buddy-works,coderockr-jam,coderockr-way,continuous-deployment,continuous-integration,docker,github,gitlab,introduction,kubernetes,new-product-development,openshift,product-design,project-management,pull-request,script,scripting,simple,social-anxiety," />
+<meta itemprop="keywords" content="Openshift,Kubernetes,Introduction,Simple,Docker," />
 
     <header>
       <h1 itemprop="headline">Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 2</h1>
@@ -289,39 +294,37 @@ p.code-legend {
 <p>Como não é uma boa ideia simplesmente definir um Pod diretamente, criei dois Deployments o <code>node-deployment</code> e o <code>db-deployment</code>.</p>
 
 <p><em>No momento da escrita desse post os Deployments ainda estavam marcados como uma versão beta, mas já são bastante usados, então é confiável.</em></p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #ae81ff">apiVersion</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">extensions/v1beta1</span>
-<span style="color: #ae81ff">kind</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">Deployment</span>
-<span style="color: #ae81ff">metadata</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;db-deployment&quot;</span>
-<span style="color: #ae81ff">spec</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">replicas</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">1</span>
-  <span style="color: #ae81ff">template</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #ae81ff">metadata</span><span style="color: #f8f8f2">:</span>
-      <span style="color: #ae81ff">labels</span><span style="color: #f8f8f2">:</span>
-        <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;db-pod&quot;</span>
-    <span style="color: #ae81ff">spec</span><span style="color: #f8f8f2">:</span>
-      <span style="color: #ae81ff">containers</span><span style="color: #f8f8f2">:</span>
-        <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;db&quot;</span>
-          <span style="color: #ae81ff">image</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;lucassabreu/openshift-mysql-test&quot;</span>
-          <span style="color: #ae81ff">ports</span><span style="color: #f8f8f2">:</span>
-            <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;mysql-port&quot;</span>
-              <span style="color: #ae81ff">containerPort</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">3306</span>
-          <span style="color: #ae81ff">env</span><span style="color: #f8f8f2">:</span>
-            <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">MYSQL_DATABASE</span>
-              <span style="color: #ae81ff">value</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">appointments</span>
-            <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">MYSQL_ROOT_PASSWORD</span>
-              <span style="color: #ae81ff">value</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;root&quot;</span>
-            <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">MYSQL_USER</span>
-              <span style="color: #ae81ff">value</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;appoint&quot;</span>
-            <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">MYSQL_PASSWORD</span>
-              <span style="color: #ae81ff">value</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;123&quot;</span>
-          <span style="color: #ae81ff">volumeMounts</span><span style="color: #f8f8f2">:</span>
-            <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;mysql-volume&quot;</span>
-              <span style="color: #ae81ff">mountPath</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;/var/lib/mysql&quot;</span>
-      <span style="color: #ae81ff">volumes</span><span style="color: #f8f8f2">:</span>
-        <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;mysql-volume&quot;</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: <span style="color:#e6db74">&#34;db-deployment&#34;</span>
+spec:
+  replicas: <span style="color:#ae81ff">1</span>
+  template:
+    metadata:
+      labels:
+        name: <span style="color:#e6db74">&#34;db-pod&#34;</span>
+    spec:
+      containers:
+        - name: <span style="color:#e6db74">&#34;db&#34;</span>
+          image: <span style="color:#e6db74">&#34;lucassabreu/openshift-mysql-test&#34;</span>
+          ports:
+            - name: <span style="color:#e6db74">&#34;mysql-port&#34;</span>
+              containerPort: <span style="color:#ae81ff">3306</span>
+          env:
+            - name: MYSQL_DATABASE
+              value: appointments
+            - name: MYSQL_ROOT_PASSWORD
+              value: <span style="color:#e6db74">&#34;root&#34;</span>
+            - name: MYSQL_USER
+              value: <span style="color:#e6db74">&#34;appoint&#34;</span>
+            - name: MYSQL_PASSWORD
+              value: <span style="color:#e6db74">&#34;123&#34;</span>
+          volumeMounts:
+            - name: <span style="color:#e6db74">&#34;mysql-volume&#34;</span>
+              mountPath: <span style="color:#e6db74">&#34;/var/lib/mysql&#34;</span>
+      volumes:
+        - name: <span style="color:#e6db74">&#34;mysql-volume&#34;</span></code></pre></div>
 <p>O primeiro Deployment é para o <code>db-deployment</code>. Os arquivos de configuração são simples de ler, sempre começamos o arquivo dizendo o tipo de objeto que será criado, o <code>metadata</code> e definimos as <code>specs</code> (que variam para cada tipo de componente).</p>
 
 <p>Defini que preciso de apenas um Pod (<code>replica</code>) e que as mesmas serão identificáveis pelas labels: <code>name=db-pod</code>.</p>
@@ -332,93 +335,81 @@ p.code-legend {
 <li><code>ports</code> define quais portas deverão ser expostas no Pod e permite que possam ser mapeadas nos Services posteriormente. Também é recomendado dar nomes às mesmas (<code>mysql-port</code>), assim podemos usar o nome como identificador no lugar de números.</li>
 <li><code>volumeMounts</code> define todos os volumes do contêiner, dessa forma o volume de dados do MySQL precisou ser mapeado (<code>/var/lib/mysql</code>).</li>
 </ul>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #ae81ff">apiVersion</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">extensions/v1beta1</span>
-<span style="color: #ae81ff">kind</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">Deployment</span>
-<span style="color: #ae81ff">metadata</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;node-deployment&quot;</span>
-<span style="color: #ae81ff">spec</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">replicas</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">1</span>
-  <span style="color: #ae81ff">template</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #ae81ff">metadata</span><span style="color: #f8f8f2">:</span>
-      <span style="color: #ae81ff">labels</span><span style="color: #f8f8f2">:</span>
-        <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;node-pod&quot;</span>
-    <span style="color: #ae81ff">spec</span><span style="color: #f8f8f2">:</span>
-      <span style="color: #ae81ff">containers</span><span style="color: #f8f8f2">:</span>
-        <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;node&quot;</span>
-          <span style="color: #ae81ff">image</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;lucassabreu/openshift-app-test&quot;</span>
-          <span style="color: #ae81ff">ports</span><span style="color: #f8f8f2">:</span>
-            <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">node-port</span>
-              <span style="color: #ae81ff">containerPort</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">8080</span>
-              <span style="color: #ae81ff">protocol</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">TCP</span>
-          <span style="color: #ae81ff">env</span><span style="color: #f8f8f2">:</span>
-            <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">DATABASE_CONNECTION</span>
-              <span style="color: #ae81ff">value</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">mysql://appoint:123@db-service:3306/appointments</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: <span style="color:#e6db74">&#34;node-deployment&#34;</span>
+spec:
+  replicas: <span style="color:#ae81ff">1</span>
+  template:
+    metadata:
+      labels:
+        name: <span style="color:#e6db74">&#34;node-pod&#34;</span>
+    spec:
+      containers:
+        - name: <span style="color:#e6db74">&#34;node&#34;</span>
+          image: <span style="color:#e6db74">&#34;lucassabreu/openshift-app-test&#34;</span>
+          ports:
+            - name: node-port
+              containerPort: <span style="color:#ae81ff">8080</span>
+              protocol: TCP
+          env:
+            - name: DATABASE_CONNECTION
+              value: mysql://appoint:<span style="color:#ae81ff">123</span>@db-service:<span style="color:#ae81ff">3306</span>/appointments</code></pre></div>
 <p>O segundo Deployment é do servidor HTTP, chamei-o de <code>node-deployment</code>. Ele segue as mesmas regras do anterior, sendo até mais simples.</p>
 
 <p>A novidade aqui é o <code>db-service</code>, que vou explicar agora:</p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #ae81ff">apiVersion</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;v1&quot;</span>
-<span style="color: #ae81ff">kind</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">Service</span>
-<span style="color: #ae81ff">metadata</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;db-service&quot;</span>
-<span style="color: #ae81ff">spec</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">ports</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">port</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">3306</span>
-      <span style="color: #ae81ff">targetPort</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;mysql-port&quot;</span>
-      <span style="color: #ae81ff">protocol</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">TCP</span>
-  <span style="color: #ae81ff">selector</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;db-pod&quot;</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: <span style="color:#e6db74">&#34;v1&#34;</span>
+kind: Service
+metadata:
+  name: <span style="color:#e6db74">&#34;db-service&#34;</span>
+spec:
+  ports:
+    - port: <span style="color:#ae81ff">3306</span>
+      targetPort: <span style="color:#e6db74">&#34;mysql-port&#34;</span>
+      protocol: TCP
+  selector:
+    name: <span style="color:#e6db74">&#34;db-pod&#34;</span></code></pre></div>
 <p>O <code>db-service</code> é o nome do Service que defini para agrupar os Pods de banco de dados, o Service ficou bem simples e basicamente tem duas partes:</p>
 
 <ul>
 <li><code>selector</code> define uma regra para selecionar quais Pods fazem parte do Service, no caso estou usando uma regra bem simples de <code>name=db-pod</code>.</li>
 <li><code>ports</code> permite que você mapeie as portas dos Pods para uma porta no Service, no caso estou roteando a porta de nome <code>mysql-port</code> para a <code>3306</code> do Service. Assim toda chamada para <code>db-service:3306</code> será direcionada para a <code>mysql-port</code> de um dos Pods.</li>
 </ul>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #ae81ff">apiVersion</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;v1&quot;</span>
-<span style="color: #ae81ff">kind</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">Service</span>
-<span style="color: #ae81ff">metadata</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;node-service&quot;</span>
-<span style="color: #ae81ff">spec</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">ports</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">port</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">80</span>
-      <span style="color: #ae81ff">targetPort</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;node-port&quot;</span>
-      <span style="color: #ae81ff">protocol</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">TCP</span>
-  <span style="color: #ae81ff">selector</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;node-pod&quot;</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: <span style="color:#e6db74">&#34;v1&#34;</span>
+kind: Service
+metadata:
+  name: <span style="color:#e6db74">&#34;node-service&#34;</span>
+spec:
+  ports:
+    - port: <span style="color:#ae81ff">80</span>
+      targetPort: <span style="color:#e6db74">&#34;node-port&#34;</span>
+      protocol: TCP
+  selector:
+    name: <span style="color:#e6db74">&#34;node-pod&#34;</span></code></pre></div>
 <p>O <code>node-service</code> segue a mesma lógica, mas para os Pods do servidor HTTP.</p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span><span style="color: #ae81ff">apiVersion</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">v1</span>
-<span style="color: #ae81ff">kind</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">Route</span>
-<span style="color: #ae81ff">metadata</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;node-route&quot;</span>
-<span style="color: #ae81ff">spec</span><span style="color: #f8f8f2">:</span>
-  <span style="color: #ae81ff">to</span><span style="color: #f8f8f2">:</span>
-    <span style="color: #ae81ff">kind</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">Service</span>
-    <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;node-service&quot;</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: v1
+kind: Route
+metadata:
+  name: <span style="color:#e6db74">&#34;node-route&#34;</span>
+spec:
+  to:
+    kind: Service
+    name: <span style="color:#e6db74">&#34;node-service&#34;</span></code></pre></div>
 <p>Por fim criei uma Route para expor o serviço <code>node-service</code> para a Internet. Eu poderia definir qual o nome de host, mas como não o fiz o OpenShift irá gerar uma URL automaticamente para mim.</p>
 
 <p>Essa URL pode ser descoberta entrando na Dashboard do OpenShift ou com o comando <code>oc get routes</code>:</p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span>$ oc get routes
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ oc get routes
 NAME         HOST/PORT                                                  PATH      SERVICES       PORT      TERMINATION
-node-route   node-route-medium-example.44fs.preview.openshiftapps.com             node-service   &lt;all&gt;
-</pre></div>
-
+node-route   node-route-medium-example.44fs.preview.openshiftapps.com             node-service   &lt;all&gt;</code></pre></div>
 <p>Para aplicar as configurações no cluster a OpenShift disponibiliza um cliente de linha de comando, que usa basicamente a mesma estrutura do <code>kubectl</code>, o <code>oc</code>. Então tudo que precisa ser feito é executar:</p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span>oc apply -f db-deployment.yml,node-deployment.yml,db-srv.yml,node-srv.yml,node-route.yml
-<span style="color: #75715e"># Ou</span>
-oc apply -f db-deployment.yml
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">oc apply -f db-deployment.yml,node-deployment.yml,db-srv.yml,node-srv.yml,node-route.yml
+<span style="color:#75715e"># Ou
+</span><span style="color:#75715e"></span>oc apply -f db-deployment.yml
 oc apply -f node-deployment.yml
 oc apply -f db-srv.yml
 oc apply -f node-srv.yml
-oc apply -f node-route.yml
-</pre></div>
-
+oc apply -f node-route.yml</code></pre></div>
 <hr />
 
 <p>As instruções de como instalar o cliente e configurá-lo estão nesse
@@ -435,10 +426,8 @@ link: <a href="https://console.preview.openshift.com/console/command-line">https
 <hr />
 
 <p>Caso não queira criar os todos esses fontes, pode pegá-los aqui: <a href="https://github.com/lucassabreu/openshift-next-gen/tree/v1">https://github.com/lucassabreu/openshift-next-gen/tree/v1</a>; ou executar:</p>
-<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span></span>git clone -b v1 <span style="color: #ae81ff">\</span>
-    https://github.com/lucassabreu/openshift-next-gen.git
-</pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">git clone -b v1 <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    https://github.com/lucassabreu/openshift-next-gen.git</code></pre></div>
 <hr />
 
 <p>Agora no console do OpenShift deverão aparecer todos esses componentes
@@ -508,20 +497,25 @@ rodando.</p>
     
       <article>
         <div id="disqus_thread"></div>
-<script type="text/javascript">
-    var disqus_shortname = 'lucas-dos-santos-abreu';
-    var disqus_identifier = 'http:\/\/www.lucassabreu.net.br\/post\/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2\/';
-    var disqus_title = 'Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 2';
-    var disqus_url = 'http:\/\/www.lucassabreu.net.br\/post\/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2\/';
-
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
     (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "lucas-dos-santos-abreu" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
     })();
 </script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
       </article>
     
     <footer>
