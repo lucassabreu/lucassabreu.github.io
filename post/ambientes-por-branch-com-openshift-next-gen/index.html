@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
-    <meta name="generator" content="Hugo 0.37-DEV" />
+    <meta name="generator" content="Hugo 0.36.1" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ambientes por Branch com OpenShift Next Gen | Lucas dos Santos Abreu</title>
@@ -568,7 +568,7 @@ echo <span style="color:#e6db74">&#34;&gt;&gt; Deployed to </span>$CI_ENVIRONMEN
 <p>Vale ressaltar que é importante marcar os componentes do ambiente com <code>app=$CI_ENVIRONMENT_SLUG</code>, pois é assim que o GitLab consegue encontrar eles e lhe retornar status sobre eles.</p>
 
 <p>Também estou usando um truque de &ldquo;templating&rdquo; com o YAML que define os ambientes para poder inserir as variáveis de cada ambiente nele. Existem outras ferramentas mais avançadas como o <a href="https://github.com/kubernetes/helm">Helm</a>, mas para o meu exemplo templating com <code>sed</code> é o suficiente.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: extensions/v1beta1
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: extensions/v1beta<span style="color:#ae81ff">1</span>
 kind: Deployment
 metadata:
   name: hw-dpl-__ENV__
@@ -605,7 +605,7 @@ spec:
     name: hw-pod
     app: __ENV__
 ---
-apiVersion: v1
+apiVersion: v<span style="color:#ae81ff">1</span>
 kind: Route
 metadata:
   name: __ENV__

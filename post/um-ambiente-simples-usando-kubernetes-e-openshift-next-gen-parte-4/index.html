@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
-    <meta name="generator" content="Hugo 0.37-DEV" />
+    <meta name="generator" content="Hugo 0.36.1" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 4 | Lucas dos Santos Abreu</title>
@@ -295,20 +295,20 @@ p.code-legend {
 <p>Existem algumas formas de criar e usar os mesmos, criá-los diretamente de arquivos, ou usando configurações, e expô-los aos contêineres usando volumes ou variáveis de ambiente.</p>
 
 <p>Para essa aplicação vou utilizar um YAML para definir um Secret e vou modificar os Pods para alimentarem as variáveis de ambiente com eles. A estrutura básica do Secret é como segue:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: v1
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: v<span style="color:#ae81ff">1</span>
 kind: Secret
 metadata:
   name: mysql-secrets
 type: Opaque
 data:
-  mysql-root-password: &lt;hash base64<span style="color:#e6db74">&gt;
+  mysql-root-password: &lt;hash base<span style="color:#ae81ff">64</span><span style="color:#e6db74">&gt;
 </span><span style="color:#e6db74">  mysql-user: &lt;hash base64&gt;
 </span><span style="color:#e6db74">  mysql-password: &lt;hash base64&gt;
 </span><span style="color:#e6db74">  mysql-database-connection: &lt;hash base64&gt;</span></code></pre></div>
 <p>Nele estou criando o Secret <code>mysql-secrets</code> e definindo quatro chaves que representam as três variáveis do MySQL e uma do servidor HTTP. No lugar do <code>&lt;hash base64&gt;</code> deve ir o conteúdo do segredo em Base 64, que pode ser gerado usando o comando <code>echo -n &quot;meusegredo&quot; | base64 -w0</code>.</p>
 
 <p>Eu não gostei muito da ideia de guardar o Base 64 dentro da definição do Secret, então fiz a seguinte modificação no meu <code>mysql-secrets.yml</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: v1
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: v<span style="color:#ae81ff">1</span>
 kind: Secret
 metadata:
   name: mysql-secrets
@@ -339,7 +339,7 @@ $ export DATABASE_PASSWORD<span style="color:#f92672">=</span><span style="color
 $ ./env-set-oc.sh
 secret <span style="color:#e6db74">&#34;mysql-secrets&#34;</span> configured</code></pre></div>
 <p>Altero os Deployments para considerarem o Secret que criei:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: extensions/v1beta1
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: extensions/v1beta<span style="color:#ae81ff">1</span>
 kind: Deployment
 metadata:
   name: <span style="color:#e6db74">&#34;db-deployment&#34;</span>
@@ -382,7 +382,7 @@ spec:
           persistentVolumeClaim:
             claimName: mysql-pv-claim</code></pre></div>
 <p><small><center>db-deployment.yml</center></small></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: extensions/v1beta1
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: extensions/v1beta<span style="color:#ae81ff">1</span>
 kind: Deployment
 metadata:
   name: <span style="color:#e6db74">&#34;node-deployment&#34;</span>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
-    <meta name="generator" content="Hugo 0.37-DEV" />
+    <meta name="generator" content="Hugo 0.36.1" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 2 | Lucas dos Santos Abreu</title>
@@ -294,7 +294,7 @@ p.code-legend {
 <p>Como não é uma boa ideia simplesmente definir um Pod diretamente, criei dois Deployments o <code>node-deployment</code> e o <code>db-deployment</code>.</p>
 
 <p><em>No momento da escrita desse post os Deployments ainda estavam marcados como uma versão beta, mas já são bastante usados, então é confiável.</em></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: extensions/v1beta1
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: extensions/v1beta<span style="color:#ae81ff">1</span>
 kind: Deployment
 metadata:
   name: <span style="color:#e6db74">&#34;db-deployment&#34;</span>
@@ -335,7 +335,7 @@ spec:
 <li><code>ports</code> define quais portas deverão ser expostas no Pod e permite que possam ser mapeadas nos Services posteriormente. Também é recomendado dar nomes às mesmas (<code>mysql-port</code>), assim podemos usar o nome como identificador no lugar de números.</li>
 <li><code>volumeMounts</code> define todos os volumes do contêiner, dessa forma o volume de dados do MySQL precisou ser mapeado (<code>/var/lib/mysql</code>).</li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: extensions/v1beta1
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: extensions/v1beta<span style="color:#ae81ff">1</span>
 kind: Deployment
 metadata:
   name: <span style="color:#e6db74">&#34;node-deployment&#34;</span>
@@ -388,7 +388,7 @@ spec:
   selector:
     name: <span style="color:#e6db74">&#34;node-pod&#34;</span></code></pre></div>
 <p>O <code>node-service</code> segue a mesma lógica, mas para os Pods do servidor HTTP.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: v1
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: v<span style="color:#ae81ff">1</span>
 kind: Route
 metadata:
   name: <span style="color:#e6db74">&#34;node-route&#34;</span>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
-    <meta name="generator" content="Hugo 0.37-DEV" />
+    <meta name="generator" content="Hugo 0.36.1" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 3 | Lucas dos Santos Abreu</title>
@@ -394,7 +394,7 @@ Query OK, <span style="color:#ae81ff">1</span> row affected <span style="color:#
 <p>Podemos utilizar vários tipos de volumes em um PVC para armazenar os dados, no caso do OpenShift o padrão é <a href="https://kubernetes.io/docs/user-guide/persistent-volumes/#aws">EBS</a>, que são volumes armazenados dentro do <a href="https://aws.amazon.com/">AWS da Amazon</a>, mas existe a opção de usar volumes do Google Cloud, do Azure, Locais, etc; no Kubernetes.</p>
 
 <p>Mas no momento o OpenShift esta ofertando apenas o EBS. Abaixo esta a definição do PVC:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: v1
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: v<span style="color:#ae81ff">1</span>
 kind: PersistentVolumeClaim
 metadata:
   name: mysql-pv-claim
@@ -405,7 +405,7 @@ spec:
     requests:
       storage: 1Gi</code></pre></div>
 <p>Depois de um momento o OpenShift irá criar um volume e disponibilizá-lo, agora é preciso vincular ele com os <code>db-pods</code>, para isso basta alterar os volumes no <code>db-deployment</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: extensions/v1beta1
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion: extensions/v1beta<span style="color:#ae81ff">1</span>
 kind: Deployment
 metadata:
   name: <span style="color:#e6db74">&#34;db-deployment&#34;</span>
