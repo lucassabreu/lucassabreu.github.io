@@ -17,7 +17,7 @@
       <pubDate>Sat, 31 Mar 2018 22:00:00 -0300</pubDate>
       
       <guid>http://www.lucassabreu.net.br/post/aplicando-https-para-uma-spa-na-aws/</guid>
-      <description>.blur-up { -webkit-filter: blur(5px); filter: blur(5px); transition: filter 400ms, -webkit-filter 400ms; } .blur-up.lazyloaded { -webkit-filter: blur(0); filter: blur(0); }  Recentemente alteramos a landing page e o SPA do Planrockr para suportar HTTPS, inicialmente tempo mantemos apenas o backend executando sobre HTTPS, mas percebemos que seria melhor prover nosso frontend sobre HTTPS também, seja para melhorar o ranking em sites de pesquisa, para garantir a segurança nas comunicações ou simplesmente passar mais segurança para os nossos usuários.</description>
+      <description>&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
   </channel>
