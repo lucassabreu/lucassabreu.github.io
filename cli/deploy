@@ -2,29 +2,8 @@
 
 git submodule update --init
 
-# reseting public to avoid conflicts
-cd public
-git fetch && git checkout gh-pages && git reset --hard origin/gh-pages && git pull origin gh-pages
-if [ ! $? -eq 0 ]; then
-    exit 1
-fi
 
 # build blog
-cd ..
 ./binaries/hugo -v -b http://www.lucassabreu.net.br
 
-# commit changes
-cd public
-ORIGIN=origin
-if [[ "$1" == "-t" ]]; then
-    git config --global user.email "travis@travis-ci.org"
-    git config --global user.name "Travis CI"
-    git remote add origin-pages git@github.com:lucassabreu/lucassabreu.github.io.git > /dev/null 2>&1
-ORIGIN=origin-pages
-fi
 
-git add --all
-git commit -m "updated at $(date +'%F'). Travis build: $TRAVIS_BUILD_NUMBER"
-git push $ORIGIN gh-pages
-
-cd ..
