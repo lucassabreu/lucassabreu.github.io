@@ -1,14 +1,20 @@
 languageCode = "pt-BR"
 title = "Lucas dos Santos Abreu"
 baseurl = "/"
-theme = "after-dark"
+theme = "terminal"
+paginate = 5
 
 disqusShortname = "lucas-dos-santos-abreu"
 pygmentsCodeFences = true
 enableEmoji = true
 
 [Params]
-  theme_variant = "hack"
+  fullWidthTheme = false
+  centerTheme = true
+
+  themeColor = "green"
+
+  contentTypeName = "post"
 
 [author]
   name = "Lucas dos Santos Abreu"
