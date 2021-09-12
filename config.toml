@@ -54,3 +54,4 @@ enableEmoji = true
 [markup]
   [markup.highlight]
     codeFences = true
+    style = 'solarized-dark'
