@@ -14,8 +14,16 @@ jobs:
           submodules: true
           fetch-depth: 0
 
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: "0.87.0"
+
       - name: Build
-        run: ./binaries/hugo -v -b http://www.lucassabreu.net.br
+        run: hugo -v -b http://www.lucassabreu.net.br
+
+      - name: Minify
+        run: hugo --minify
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.5
