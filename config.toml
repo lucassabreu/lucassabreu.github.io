@@ -1,14 +1,13 @@
 languageCode = "pt-BR"
 title = "Lucas dos Santos Abreu"
 baseurl = "/"
-theme = "after-dark"
+theme = "smol"
 
 disqusShortname = "lucas-dos-santos-abreu"
-pygmentsCodeFences = true
 enableEmoji = true
 
 [Params]
-  theme_variant = "hack"
+  dateFmt = "2006-01-02"
 
 [author]
   name = "Lucas dos Santos Abreu"
@@ -49,3 +48,10 @@ enableEmoji = true
   identifier = "linkedin"
   url = "https://www.linkedin.com/in/lucassantosabreu"
 
+[markup.goldmark.renderer]
+  unsafe = true
+
+[markup]
+  [markup.highlight]
+    codeFences = true
+    style = 'solarized-dark'
