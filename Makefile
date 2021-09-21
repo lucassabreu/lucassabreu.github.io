@@ -7,7 +7,8 @@ git.submodule:
 	git submodule update --init
 
 build:
-	./binaries/hugo -v -b https://www.lucassabreu.net.br
+	hugo -v -b https://www.lucassabreu.net.br
 
 server:
+	$$BROWSER http://localhost:1313
 	hugo server -v

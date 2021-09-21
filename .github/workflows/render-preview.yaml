@@ -1,0 +1,71 @@
+name: GH Pages (Preview PR)
+on:
+  pull_request:
+    types: [labeled]
+
+jobs:
+  build-and-preview:
+    if: ${{ github.event.label.name == 'preview-pr' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2.3.1
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: "0.87.0"
+
+      - name: Build
+        run: |
+          REL=preview/${{ github.event.number }}
+          hugo -d public/$REL -v --minify -b http://www.lucassabreu.net.br/$REL
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@4.1.5
+        with:
+          branch: gh-pages
+          folder: public
+          clean: false
+
+      - uses: actions/github-script@v4
+        if: ${{ always() }}
+        with:
+          script: |
+            github.issues.removeLabel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.number,
+              name: 'preview-pr'
+            })
+
+      - uses: actions/github-script@v4
+        with:
+          script: |
+            const { data: deployment } = await github.repos.createDeployment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.payload.pull_request ?
+                context.payload.pull_request.head.sha : context.sha,
+                transient_environment: true,
+                production_environment: false,
+              environment: 'preview/' + context.payload.number,
+              required_contexts: [],
+            });
+            github.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: deployment.id,
+              state: 'success',
+              environment_url: 'http://www.lucassabreu.net.br/preview/' + context.payload.number,
+              auto_inactive: true,
+            })
+            github.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.number,
+              labels: ['preview-deployed']
+            })
