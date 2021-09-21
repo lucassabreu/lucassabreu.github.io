@@ -8,6 +8,7 @@ enableEmoji = true
 
 [Params]
   dateFmt = "2006-01-02"
+  headingAnchors = true
 
 [author]
   name = "Lucas dos Santos Abreu"
