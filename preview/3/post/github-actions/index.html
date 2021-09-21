@@ -4,7 +4,7 @@
 <meta itemprop=description content="O que é isso? O Github Actions é primariamente uma ferramenta para implementar Continuous Integration, ou seja, automatizar a execução de ferramentas ou processos que ajudam a garantir a qualidade do código, seja teste unitários, análises de código estática, analises de segurança, simplesmente compilar/&ldquo;buildar&rdquo; o projeto.
 Além disso também podemos implementar fluxos de Continuous Delivery, fazendo o deploy ou bundle do projeto de forma automática sempre que um evento acontece, seja o push para uma branch, ou algum outro evento do Github."><meta itemprop=datePublished content="2021-09-12T00:00:00+00:00">
 <meta itemprop=dateModified content="2021-09-12T00:00:00+00:00">
-<meta itemprop=wordCount content="600">
+<meta itemprop=wordCount content="1041">
 <meta itemprop=keywords content="Github,Github Actions,Continuous Integration,">
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
@@ -14,9 +14,8 @@ Além disso também podemos implementar fluxos de Continuous Delivery, fazendo o
 Github Actions |
 Lucas dos Santos Abreu
 </title>
-<link rel=stylesheet href="/preview/3/css/style.css?rnd=1632057810">
-<script src=https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js integrity="sha512-q583ppKrCRc7N5O0n2nzUiJ+suUv7Et1JGels4bXOaMFQcamPk9HjdUknZuuFjBNs7tsMuadge5k9RzdmO+1GQ==" crossorigin=anonymous referrerpolicy=no-referrer></script>
-<script src=/preview/3/js/index.js></script>
+<link rel=stylesheet href="/preview/3/css/style.css?rnd=1632265036">
+<script src="/preview/3/js/index.js?rnd=1632265036"></script>
 </head>
 <body>
 <a class=skip-to-content-link href=#main> Skip to content </a>
@@ -35,7 +34,7 @@ Lucas dos Santos Abreu
 <header>
 <h1>Github Actions</h1>
 <p>
-<span class=reading-time>3 minute read</span>
+<span class=reading-time>5 minute read</span>
 <span class=published-at>
 Published:
 <time datetime="2021-09-12 00:00:00 +0000 UTC">2021-09-12</time>
@@ -48,13 +47,11 @@ Published:
 <li><a href=#como-temos-usado-o-github-actionsci-em-geral>Como temos usado o Github Actions/CI em geral</a></li>
 <li><a href=#show-me-the-code>Show me the code</a>
 <ol>
-<li><a href=#workflow-simples>Workflow simples</a>
-<ol>
+<li><a href=#workflow-simples>Workflow simples</a></li>
 <li><a href=#lintsanalise-estática-com-annotations>Lints/Analise Estática com annotations</a></li>
 </ol>
 </li>
-</ol>
-</li>
+<li><a href=#integrações-e-actions>Integrações e &ldquo;Actions&rdquo;</a></li>
 </ol>
 <ol>
 <li><a href=#o-que-é-o-github-actions>o que é o github actions</a></li>
@@ -147,8 +144,9 @@ vão funcionar se o <code>workflow</code> estiver na branch default).</p>
 <p>Esse é o tipo mais simples de <code>workflow</code> que pode ser feito no Github Actions,
 apenas executa a cada push para a <code>main</code> e em todos os <code>pull requests</code>, e a
 única saída gerada é o &ldquo;commit status&rdquo;.</p>
-<p><figure class=big>
-<img class="lazyload blur-up" data-src=phpunit-basic-checks.png alt="commit status">
+<p>
+<figure class=big>
+<img class="lazyload blur-up" loading=lazy data-src=phpunit-basic-checks.png alt="commit status" width=944 height=223>
 <figcaption><p>commit status gerados pelo workflow</p></figcaption>
 </figure>
 </p>
@@ -156,21 +154,103 @@ apenas executa a cada push para a <code>main</code> e em todos os <code>pull req
 esperada, ou que quebrem algo no caso do PHPUnit; para todos os
 desenvolvedores do projeto o acesso a porquê o commit não passou esta a um
 click.</p>
-<p><figure class=big>
-<img class="lazyload blur-up" data-src=./github-actions-check-details.png alt="check details">
+<p>
+<figure class=big>
+<img class="lazyload blur-up" loading=lazy data-src=./github-actions-check-details.png alt="check details">
 <figcaption><p>logs do phpunit no github actions</p></figcaption>
 </figure>
 </p>
-<h4 id=lintsanalise-estática-com-annotations>Lints/Analise Estática com annotations</h4>
+<h3 id=lintsanalise-estática-com-annotations>Lints/Analise Estática com annotations</h3>
 <p>Mas esse é só o básico podemos fazer algumas coisas mais avançadas com o Github
 Actions e a integração &ldquo;auto-mágica&rdquo; com a API do Github.</p>
-<p>Uma integração que hoje precisava de um setup grande para fazer, mas que era
-muito boa para auxiliar no revisão automática são os <a href=https://docs.github.com/en/github/collaborating-with-pull-requests/collaborating-on-repositories-with-code-quality-features/about-status-checks#checks>annotations</a>.</p>
-<p><figure class=big>
-<img class="lazyload blur-up" data-src=./phpstan-github-annotation.png alt="github annotations">
+<p>Uma integração que precisava de um setup grande para fazer, mas que era muito boa
+para auxiliar no revisão automática são os <a href=https://docs.github.com/en/github/collaborating-with-pull-requests/collaborating-on-repositories-with-code-quality-features/about-status-checks#checks>annotations</a>. Com eles podemos
+criar &ldquo;comentários&rdquo; diretamente nos arquivos do PR/repositório de forma
+automatizada, marcando inclusive qual a linha que tem o problema e qual o
+problema daquela linha.</p>
+<p>
+<figure class=big>
+<img class="lazyload blur-up" loading=lazy data-src=./phpstan-github-annotation.png alt="phpstan github annotations">
 <figcaption><p>exemplo de annotations</p></figcaption>
 </figure>
 </p>
+<p>A utilidade disso é que agora quando o time for revisar o PR podemos focar no
+design da solução e na regra de negócio que esta sendo implementada, no lugar de
+revisar se o fonte possui problemas estruturais ou erros de
+compilação/interpretação que possam acontecer.</p>
+<p>Isso é claro depende do ferramental que a linguagem que você esta trabalhando
+oferece, no caso do PHP quase todos os nossos projetos vão incluir o
+<a href=wip>PHPStan</a> (ou <a href=wip>Phan</a>), <a href=wip>PHPMD</a>, <a href=wip>PHPCS</a> e <a href=wip>PHP CS Fixer</a> para
+padronizar e analisar o código.</p>
+<p>O exemplo da imagem anterior é feita com o seguinte <code>workflow</code>:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#268bd2>name</span>: <span style=color:#2aa198>&#34;PHPStan&#34;</span>
+<span style=color:#268bd2>on</span>:
+  <span style=color:#268bd2>pull_request</span>:
+  <span style=color:#268bd2>push</span>:
+    <span style=color:#268bd2>branches</span>: [main]
+
+<span style=color:#268bd2>jobs</span>:
+  <span style=color:#268bd2>php-stan</span>:
+    <span style=color:#268bd2>runs-on</span>: ubuntu-latest
+    <span style=color:#268bd2>timeout-minutes</span>: <span style=color:#2aa198>15</span>
+    <span style=color:#268bd2>env</span>:
+      <span style=color:#268bd2>COMPOSER_NO_INTERACTION</span>: <span style=color:#2aa198>1</span>
+
+    <span style=color:#268bd2>steps</span>:
+      - <span style=color:#268bd2>name</span>: Checkout code
+        <span style=color:#268bd2>uses</span>: actions/checkout@v2
+
+      - <span style=color:#268bd2>name</span>: Setup PHP
+        <span style=color:#268bd2>uses</span>: shivammathur/setup-php@v2
+        <span style=color:#268bd2>with</span>:
+          <span style=color:#268bd2>php-version</span>: <span style=color:#2aa198>8.0</span>
+          <span style=color:#268bd2>tools</span>: composer:v2
+
+      - <span style=color:#268bd2>name</span>: Install dependencies
+        <span style=color:#268bd2>run</span>: composer install --prefer-dist
+
+      - <span style=color:#268bd2>name</span>: Execute PHPStan
+        <span style=color:#268bd2>run</span>: php vendor/bin/phpstan analyse src --level 8 --error-format=github
+</code></pre></div><p class=code-legend>exemplo de workflow com phpstan</p>
+<p>O mesmo é basicamente igual ao <code>workflow</code> criado para o PHPUnit antes, apenas
+chamando o PHPStan dessa vez, e com isso ele já gera as <code>annotations</code>, isso
+porque o Actions tem um conceito de &ldquo;<a href=https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions>workflow message commands</a>&rdquo;.</p>
+<p>Ele interpreta a saída do <code>workflow</code> e se a linha repeitar um dos formatos
+abaixo, ele destaca essa informação.</p>
+<pre><code>::notice file={name},line={line},endLine={endLine},title={title}::{message}
+::warning file={name},line={line},endLine={endLine},title={title}::{message}
+::error file={name},line={line},endLine={endLine},title={title}::{message}
+</code></pre><p>Quando o Actios identifica um desses formatos no output do <code>workflow</code> ele
+automaticamente cria um <code>annotation</code> com o mesmo &ldquo;nível&rdquo; no <code>pull request</code> (se
+existir um para a execução).</p>
+<p>Então se eu criar um <code>step</code> como o abaixo:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml>    - <span style=color:#268bd2>name</span>: Fake
+      <span style=color:#268bd2>run</span>: |<span style=color:#2aa198>
+</span><span style=color:#2aa198>        echo ::notice \
+</span><span style=color:#2aa198>          file=$PWD/src/Hugger/Friendly.php,line=1,col=0::this is a notice
+</span><span style=color:#2aa198>        echo ::warning \
+</span><span style=color:#2aa198>          file=$PWD/src/Hugger/Friendly.php,line=1,col=0::this is a warning
+</span><span style=color:#2aa198>        echo ::error \
+</span><span style=color:#2aa198>          file=$PWD/src/Hugger/Friendly.php,line=1,col=0::this is a error</span>        
+
+</code></pre></div><p>Vai gerar uma nova <code>annotation</code>:</p>
+<p>
+<figure class=big>
+<img class="lazyload blur-up" loading=lazy data-src=./fake-annotations.png alt="fake annotation">
+</figure>
+</p>
+<p>Isso mostra quão fácil é integrar com essa funcionalidade do Github Actions,
+várias ferramentas tem formatos de saída prontos para integrar com ele, e as
+que não tem, bem estão a um <a href=https://github.com/lucassabreu/github-actions-examples/blob/f051cee06d489998f90e4e4cb6fc71afcc5fc7ca/.github/workflows/phpcs.yaml#L35-L38><code>sed</code></a> de distância.</p>
+<h2 id=integrações-e-actions>Integrações e &ldquo;Actions&rdquo;</h2>
+<p>Para a maioria das ferramentas, principalmente para as que pode/devem ser
+executadas como parte do <code>pre-commit</code> usar o <code>step.run</code> é a melhor forma,
+fácil de entender e inclusive já mostra como executar localmente assim o
+desenvolvedor não precisa fazer o push para ver os resultados, ele pode apenas
+rodar o <code>php vendor/bin/phpunit</code> no terminal antes de fazer o commit e feito.</p>
+<p>Mas existem algumas etapas que podemos adicionar no <code>workflow</code> que não precisam
+ser executadas localmente, por exemplo: deploys, cache de arquivos, relatórios
+de cobertura, integrações com serviços externos, etc.</p>
 <hr>
 <h1 id=heading></h1>
 <h2 id=o-que-é-o-github-actions>o que é o github actions</h2>
@@ -218,7 +298,7 @@ and tagged
 <a href=/preview/3/tags/github>Github</a>
 <a href=/preview/3/tags/github-actions>Github Actions</a>
 <a href=/preview/3/tags/continuous-integration>Continuous Integration</a>
-using <span itemprop=wordCount>600</span> words.
+using <span itemprop=wordCount>1041</span> words.
 </p>
 </section>
 </footer>

@@ -13,9 +13,8 @@
 Aplicando HTTPS para uma SPA na AWS |
 Lucas dos Santos Abreu
 </title>
-<link rel=stylesheet href="/preview/3/css/style.css?rnd=1632057810">
-<script src=https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js integrity="sha512-q583ppKrCRc7N5O0n2nzUiJ+suUv7Et1JGels4bXOaMFQcamPk9HjdUknZuuFjBNs7tsMuadge5k9RzdmO+1GQ==" crossorigin=anonymous referrerpolicy=no-referrer></script>
-<script src=/preview/3/js/index.js></script>
+<link rel=stylesheet href="/preview/3/css/style.css?rnd=1632265036">
+<script src="/preview/3/js/index.js?rnd=1632265036"></script>
 </head>
 <body>
 <a class=skip-to-content-link href=#main> Skip to content </a>
@@ -43,7 +42,7 @@ Published:
 </header>
 <div class=content role=content>
 <figure class=big>
-<img class="lazyload blur-up" data-src=/uploads/banner-cf-s3-https.svg.png>
+<img class="lazyload blur-up" loading=lazy data-src=/uploads/banner-cf-s3-https.svg.png width=984 height=243>
 </figure>
 <p>Recentemente passamos a servir a nossa landing page e o SPA do <a href=https://planrockr.com/>Planrockr</a> sobre HTTPS, inicialmente apenas estamos usando HTTPS no nosso backend, mas percebemos que seria melhor que nosso frontend também usasse.</p>
 <p>Alguns dos motivos por traz disso seriam para melhorar o <a href=https://webmasters.googleblog.com/2014/08/https-as-ranking-signal.html>ranking em sites de pesquisa</a>, para garantir ainda mais a segurança nas comunicações, e também para passar mais segurança para os nossos usuários.</p>
@@ -65,23 +64,23 @@ Published:
 &lt;/<span style=color:#268bd2>html</span>&gt;
 </code></pre></div><p>Habilitei o mesmo para funcionar como <em>Static website hosting</em>, então posso acessar a URL <a href=http://simple.planrockr.com.s3-website-sa-east-1.amazonaws.com/>http://simple.planrockr.com.s3-website-sa-east-1.amazonaws.com/</a> e verei o seguinte:</p>
 <figure>
-<img class="lazyload blur-up" data-src=/uploads/https-aws-s3-cf_index.html-sem-https.png>
+<img class="lazyload blur-up" loading=lazy data-src=/uploads/https-aws-s3-cf_index.html-sem-https.png width=552 height=292>
 <figcaption><p>Página simples servida via HTTP</p></figcaption>
 </figure>
 <p>Com esse bucket podemos simular a migração de uma &ldquo;SPA&rdquo; no S3 sem HTTPS para uma usando CloudFront para servir via HTTPS.</p>
 <p>O primeiro é acessar o dashboard do CloudFront no AWS, nele acesse o botão <strong>Create Distribution</strong>:</p>
 <figure>
-<img class="lazyload blur-up" data-src=/uploads/https-aws-s3-cf_cloudfront-dashboard.png>
+<img class="lazyload blur-up" loading=lazy data-src=/uploads/https-aws-s3-cf_cloudfront-dashboard.png width=753 height=229>
 <figcaption><p>Botão Create Distribution CloudFront</p></figcaption>
 </figure>
 <p>Ir na opção para Web:</p>
 <figure>
-<img class="lazyload blur-up" data-src=/uploads/https-aws-s3-cf_cloudfront-get-started.png>
+<img class="lazyload blur-up" loading=lazy data-src=/uploads/https-aws-s3-cf_cloudfront-get-started.png width=1286 height=290>
 <figcaption><p>Get Started do CloudFront (Web)</p></figcaption>
 </figure>
 <p>Na tela <strong>Create Distribution</strong>, informe o nome do bucket que deseja usar, e selecione-o quando aparecer na lista.</p>
 <figure>
-<img class="lazyload blur-up" data-src=/uploads/https-aws-s3-cf_cloudfront-create-distribution.png>
+<img class="lazyload blur-up" loading=lazy data-src=/uploads/https-aws-s3-cf_cloudfront-create-distribution.png width=884 height=192>
 <figcaption><p>CloudFront Create Distribution, selecionar bucket</p></figcaption>
 </figure>
 <p>Eu recomendo marcar a opção &ldquo;Redirect HTTP to HTTPS&rdquo; em <strong>Viewer Protocol Policy</strong>, para que o seu site/SPA sempre seja acessado via HTTPS, mesmo que o usuário tenha um link com HTTP apenas.</p>
@@ -90,7 +89,7 @@ Published:
 <p>Para isso entre na distribution, na aba &ldquo;Error Pages&rdquo;, vamos adicionar duas regras para que todas as chamadas para arquivos que não existam no bucket sejam direcionadas para o <code>index.html</code> do SPA.</p>
 <p>Fica assim:</p>
 <figure>
-<img class="lazyload blur-up" data-src=/uploads/https-aws-s3-cf_cloudfront-create-error-page.png>
+<img class="lazyload blur-up" loading=lazy data-src=/uploads/https-aws-s3-cf_cloudfront-create-error-page.png width=717 height=424>
 <figcaption><p>CloudFront Custom Error Response Settings</p></figcaption>
 </figure>
 <p>O S3 retorna os Status Codes <code>403</code> e <code>404</code> quando não consegue achar um arquivo ou não permite acesso a ele, desse modo criando a regra acima para esses dois Status Codes todas as requisições (que não forem de assets) serão direcionados ao <code>index.html</code>.</p>

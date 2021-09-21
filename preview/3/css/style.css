@@ -150,12 +150,12 @@ dl {
   margin-bottom: var(--paragraphmargin);
 }
 
-p > code {
+p code {
   font-weight: 700;
 }
 
-p > code::before,
-p > code::after {
+p code::before,
+p code::after {
   content: "`";
 }
 

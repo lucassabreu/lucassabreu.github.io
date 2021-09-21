@@ -13,9 +13,8 @@
 Simplificando o Setup de Projetos no GitHub |
 Lucas dos Santos Abreu
 </title>
-<link rel=stylesheet href="/preview/3/css/style.css?rnd=1632057810">
-<script src=https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js integrity="sha512-q583ppKrCRc7N5O0n2nzUiJ+suUv7Et1JGels4bXOaMFQcamPk9HjdUknZuuFjBNs7tsMuadge5k9RzdmO+1GQ==" crossorigin=anonymous referrerpolicy=no-referrer></script>
-<script src=/preview/3/js/index.js></script>
+<link rel=stylesheet href="/preview/3/css/style.css?rnd=1632265036">
+<script src="/preview/3/js/index.js?rnd=1632265036"></script>
 </head>
 <body>
 <a class=skip-to-content-link href=#main> Skip to content </a>
@@ -45,20 +44,20 @@ Published:
 <p>Na <a href=http://blog.coderockr.com/>Coderockr</a> iniciamos e assumimos vários projetos, sejam para clientes que nos contratam ou para ações internas, e normalmente o <a href=http://github.com>GitHub</a> acaba sendo a ferramenta escolhida para eles.</p>
 <p>E ao longo dos anos acabamos definindo uma estrutura para controlarmos as nossas issues, usando as seguintes labels:</p>
 <figure>
-<img class="lazyload blur-up" data-src=/post/simplificando-setup-projetos-github/labels.png>
+<img class="lazyload blur-up" loading=lazy data-src=/post/simplificando-setup-projetos-github/labels.png width=704 height=410>
 <figcaption><p>Conjunto de labels utilizadas no Coderockr Way</p></figcaption>
 </figure>
 <p>É um conjunto bem simples, mas que deixa bem claro as etapas, prioridades, tipos e estados das tarefas, de forma que fica bem fácil de acompanhá-las.</p>
 <p>Em todos os projetos cadastramos essas labels. Mas mesmo que você esteja de bom humor, vai ser um trabalho chato e moroso. E é bem provável que esqueça alguma delas, e precise revisar a lista para garantir que estão todas lá.</p>
 <figure>
-<img class="lazyload blur-up" data-src=/post/simplificando-setup-projetos-github/looking-for.gif>
+<img class="lazyload blur-up" loading=lazy data-src=/post/simplificando-setup-projetos-github/looking-for.gif width=444 height=358>
 <figcaption><p>Esqueci o "Stage: Testing"? Achei...</p></figcaption>
 </figure>
 <p>Pensando nessa monotonia e para economizar algum tempo de setup nos projetos resolvemos criar um script que fizesse esse processo, adicionando as labels a um projeto que fosse informado.</p>
 <p>O script acabou ficando bem mais simples que o esperado graças a simplicidade da API do GitHub, todo ele foi feito com cURL e alguns loops no bash para as labels.</p>
 <p>Até preparamos ele para não precisar ser baixado/instalado, basta dar um cURL direto do repositório do GitHub que ele pede os dados que precisa.</p>
 <figure>
-<img class="lazyload blur-up" data-src=/post/simplificando-setup-projetos-github/no-need-for-downloads.png>
+<img class="lazyload blur-up" loading=lazy data-src=/post/simplificando-setup-projetos-github/no-need-for-downloads.png width=652 height=108>
 <figcaption><p>nem precisa baixar</p></figcaption>
 </figure>
 <p>Resolvemos deixar o script que criamos em um repositório público no GitHub para quem estiver procurando uma solução parecida (ou que agora acha que vale a pena criar um também).</p>
@@ -112,7 +111,7 @@ using <span itemprop=wordCount>289</span> words.
 <ul>
 <li>
 <a href=/preview/3/post/github-actions/>Github Actions</a> &ndash;
-<time>3 minute read</time>
+<time>5 minute read</time>
 </li>
 <li>
 <a href=/preview/3/post/ambientes-por-branch-com-openshift-next-gen-usando-github/>Ambientes por Branch com OpenShift Next Gen usando GitHub</a> &ndash;

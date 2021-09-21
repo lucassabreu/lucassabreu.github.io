@@ -13,9 +13,8 @@
 Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 3 |
 Lucas dos Santos Abreu
 </title>
-<link rel=stylesheet href="/preview/3/css/style.css?rnd=1632057811">
-<script src=https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js integrity="sha512-q583ppKrCRc7N5O0n2nzUiJ+suUv7Et1JGels4bXOaMFQcamPk9HjdUknZuuFjBNs7tsMuadge5k9RzdmO+1GQ==" crossorigin=anonymous referrerpolicy=no-referrer></script>
-<script src=/preview/3/js/index.js></script>
+<link rel=stylesheet href="/preview/3/css/style.css?rnd=1632265036">
+<script src="/preview/3/js/index.js?rnd=1632265036"></script>
 </head>
 <body>
 <a class=skip-to-content-link href=#main> Skip to content </a>
@@ -43,7 +42,7 @@ Published:
 </header>
 <div class=content role=content>
 <figure class=big>
-<img class="lazyload blur-up" data-src=/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png>
+<img class="lazyload blur-up" loading=lazy data-src=/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png width=1000 height=165>
 </figure>
 <p>Este post é a terceira parte de uma série sobre o básico necessário para
 usar o Kubernetes, caso você não tenha lido o post anterior recomendo
@@ -62,7 +61,7 @@ lê-lo e depois voltar aqui para não ficar perdido.</p>
 <h4 id=a297 class="graf graf--h4 graf--leading" name=a297>Volumes Persistentes</h4>
 <p>Podemos testar esse problema conectando no Pod e adicionando alguns dados e então destruindo ele para ver o efeito. Vou adicionar um registro sobre para Homens no Sábado, pois é um dia sem nenhuma informação e facilita a visualização.</p>
 <figure>
-<img class="lazyload blur-up" data-src=/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/male-chart-before.png>
+<img class="lazyload blur-up" loading=lazy data-src=/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/male-chart-before.png width=494 height=350>
 <figcaption><p>Antes... sem dados</p></figcaption>
 </figure>
 <p>Para acessar o Pod usa-se o comando <code>oc rsh &lt;pod-name></code>, e para encontrar o nome do Pod posso usar o comando <code>oc get pods -l &lt;selector></code>, então é só acessar o MySQL e inserir os dados:</p>
@@ -75,12 +74,12 @@ mysql&gt; insert into appointments values<span style=color:#719e07>(</span>21, <
 Query OK, <span style=color:#2aa198>1</span> row affected <span style=color:#719e07>(</span>0.00 sec<span style=color:#719e07>)</span>
 </code></pre></div><p>Entrando novamente na aplicação e indo em &ldquo;Sunday&rdquo;, tenho um gráfico com dados para os Homens.</p>
 <figure>
-<img class="lazyload blur-up" data-src=/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/male-chart-changed.png>
+<img class="lazyload blur-up" loading=lazy data-src=/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/male-chart-changed.png width=435 height=348>
 <figcaption><p>isso se o seu contêiner não morrer no caminho</p></figcaption>
 </figure>
 <p>Para concluir o teste, basta apagar o Pod com <code>oc delete pods -l name=db-pod</code> ou <code>oc delete pod db-deployment-xyz</code>, esperar o Pod ser recriado e então ver que as alterações nos dados se foram:</p>
 <figure>
-<img class="lazyload blur-up" data-src=/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/male-chart-before.png>
+<img class="lazyload blur-up" loading=lazy data-src=/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/male-chart-before.png width=494 height=350>
 <figcaption><p>:'(</p></figcaption>
 </figure>
 <p>Para resolver esse problema o Kubernetes possui os <a href=https://kubernetes.io/docs/user-guide/persistent-volumes/><strong>Persistent Volume Claims (PVC)</strong></a> que permitem definir volumes que existem fora do ciclo de vida de um Pod, ou seja, mesmo que todos os Pods sejam destruídos, o PVC irá manter os dados em si.</p>

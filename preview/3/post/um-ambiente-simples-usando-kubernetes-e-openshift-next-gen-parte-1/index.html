@@ -13,9 +13,8 @@
 Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 1 |
 Lucas dos Santos Abreu
 </title>
-<link rel=stylesheet href="/preview/3/css/style.css?rnd=1632057810">
-<script src=https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js integrity="sha512-q583ppKrCRc7N5O0n2nzUiJ+suUv7Et1JGels4bXOaMFQcamPk9HjdUknZuuFjBNs7tsMuadge5k9RzdmO+1GQ==" crossorigin=anonymous referrerpolicy=no-referrer></script>
-<script src=/preview/3/js/index.js></script>
+<link rel=stylesheet href="/preview/3/css/style.css?rnd=1632265036">
+<script src="/preview/3/js/index.js?rnd=1632265036"></script>
 </head>
 <body>
 <a class=skip-to-content-link href=#main> Skip to content </a>
@@ -43,7 +42,7 @@ Published:
 </header>
 <div class=content role=content>
 <figure class=big>
-<img class="lazyload blur-up" data-src=/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png>
+<img class="lazyload blur-up" loading=lazy data-src=/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png width=1000 height=165>
 </figure>
 <p>Como parte das minhas metas dentro da <a href=http://blog.coderockr.com>Coderockr</a> está a construção de um cluster usando algumas das ferramentas de orquestração de contêineres que existem no mercado; como o <a href=https://docs.docker.com/engine/swarm/>Docker Swarm</a>, <a href=http://kubernetes.io>Kubernetes</a>, <a href=http://mesos.apache.org/>Apache Mesos</a>, etc.</p>
 <p>Optei pelo <strong>Kubernetes</strong> no momento, tanto pelo pedigree, criado pelo Google e mantido pela Cloud Native Computing Foundation; quanto pela oferta de grandes clouds como a Red Hat, Azure e Google.</p>
@@ -60,7 +59,7 @@ Published:
 <hr>
 <p>A aplicação que construí usa um <a href=https://www.kaggle.com/joniarroba/noshowappointments>conjunto de dados sobre faltas em consultas</a> que achei no <a href=https://www.kaggle.com/>Kaggle</a> e gera os gráficos abaixo, podendo escolher o dia da semana como filtro.</p>
 <figure>
-<img class="lazyload blur-up" data-src=/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/app-view.png>
+<img class="lazyload blur-up" loading=lazy data-src=/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/app-view.png width=800 height=541>
 <figcaption><p>O fonte dessa aplicação pode ser encontrado aqui: &lt;https://github.com/lucassabreu/openshift-next-gen/tree/app></p></figcaption>
 </figure>
 <p>Então publiquei no <a href=http://hub.docker.com>Docker Hub</a> uma imagem para a aplicação (<a href=https://hub.docker.com/r/lucassabreu/openshift-app-test/>lucassabreu/openshift-app-test</a>) e outra para o banco de dados (<a href=https://hub.docker.com/r/lucassabreu/openshift-mysql-test/>lucassabreu/openshift-mysql-test</a>) - essa imagem é um MySQL normal, mas que adicionei um dump da base que vou usar para facilitar o deploy.</p>
