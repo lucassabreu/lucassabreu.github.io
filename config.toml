@@ -55,3 +55,8 @@ enableEmoji = true
   [markup.highlight]
     codeFences = true
     style = 'solarized-dark'
+
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 5
+    ordered = true
