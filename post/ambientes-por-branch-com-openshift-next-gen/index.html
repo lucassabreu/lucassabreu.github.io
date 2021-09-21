@@ -3,7 +3,7 @@
 <meta itemprop=name content="Ambientes por Branch com OpenShift Next Gen">
 <meta itemprop=description content="Como melhorar o processo de Pull Request usando deploys por branch usando OpenShift Next Gen e Continuous Integration"><meta itemprop=datePublished content="2017-05-01T00:00:00+00:00">
 <meta itemprop=dateModified content="2017-05-01T00:00:00+00:00">
-<meta itemprop=wordCount content="1883"><meta itemprop=image content="/post/ambientes-por-branch-com-openshift-next-gen/header.png">
+<meta itemprop=wordCount content="1883"><meta itemprop=image content="http://www.lucassabreu.net.br/post/ambientes-por-branch-com-openshift-next-gen/header.png">
 <meta itemprop=keywords content="Openshift,Gitlab,Continuous Integration,Pull Request,Github,">
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
@@ -13,9 +13,8 @@
 Ambientes por Branch com OpenShift Next Gen |
 Lucas dos Santos Abreu
 </title>
-<link rel=stylesheet href="/css/style.css?rnd=1632055817">
-<script src=https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js integrity="sha512-q583ppKrCRc7N5O0n2nzUiJ+suUv7Et1JGels4bXOaMFQcamPk9HjdUknZuuFjBNs7tsMuadge5k9RzdmO+1GQ==" crossorigin=anonymous referrerpolicy=no-referrer></script>
-<script src=/js/index.js></script>
+<link rel=stylesheet href="/css/style.css?rnd=1632265824">
+<script src="/js/index.js?rnd=1632265824"></script>
 </head>
 <body>
 <a class=skip-to-content-link href=#main> Skip to content </a>
@@ -43,7 +42,7 @@ Published:
 </header>
 <div class=content role=content>
 <figure class=big>
-<img class="lazyload blur-up" data-src=/post/ambientes-por-branch-com-openshift-next-gen/header.png>
+<img class="lazyload blur-up" loading=lazy data-src=/post/ambientes-por-branch-com-openshift-next-gen/header.png width=1000 height=328>
 </figure>
 <p>Hoje na <a href=https://blog.coderockr.com>Coderockr</a> utilizamos <a href=https://blog.coderockr.com/a-import%C3%A2ncia-da-revis%C3%A3o-de-c%C3%B3digo-a1a8b41ed7ff>Pull Requests e Code Reviews</a> como uma ferramenta de qualidade nos nossos desenvolvimentos, e tem garantido resultados nesse sentido.</p>
 <p>Mas mesmo com esse processo eventualmente temos de lidar com alguns problemas como, por exemplo, funções que interferem umas nas outras depois de aprovadas, permitir que os Testers possam avaliar as melhorias, e garantir que todos as mudanças feitas na branch principal podem ser enviadas para produção.</p>
@@ -58,12 +57,12 @@ Published:
 <p><a href=https://github.com/openshift/origin/releases><strong>openshift/origin</strong> origin - Enterprise Kubernetes for Developers</a></p>
 <h4 id=gitlab-integrations-ci-registry-e-environments>GitLab: Integrations, CI, Registry e Environments</h4>
 <figure class=big>
-<img class="lazyload blur-up" data-src=/post/ambientes-por-branch-com-openshift-next-gen/gitlab.png>
+<img class="lazyload blur-up" loading=lazy data-src=/post/ambientes-por-branch-com-openshift-next-gen/gitlab.png width=800 height=202>
 </figure>
 <p>A primeira experiencia que fizemos foi com o <a href=https://gitlab.com>GitLab</a>, principalmente pela integração que ele traz com o Kubernetes, e as outras ferramentas que ele oferece que acabaram cobrindo todo o escopo do problema.</p>
 <p>O que queremos montar é um ambiente por branch/PR que deve ser facilmente criado e destruído. Para demonstrar criei um repositório no GitLab com uma aplicação bem simples que apenas retorna uma página estática, mas é o suficiente para o objetivo.</p>
 <figure>
-<img class="lazyload blur-up" data-src=/post/ambientes-por-branch-com-openshift-next-gen/helloworld-view.png>
+<img class="lazyload blur-up" loading=lazy data-src=/post/ambientes-por-branch-com-openshift-next-gen/helloworld-view.png width=638 height=365>
 <figcaption><p>retorno do serviço helloworld</p></figcaption>
 </figure>
 <p>Primeiramente criei a base da aplicação usando Docker, a mesma gera uma página com o conteúdo acima. O que vale destacar nesse primeiro momento é que já configurei um processo de CI simples:</p>
@@ -89,7 +88,7 @@ Published:
 <p>Para fazer isso primeiramente temos de configurar a integração entre o OpenShift e o GitLab, para isso vamos em <em>Settings</em> > <em>Integrations</em> e procuramos <em>Kubernetes</em> nas opções. O GitLab irá solicitar algumas informações sobre o ambiente, qual o <strong>Namespace</strong>, o <strong>URL da API</strong> do <strong>Kubernetes</strong> e uma forma de autenticação, que pode ser um <strong>Service Token</strong> ou um <strong>CA Bundle</strong>.</p>
 <p>Dessa forma vou criar um novo <strong>Namespace</strong>, como fazer isso vai depender do seu vendor de Kubernetes, no caso da <a href=https://getupcloud.com.br>Getup Cloud</a>, basta ir em <a href=https://portal.getupcloud.com/projects>https://portal.getupcloud.com/projects</a> e criar um novo projeto, o nome do projeto será o <strong>Namespace.</strong></p>
 <figure class=big>
-<img class="lazyload blur-up" data-src=/post/ambientes-por-branch-com-openshift-next-gen/dashboard-getup.png>
+<img class="lazyload blur-up" loading=lazy data-src=/post/ambientes-por-branch-com-openshift-next-gen/dashboard-getup.png width=800 height=282>
 </figure>
 <p>Uma vez com o <strong>Namespace</strong> podemos criar um novo <strong>Service Token</strong> para ser usado no CI do GitLab, no caso para criar um Service Token é necessário criar uma ServiceAccount e dar permissões a mesma, e então pegar o Service Token dela. O script abaixo realiza essas operações:</p>
 <pre>
@@ -141,7 +140,7 @@ token:  <i><b>token-do-openshift-que-estou-ocultando</i></b>
 <p>Agora que temos o token gerado basta adicionar essas informações no
 GitLab.</p>
 <figure class=big>
-<img class="lazyload blur-up" data-src=/post/ambientes-por-branch-com-openshift-next-gen/gitlab-k8s-integration.png>
+<img class="lazyload blur-up" loading=lazy data-src=/post/ambientes-por-branch-com-openshift-next-gen/gitlab-k8s-integration.png width=750 height=481>
 </figure>
 <p>Você pode confirmar se passou os dados corretos com o botão de teste no GitLab.</p>
 <p>Certo, agora o GitLab consegue conversar com o OpenShift. Podemos então alterar nossas regras de CI para criar duas novas etapas: <em>staging</em> e <em>production</em>, que irão realizar o deploy dos nossos ambientes padrões, sendo que <em>staging</em> será disparada automaticamente por commits na master e <em>production</em> ficará como manual.</p>
@@ -281,7 +280,7 @@ sed <span style=color:#2aa198>&#34;
 </code></pre></div><p class=code-legend>k8s/full.yml</p>
 <p>Agora, depois que do commit das alterações, o GitLab faz o <em>build</em>, o deploy da <em>staging</em> e <em>production</em> (manual); podemos ver na área <em>Environments</em> do GitLab que os ambientes estão rodando, ele inclusive traz alguns comandos para facilitar a vida: link para a URL do ambiente, terminal dentro do Pod e opção de Re-deploy.</p>
 <figure class=big>
-<img class="lazyload blur-up" data-src=/post/ambientes-por-branch-com-openshift-next-gen/gilab-envs.png>
+<img class="lazyload blur-up" loading=lazy data-src=/post/ambientes-por-branch-com-openshift-next-gen/gilab-envs.png width=1000 height=301>
 </figure>
 <p>Fonte completo até agora:</p>
 <p><a href=https://gitlab.com/lucassabreu/k8s-pr-envs/tree/v2><strong>Files · v2 · Lucas dos Santos Abreu / k8s-pr-envs</strong></a></p>
@@ -347,11 +346,11 @@ sed <span style=color:#2aa198>&#34;
 </code></pre></div><p class=code-legend>public/index.html (pr)</p>
 <p>Assim que dei o <code>git push</code> começou o deploy do novo ambiente <code>r/a-change</code>, logo que terminou pude verificar na área de ambientes do GitLab que estava rodando, e tem as mesmas operações disponíveis que os outros, mais a opção de parada (<code>stop_review</code>):</p>
 <figure class=big>
-<img class="lazyload blur-up" data-src=/post/ambientes-por-branch-com-openshift-next-gen/branch-env.png>
+<img class="lazyload blur-up" loading=lazy data-src=/post/ambientes-por-branch-com-openshift-next-gen/branch-env.png width=1000 height=145>
 </figure>
 <p>Já rodando as alterações:</p>
 <figure>
-<img class="lazyload blur-up" data-src=/post/ambientes-por-branch-com-openshift-next-gen/a-change.png>
+<img class="lazyload blur-up" loading=lazy data-src=/post/ambientes-por-branch-com-openshift-next-gen/a-change.png width=612 height=343>
 </figure>
 <p>Fontes com essas alterações em:</p>
 <p><a href=https://gitlab.com/lucassabreu/k8s-pr-envs/tree/v3><strong>Files · v3 · Lucas dos Santos Abreu / k8s-pr-envs</strong></a></p>
@@ -363,13 +362,13 @@ sed <span style=color:#2aa198>&#34;
 </div><section class=share>
 <p>
 Share this post at
-<a href="https://twitter.com/share?text=Ambientes%20por%20Branch%20com%20OpenShift%20Next%c2%a0Gen&nbsp;-&nbsp;Lucas%20dos%20Santos%20Abreu&url=%2fpost%2fambientes-por-branch-com-openshift-next-gen%2f" onclick="return window.open(this.href,'twitter-share','width=550,height=235'),!1">
+<a href="https://twitter.com/share?text=Ambientes%20por%20Branch%20com%20OpenShift%20Next%c2%a0Gen&nbsp;-&nbsp;Lucas%20dos%20Santos%20Abreu&url=http%3a%2f%2fwww.lucassabreu.net.br%2fpost%2fambientes-por-branch-com-openshift-next-gen%2f" onclick="return window.open(this.href,'twitter-share','width=550,height=235'),!1">
 Twitter
 </a>
-<a href="https://www.facebook.com/sharer/sharer.php?u=%2fpost%2fambientes-por-branch-com-openshift-next-gen%2f" onclick="return window.open(this.href,'facebook-share','width=580,height=296'),!1">
+<a href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fwww.lucassabreu.net.br%2fpost%2fambientes-por-branch-com-openshift-next-gen%2f" onclick="return window.open(this.href,'facebook-share','width=580,height=296'),!1">
 Facebook
 </a>
-<a href="http://pinterest.com/pin/create/button/?url=%2fpost%2fambientes-por-branch-com-openshift-next-gen%2f&description=Ambientes%20por%20Branch%20com%20OpenShift%20Next%c2%a0Gen" onclick="return window.open(this.href,'pinterest-share','width=580,height=296'),!1">
+<a href="http://pinterest.com/pin/create/button/?url=http%3a%2f%2fwww.lucassabreu.net.br%2fpost%2fambientes-por-branch-com-openshift-next-gen%2f&description=Ambientes%20por%20Branch%20com%20OpenShift%20Next%c2%a0Gen" onclick="return window.open(this.href,'pinterest-share','width=580,height=296'),!1">
 Pinterest
 </a>
 </p>

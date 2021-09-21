@@ -3,7 +3,7 @@
 <meta itemprop=name content="Ambientes por Branch com OpenShift Next Gen usando GitHub">
 <meta itemprop=description content="Esta postagem é uma continuação da &#34;Ambientes por Branch com OpenShift Next Gen&#34;, implementando o processo no GitHub usando Buddy.Works e o OpenShift da GetUp Cloud"><meta itemprop=datePublished content="2017-05-07T00:00:00+00:00">
 <meta itemprop=dateModified content="2017-05-07T00:00:00+00:00">
-<meta itemprop=wordCount content="1777"><meta itemprop=image content="/post/ambientes-por-branch-com-openshift-next-gen-usando-github/header.png">
+<meta itemprop=wordCount content="1777"><meta itemprop=image content="http://www.lucassabreu.net.br/post/ambientes-por-branch-com-openshift-next-gen-usando-github/header.png">
 <meta itemprop=keywords content="Openshift,Continuous Integration,Continuous Deployment,Github,Buddy Works,">
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
@@ -13,9 +13,8 @@
 Ambientes por Branch com OpenShift Next Gen usando GitHub |
 Lucas dos Santos Abreu
 </title>
-<link rel=stylesheet href="/css/style.css?rnd=1632055817">
-<script src=https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js integrity="sha512-q583ppKrCRc7N5O0n2nzUiJ+suUv7Et1JGels4bXOaMFQcamPk9HjdUknZuuFjBNs7tsMuadge5k9RzdmO+1GQ==" crossorigin=anonymous referrerpolicy=no-referrer></script>
-<script src=/js/index.js></script>
+<link rel=stylesheet href="/css/style.css?rnd=1632265824">
+<script src="/js/index.js?rnd=1632265824"></script>
 </head>
 <body>
 <a class=skip-to-content-link href=#main> Skip to content </a>
@@ -43,7 +42,7 @@ Published:
 </header>
 <div class=content role=content>
 <figure class=big>
-<img class="lazyload blur-up" data-src=/post/ambientes-por-branch-com-openshift-next-gen-usando-github/header.png>
+<img class="lazyload blur-up" loading=lazy data-src=/post/ambientes-por-branch-com-openshift-next-gen-usando-github/header.png width=1000 height=328>
 </figure>
 <p><i>Esta postagem é uma continuação da <a href=/post/ambientes-por-branch-com-openshift-next-gen><strong>Ambientes por Branch com OpenShift Next Gen</strong></a>, a introdução do problema esta lá e também mostro como implementar o processo de deploy usando o GitLab nele, se não viu da uma conferida, vale o investimento* 😉.</i></p>
 <p>Como prometi na outra postagem, vamos criar um processo de deploy de ambientes por branch usando o <a href=https://medium.com/@github>GitHub</a>.</p>
@@ -56,7 +55,7 @@ Published:
 <hr>
 <p>O que queremos montar é um ambiente por branch/PR que deve ser facilmente criado e destruído. Para demonstrar criei um repositório no GitHub com uma aplicação bem simples que apenas retorna uma página estática, mas é o suficiente para o objetivo.</p>
 <figure>
-<img class="lazyload blur-up" data-src=/post/ambientes-por-branch-com-openshift-next-gen-usando-github/helloworld.png>
+<img class="lazyload blur-up" loading=lazy data-src=/post/ambientes-por-branch-com-openshift-next-gen-usando-github/helloworld.png width=638 height=365>
 <figcaption><p>retorno do serviço helloworld</p></figcaption>
 </figure>
 <p>E configurei o Buddy para construir uma imagem com base nesse repositório e publicar ela como <a href=https://hub.docker.com/r/lucassabreu/k8s-pr-envs/>lucassabreu/k8s-pr-envs</a> no Docker Hub.</p>
@@ -80,7 +79,7 @@ Published:
 <p>Então vamos adicionar um processo de deploy no OpenShift para o ambiente de produção e testes, sendo que o ambiente de testes é atualizado automaticamente para os commits na master e o de produção apenas quando um usuário disparar o deploy via interface web do Buddy (<a href=http://app.buddy.works/>http://app.buddy.works/</a>).</p>
 <p>Precisamos preparar o OpenShift para montar esse processo, primeiramente criamos um <strong>Namespace</strong>. A forma como criamos um varia de vendor para vendor, no caso do OpenShift da <a href=https://medium.com/@getupcloud>Getup Cloud</a>, basta ir em <a href=https://portal.getupcloud.com/projects>https://portal.getupcloud.com/projects</a> e criar um novo projeto, o nome do projeto será o <strong>Namespace.</strong></p>
 <figure class=big>
-<img class="lazyload blur-up" data-src=/post/ambientes-por-branch-com-openshift-next-gen-usando-github/getup-dashboard.png>
+<img class="lazyload blur-up" loading=lazy data-src=/post/ambientes-por-branch-com-openshift-next-gen-usando-github/getup-dashboard.png width=800 height=286>
 </figure>
 <p>Tendo um <strong>Namespace</strong> precisamos de uma forma do Buddy se autenticar contra o OpenShift, para isso podemos criar um ServiceAccount e usar o <strong>Token</strong> do mesmo para isso. O script abaixo mostra como criar uma ServiceAccount e resgatar o <strong>Token</strong> usando o CLI do OpenShift:</p>
 <pre>
@@ -131,7 +130,7 @@ token:  <i>token-do-openshift-que-estou-ocultando</i>
 </pre>
 <p>Agora podemos informar no Buddy algumas variáveis para ele disponibilizar para nós depois. Meu painel ficou como abaixo:</p>
 <figure>
-<img class="lazyload blur-up" data-src=/post/ambientes-por-branch-com-openshift-next-gen-usando-github/buddy-envs.png>
+<img class="lazyload blur-up" loading=lazy data-src=/post/ambientes-por-branch-com-openshift-next-gen-usando-github/buddy-envs.png width=800 height=336>
 <figcaption><p>buddy environments</p></figcaption>
 </figure>
 <p>A URL da API e o domínio que o OpenShift irá utilizar também dependem do seu vendor, no meu caso a API está em <code>https://api.getupcould.com:443</code> e o domínio base é <code>getup.io</code>.</p>
@@ -305,7 +304,7 @@ de uma nova.</p>
 <p>Com isso faço algumas chamadas a API do GitHub usando o <code>k8s/github-deployment</code> (que é basicamente um facilitador para a API) e consigo registrar o deploy no GitHub.</p>
 <p>O Pull Request da branch <code>a-change</code> fica assim:</p>
 <figure>
-<img class="lazyload blur-up" data-src=/post/ambientes-por-branch-com-openshift-next-gen-usando-github/github-deployments.png>
+<img class="lazyload blur-up" loading=lazy data-src=/post/ambientes-por-branch-com-openshift-next-gen-usando-github/github-deployments.png width=800 height=571>
 </figure>
 <p>Nesse botão &ldquo;View deployment&rdquo; está o link para a rota que criamos no deploy, e dessa forma fica extremamente fácil para a equipe de QA acessar os ambientes.</p>
 <p>Fontes até agora:</p>
@@ -347,7 +346,7 @@ k8s/github-deployment <span style=color:#2aa198>&#34;lucassabreu/k8s-pr-envs&#34
 <p>Para resolver esse problema podemos adicionar um webhook no GitHub e dispararmos o pipeline através desse webhook. Isso pode ser feito de várias formas, usando Lambda Functions ou um endpoint para esse fim.</p>
 <p>No caso criei um novo Pod com um contêiner que criei (<code>lucassabreu/buddy-works-pullrequest-webhook</code>) e associei ela no meu projeto no GitHub.</p>
 <figure class=big>
-<img class="lazyload blur-up" data-src=/post/ambientes-por-branch-com-openshift-next-gen-usando-github/webhooks.png>
+<img class="lazyload blur-up" loading=lazy data-src=/post/ambientes-por-branch-com-openshift-next-gen-usando-github/webhooks.png width=1000 height=296>
 </figure>
 <p>E pronto tenho um processo completo, mesmo que se esqueçam de derrubar o ambiente no momento que o merge acontecer automaticamente o ambiente
 será destruído.</p>
@@ -360,13 +359,13 @@ ter uma base de como é a chamada.</p>
 </div><section class=share>
 <p>
 Share this post at
-<a href="https://twitter.com/share?text=Ambientes%20por%20Branch%20com%20OpenShift%20Next%20Gen%20usando%c2%a0GitHub&nbsp;-&nbsp;Lucas%20dos%20Santos%20Abreu&url=%2fpost%2fambientes-por-branch-com-openshift-next-gen-usando-github%2f" onclick="return window.open(this.href,'twitter-share','width=550,height=235'),!1">
+<a href="https://twitter.com/share?text=Ambientes%20por%20Branch%20com%20OpenShift%20Next%20Gen%20usando%c2%a0GitHub&nbsp;-&nbsp;Lucas%20dos%20Santos%20Abreu&url=http%3a%2f%2fwww.lucassabreu.net.br%2fpost%2fambientes-por-branch-com-openshift-next-gen-usando-github%2f" onclick="return window.open(this.href,'twitter-share','width=550,height=235'),!1">
 Twitter
 </a>
-<a href="https://www.facebook.com/sharer/sharer.php?u=%2fpost%2fambientes-por-branch-com-openshift-next-gen-usando-github%2f" onclick="return window.open(this.href,'facebook-share','width=580,height=296'),!1">
+<a href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fwww.lucassabreu.net.br%2fpost%2fambientes-por-branch-com-openshift-next-gen-usando-github%2f" onclick="return window.open(this.href,'facebook-share','width=580,height=296'),!1">
 Facebook
 </a>
-<a href="http://pinterest.com/pin/create/button/?url=%2fpost%2fambientes-por-branch-com-openshift-next-gen-usando-github%2f&description=Ambientes%20por%20Branch%20com%20OpenShift%20Next%20Gen%20usando%c2%a0GitHub" onclick="return window.open(this.href,'pinterest-share','width=580,height=296'),!1">
+<a href="http://pinterest.com/pin/create/button/?url=http%3a%2f%2fwww.lucassabreu.net.br%2fpost%2fambientes-por-branch-com-openshift-next-gen-usando-github%2f&description=Ambientes%20por%20Branch%20com%20OpenShift%20Next%20Gen%20usando%c2%a0GitHub" onclick="return window.open(this.href,'pinterest-share','width=580,height=296'),!1">
 Pinterest
 </a>
 </p>

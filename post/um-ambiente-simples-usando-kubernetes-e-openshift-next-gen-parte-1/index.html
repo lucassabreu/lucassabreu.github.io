@@ -3,7 +3,7 @@
 <meta itemprop=name content="Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 1">
 <meta itemprop=description content="Como parte das minhas metas dentro da Coderockr está a construção de um cluster usando algumas das ferramentas de orquestração de contêineres que existem no mercado; como o Docker Swarm, Kubernetes, Apache Mesos, etc. Optei pelo Kubernetes..."><meta itemprop=datePublished content="2017-03-07T00:00:00+00:00">
 <meta itemprop=dateModified content="2017-03-07T00:00:00+00:00">
-<meta itemprop=wordCount content="770"><meta itemprop=image content="/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png">
+<meta itemprop=wordCount content="770"><meta itemprop=image content="http://www.lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png">
 <meta itemprop=keywords content="Kubernetes,Openshift,Introduction,Simple,Docker,">
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
@@ -13,9 +13,8 @@
 Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 1 |
 Lucas dos Santos Abreu
 </title>
-<link rel=stylesheet href="/css/style.css?rnd=1632055817">
-<script src=https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js integrity="sha512-q583ppKrCRc7N5O0n2nzUiJ+suUv7Et1JGels4bXOaMFQcamPk9HjdUknZuuFjBNs7tsMuadge5k9RzdmO+1GQ==" crossorigin=anonymous referrerpolicy=no-referrer></script>
-<script src=/js/index.js></script>
+<link rel=stylesheet href="/css/style.css?rnd=1632265824">
+<script src="/js/index.js?rnd=1632265824"></script>
 </head>
 <body>
 <a class=skip-to-content-link href=#main> Skip to content </a>
@@ -43,7 +42,7 @@ Published:
 </header>
 <div class=content role=content>
 <figure class=big>
-<img class="lazyload blur-up" data-src=/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png>
+<img class="lazyload blur-up" loading=lazy data-src=/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png width=1000 height=165>
 </figure>
 <p>Como parte das minhas metas dentro da <a href=http://blog.coderockr.com>Coderockr</a> está a construção de um cluster usando algumas das ferramentas de orquestração de contêineres que existem no mercado; como o <a href=https://docs.docker.com/engine/swarm/>Docker Swarm</a>, <a href=http://kubernetes.io>Kubernetes</a>, <a href=http://mesos.apache.org/>Apache Mesos</a>, etc.</p>
 <p>Optei pelo <strong>Kubernetes</strong> no momento, tanto pelo pedigree, criado pelo Google e mantido pela Cloud Native Computing Foundation; quanto pela oferta de grandes clouds como a Red Hat, Azure e Google.</p>
@@ -60,7 +59,7 @@ Published:
 <hr>
 <p>A aplicação que construí usa um <a href=https://www.kaggle.com/joniarroba/noshowappointments>conjunto de dados sobre faltas em consultas</a> que achei no <a href=https://www.kaggle.com/>Kaggle</a> e gera os gráficos abaixo, podendo escolher o dia da semana como filtro.</p>
 <figure>
-<img class="lazyload blur-up" data-src=/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/app-view.png>
+<img class="lazyload blur-up" loading=lazy data-src=/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/app-view.png width=800 height=541>
 <figcaption><p>O fonte dessa aplicação pode ser encontrado aqui: &lt;https://github.com/lucassabreu/openshift-next-gen/tree/app></p></figcaption>
 </figure>
 <p>Então publiquei no <a href=http://hub.docker.com>Docker Hub</a> uma imagem para a aplicação (<a href=https://hub.docker.com/r/lucassabreu/openshift-app-test/>lucassabreu/openshift-app-test</a>) e outra para o banco de dados (<a href=https://hub.docker.com/r/lucassabreu/openshift-mysql-test/>lucassabreu/openshift-mysql-test</a>) - essa imagem é um MySQL normal, mas que adicionei um dump da base que vou usar para facilitar o deploy.</p>
@@ -95,13 +94,13 @@ docker run -d --name app-test --link db-test:db <span style=color:#cb4b16>\
 </div><section class=share>
 <p>
 Share this post at
-<a href="https://twitter.com/share?text=Um%20ambiente%20simples%20usando%20Kubernetes%20e%20OpenShift%20Next%20Gen%e2%80%8a-%e2%80%8aParte%c2%a01&nbsp;-&nbsp;Lucas%20dos%20Santos%20Abreu&url=%2fpost%2fum-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1%2f" onclick="return window.open(this.href,'twitter-share','width=550,height=235'),!1">
+<a href="https://twitter.com/share?text=Um%20ambiente%20simples%20usando%20Kubernetes%20e%20OpenShift%20Next%20Gen%e2%80%8a-%e2%80%8aParte%c2%a01&nbsp;-&nbsp;Lucas%20dos%20Santos%20Abreu&url=http%3a%2f%2fwww.lucassabreu.net.br%2fpost%2fum-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1%2f" onclick="return window.open(this.href,'twitter-share','width=550,height=235'),!1">
 Twitter
 </a>
-<a href="https://www.facebook.com/sharer/sharer.php?u=%2fpost%2fum-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1%2f" onclick="return window.open(this.href,'facebook-share','width=580,height=296'),!1">
+<a href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fwww.lucassabreu.net.br%2fpost%2fum-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1%2f" onclick="return window.open(this.href,'facebook-share','width=580,height=296'),!1">
 Facebook
 </a>
-<a href="http://pinterest.com/pin/create/button/?url=%2fpost%2fum-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1%2f&description=Um%20ambiente%20simples%20usando%20Kubernetes%20e%20OpenShift%20Next%20Gen%e2%80%8a-%e2%80%8aParte%c2%a01" onclick="return window.open(this.href,'pinterest-share','width=580,height=296'),!1">
+<a href="http://pinterest.com/pin/create/button/?url=http%3a%2f%2fwww.lucassabreu.net.br%2fpost%2fum-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1%2f&description=Um%20ambiente%20simples%20usando%20Kubernetes%20e%20OpenShift%20Next%20Gen%e2%80%8a-%e2%80%8aParte%c2%a01" onclick="return window.open(this.href,'pinterest-share','width=580,height=296'),!1">
 Pinterest
 </a>
 </p>
