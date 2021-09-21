@@ -1,0 +1,221 @@
+<!doctype html><html lang=pt-br>
+<head>
+<meta itemprop=name content="Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 3">
+<meta itemprop=description content="Agora que sabemos os conceitos por traz do Kubernetes e vimos um exemplo básico de utilização, vamos ver como lidamos com contêiners que precisam de persistência."><meta itemprop=datePublished content="2017-03-09T00:00:00+00:00">
+<meta itemprop=dateModified content="2017-03-09T00:00:00+00:00">
+<meta itemprop=wordCount content="680"><meta itemprop=image content="http://www.lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png">
+<meta itemprop=keywords content="Kubernetes,Openshift,Introduction,Simple,Docker,">
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<style type=text/css>body{font-family:monospace}</style>
+<title>
+Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 3 |
+Lucas dos Santos Abreu
+</title>
+<link rel=stylesheet href="/preview/3/css/style.css?rnd=1632265904">
+<script src="/preview/3/js/index.js?rnd=1632265904"></script>
+</head>
+<body>
+<a class=skip-to-content-link href=#main> Skip to content </a>
+<header class=page-header>
+<nav arial-label=primary role=menu>
+<a href=/preview/3/preview/3/>Home</a>
+<a href=/preview/3/preview/3/resume>Resume</a>
+<a href=https://twitter.com/LucasSantAbreu>Twitter</a>
+<a href=https://github.com/lucassabreu>GitHub</a>
+<a href=https://medium.com/@lucassabreu>Medium</a>
+<a href=https://www.linkedin.com/in/lucassantosabreu>LinkedIn</a>
+</nav>
+</header>
+<main id=main>
+<article>
+<header>
+<h1>Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 3</h1>
+<p>
+<span class=reading-time>4 minute read</span>
+<span class=published-at>
+Published:
+<time datetime="2017-03-09 00:00:00 +0000 UTC">2017-03-09</time>
+</span>
+</p>
+</header>
+<div class=content role=content>
+<figure class=big>
+<img class="lazyload blur-up" loading=lazy data-src=/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png width=1000 height=165>
+</figure>
+<p>Este post é a terceira parte de uma série sobre o básico necessário para
+usar o Kubernetes, caso você não tenha lido o post anterior recomendo
+lê-lo e depois voltar aqui para não ficar perdido.</p>
+<ul>
+<li>Parte 1 - Conceitos Básicos: <a href=/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1>clique aqui</a></li>
+<li>Parte 2 - Construindo o Ambiente: <a href=/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2>clique aqui</a></li>
+<li>Parte 4 - Segredos: <a href=/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4>clique aqui</a></li>
+</ul>
+<hr>
+<p>Como comentei no <a href=/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2>post anterior</a> existem alguns problemas no ambiente que construí, e o princípial deles é que os Pods não totalmente efêmeros, ou seja, se eu adicionar novos dados nele, no momento que o Pod fosse destruído os dados iriam junto e sem backup !</p>
+<p>E agora iremos tratar esse primeiro problema. Caso não tenha mais os fontes até o estado do post anterior, ou prefira acompanhar o meu andamento, pode pode pegá-los aqui: <a href=https://github.com/lucassabreu/openshift-next-gen/tree/v1>https://github.com/lucassabreu/openshift-next-gen/tree/v1</a>; ou executar:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>git clone -b v1 <span style=color:#cb4b16>\
+</span><span style=color:#cb4b16></span>    https://github.com/lucassabreu/openshift-next-gen.git
+</code></pre></div><hr>
+<h4 id=a297 class="graf graf--h4 graf--leading" name=a297>Volumes Persistentes</h4>
+<p>Podemos testar esse problema conectando no Pod e adicionando alguns dados e então destruindo ele para ver o efeito. Vou adicionar um registro sobre para Homens no Sábado, pois é um dia sem nenhuma informação e facilita a visualização.</p>
+<figure>
+<img class="lazyload blur-up" loading=lazy data-src=/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/male-chart-before.png width=494 height=350>
+<figcaption><p>Antes... sem dados</p></figcaption>
+</figure>
+<p>Para acessar o Pod usa-se o comando <code>oc rsh &lt;pod-name></code>, e para encontrar o nome do Pod posso usar o comando <code>oc get pods -l &lt;selector></code>, então é só acessar o MySQL e inserir os dados:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ oc get pods -l <span style=color:#268bd2>name</span><span style=color:#719e07>=</span>db-pod
+NAME                             READY     STATUS    RESTARTS   AGE
+db-deployment-3618823556-zrje2   1/1       Running   <span style=color:#2aa198>0</span>          14m
+$ oc rsh db-deployment-3618823556-zrje2 bash
+&lt;dentro contêiner&gt;:/$ mysql -u<span style=color:#268bd2>$MYSQL_USER</span> -p<span style=color:#268bd2>$MYSQL_PASSWORD</span> appointments
+mysql&gt; insert into appointments values<span style=color:#719e07>(</span>21, <span style=color:#2aa198>&#39;M&#39;</span>, <span style=color:#2aa198>&#39;2017-03-05&#39;</span>, <span style=color:#2aa198>&#39;Sunday&#39;</span>, 1, null<span style=color:#719e07>)</span>;
+Query OK, <span style=color:#2aa198>1</span> row affected <span style=color:#719e07>(</span>0.00 sec<span style=color:#719e07>)</span>
+</code></pre></div><p>Entrando novamente na aplicação e indo em &ldquo;Sunday&rdquo;, tenho um gráfico com dados para os Homens.</p>
+<figure>
+<img class="lazyload blur-up" loading=lazy data-src=/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/male-chart-changed.png width=435 height=348>
+<figcaption><p>isso se o seu contêiner não morrer no caminho</p></figcaption>
+</figure>
+<p>Para concluir o teste, basta apagar o Pod com <code>oc delete pods -l name=db-pod</code> ou <code>oc delete pod db-deployment-xyz</code>, esperar o Pod ser recriado e então ver que as alterações nos dados se foram:</p>
+<figure>
+<img class="lazyload blur-up" loading=lazy data-src=/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/male-chart-before.png width=494 height=350>
+<figcaption><p>:'(</p></figcaption>
+</figure>
+<p>Para resolver esse problema o Kubernetes possui os <a href=https://kubernetes.io/docs/user-guide/persistent-volumes/><strong>Persistent Volume Claims (PVC)</strong></a> que permitem definir volumes que existem fora do ciclo de vida de um Pod, ou seja, mesmo que todos os Pods sejam destruídos, o PVC irá manter os dados em si.</p>
+<p>Podemos utilizar vários tipos de volumes em um PVC para armazenar os dados, no caso do OpenShift o padrão é <a href=https://kubernetes.io/docs/user-guide/persistent-volumes/#aws>EBS</a>, que são volumes armazenados dentro do <a href=https://aws.amazon.com/>AWS da Amazon</a>, mas existe a opção de usar volumes do Google Cloud, do Azure, Locais, etc; no Kubernetes.</p>
+<p>Mas no momento o OpenShift esta ofertando apenas o EBS. Abaixo esta a definição do PVC:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#268bd2>apiVersion</span>: v1
+<span style=color:#268bd2>kind</span>: PersistentVolumeClaim
+<span style=color:#268bd2>metadata</span>:
+  <span style=color:#268bd2>name</span>: mysql-pv-claim
+<span style=color:#268bd2>spec</span>:
+  <span style=color:#268bd2>accessModes</span>:
+    - ReadWriteOnce
+  <span style=color:#268bd2>resources</span>:
+    <span style=color:#268bd2>requests</span>:
+      <span style=color:#268bd2>storage</span>: 1Gi
+</code></pre></div><p>Depois de um momento o OpenShift irá criar um volume e disponibilizá-lo, agora é preciso vincular ele com os <code>db-pods</code>, para isso basta alterar os volumes no <code>db-deployment</code>:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#268bd2>apiVersion</span>: extensions/v1beta1
+<span style=color:#268bd2>kind</span>: Deployment
+<span style=color:#268bd2>metadata</span>:
+  <span style=color:#268bd2>name</span>: <span style=color:#2aa198>&#34;db-deployment&#34;</span>
+<span style=color:#268bd2>spec</span>:
+  <span style=color:#268bd2>replicas</span>: <span style=color:#2aa198>1</span>
+  <span style=color:#268bd2>template</span>:
+    <span style=color:#268bd2>metadata</span>:
+      <span style=color:#268bd2>labels</span>:
+        <span style=color:#268bd2>name</span>: <span style=color:#2aa198>&#34;db-pod&#34;</span>
+    <span style=color:#268bd2>spec</span>:
+      <span style=color:#268bd2>containers</span>:
+        - <span style=color:#268bd2>name</span>: <span style=color:#2aa198>&#34;db&#34;</span>
+          <span style=color:#268bd2>image</span>: <span style=color:#2aa198>&#34;lucassabreu/openshift-mysql-test&#34;</span>
+          <span style=color:#268bd2>ports</span>:
+            - <span style=color:#268bd2>name</span>: <span style=color:#2aa198>&#34;mysql-port&#34;</span>
+              <span style=color:#268bd2>containerPort</span>: <span style=color:#2aa198>3306</span>
+          <span style=color:#268bd2>env</span>:
+            - <span style=color:#268bd2>name</span>: MYSQL_DATABASE
+              <span style=color:#268bd2>value</span>: appointments
+            - <span style=color:#268bd2>name</span>: MYSQL_ROOT_PASSWORD
+              <span style=color:#268bd2>value</span>: <span style=color:#2aa198>&#34;root&#34;</span>
+            - <span style=color:#268bd2>name</span>: MYSQL_USER
+              <span style=color:#268bd2>value</span>: <span style=color:#2aa198>&#34;appoint&#34;</span>
+            - <span style=color:#268bd2>name</span>: MYSQL_PASSWORD
+              <span style=color:#268bd2>value</span>: <span style=color:#2aa198>&#34;123&#34;</span>
+          <span style=color:#268bd2>volumeMounts</span>:
+            - <span style=color:#268bd2>name</span>: <span style=color:#2aa198>&#34;mysql-persistent-volume&#34;</span> <span style=color:#586e75># mudou aqui</span>
+              <span style=color:#268bd2>mountPath</span>: <span style=color:#2aa198>&#34;/var/lib/mysql&#34;</span>
+      <span style=color:#268bd2>volumes</span>:
+        - <span style=color:#268bd2>name</span>: <span style=color:#2aa198>&#34;mysql-persistent-volume&#34;</span> <span style=color:#586e75># e aqui</span>
+          <span style=color:#268bd2>persistentVolumeClaim</span>:
+            <span style=color:#268bd2>claimName</span>: mysql-pv-claim
+</code></pre></div><p>Duas coisas foram alteradas no <code>db-deployment</code>:</p>
+<ul>
+<li>O nome do volume mudou, isso é necessário porque estamos fazendo uma mudança de tipo de volume, e o Deployment não consegue alterar o tipo, mas se temos um novo, então tudo bem.</li>
+<li>Adicionei a tag <code>persistentVolumeClaim</code> no volume novo e apontei para o PVC que criei agora a pouco.</li>
+</ul>
+<p>Executo o comando <code>oc apply -f db-deployment.yml</code> e o Deployment irá destruir os Pods antigos e criar novos usando o PVC.</p>
+<p>Agora se replicarmos os comandos de para incluir registros e destruir o Pod do MySQL, quando o Deployment recriar o Pod ele manterá os dados.</p>
+<hr>
+<p>Outro ponto que esta desconfortável no meu ambiente é o fato das senhas e usuários estarem expostas diretamente nas configurações. O Kubernetes oferece uma solução para esse problema, que irei abordar no próximo post.</p>
+<p>Próximo Post: <a href=/post/um-ambiente-usando-kubernetes-e-openshift-parte-4/>clique aqui</a></p>
+</div><section class=share>
+<p>
+Share this post at
+<a href="https://twitter.com/share?text=Um%20ambiente%20simples%20usando%20Kubernetes%20e%20OpenShift%20Next%20Gen%e2%80%8a-%e2%80%8aParte%c2%a03&nbsp;-&nbsp;Lucas%20dos%20Santos%20Abreu&url=http%3a%2f%2fwww.lucassabreu.net.br%2fpreview%2f3%2fpost%2fum-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3%2f" onclick="return window.open(this.href,'twitter-share','width=550,height=235'),!1">
+Twitter
+</a>
+<a href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fwww.lucassabreu.net.br%2fpreview%2f3%2fpost%2fum-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3%2f" onclick="return window.open(this.href,'facebook-share','width=580,height=296'),!1">
+Facebook
+</a>
+<a href="http://pinterest.com/pin/create/button/?url=http%3a%2f%2fwww.lucassabreu.net.br%2fpreview%2f3%2fpost%2fum-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3%2f&description=Um%20ambiente%20simples%20usando%20Kubernetes%20e%20OpenShift%20Next%20Gen%e2%80%8a-%e2%80%8aParte%c2%a03" onclick="return window.open(this.href,'pinterest-share','width=580,height=296'),!1">
+Pinterest
+</a>
+</p>
+</section>
+<footer>
+<section role=comment>
+<p>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//lucas-dos-santos-abreu.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</p>
+</section>
+<section>
+<p>
+Published
+by <span itemprop=author></span>
+<time datetime=2017-03-09T00:00:00+00:00>
+9 Mar, 2017
+</time>
+and tagged
+<a href=/preview/3/tags/kubernetes>Kubernetes</a>
+<a href=/preview/3/tags/openshift>Openshift</a>
+<a href=/preview/3/tags/introduction>Introduction</a>
+<a href=/preview/3/tags/simple>Simple</a>
+<a href=/preview/3/tags/docker>Docker</a>
+using <span itemprop=wordCount>680</span> words.
+</p>
+</section>
+</footer>
+</article>
+</main>
+<aside>
+<header>Related Content</header>
+<ul>
+<li>
+<a href=/preview/3/post/ambientes-por-branch-com-openshift-next-gen-usando-github/>Ambientes por Branch com OpenShift Next Gen usando GitHub</a> &ndash;
+<time>9 minute read</time>
+</li>
+<li>
+<a href=/preview/3/post/ambientes-por-branch-com-openshift-next-gen/>Ambientes por Branch com OpenShift Next Gen</a> &ndash;
+<time>9 minute read</time>
+</li>
+<li>
+<a href=/preview/3/gist/coderockr-jam-2017-03/>Notas Kubernetes - Coderockr Jam 2017-03-11</a> &ndash;
+<time>5 minute read</time>
+</li>
+<li>
+<a href=/preview/3/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4/>Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 4</a> &ndash;
+<time>4 minute read</time>
+</li>
+<li>
+<a href=/preview/3/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2/>Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 2</a> &ndash;
+<time>5 minute read</time>
+</li>
+<li>
+<a href=/preview/3/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/>Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 1</a> &ndash;
+<time>4 minute read</time>
+</li>
+</ul>
+</aside>
+<footer>
+<p>
+&copy;
+2021 ·
+This page was generated using <a target=_blank rel=noopener href=https://github.com/colorchestra/smol>smol<a> for <a target=_blank rel=noopener href=https://gohugo.io/>Hugo</a>.
+</p>
+</footer>
+</body>
+</html>
