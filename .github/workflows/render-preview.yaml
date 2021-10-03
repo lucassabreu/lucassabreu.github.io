@@ -1,11 +1,11 @@
 name: GH Pages (Preview PR)
 on:
   pull_request:
-    types: [labeled]
+    types: [labeled, opened, synchronize, reopened]
 
 jobs:
   build-and-preview:
-    if: ${{ github.event.label.name == 'preview-pr' }}
+    if: ${{ github.event.label.name == 'preview-pr' || contains(github.event.pull_request.labels.*.name, 'preview-deployed')}}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
@@ -32,7 +32,7 @@ jobs:
           clean: false
 
       - uses: actions/github-script@v4
-        if: ${{ always() }}
+        if: ${{ always() && github.event.label.name == 'preview-pr' }}
         with:
           script: |
             github.issues.removeLabel({
