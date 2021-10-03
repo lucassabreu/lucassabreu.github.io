@@ -27,3 +27,28 @@ jobs:
         with:
           branch: gh-pages
           folder: public
+
+      - name: Inactive previews ♻️
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const deployments = await github.paginate(github.repos.listDeployments, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+
+            deployments
+              .filter(d => d.environment !== 'github-pages')
+              .map(async (d) => {
+                await github.repos.createDeploymentStatus({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  deployment_id: d.id,
+                  state: 'inactive',
+                });
+                github.repos.deleteDeployment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  deployment_id: d.id,
+                });
+              });
