@@ -100,6 +100,11 @@ h6 {
 
 a.heading-anchor:link {
   text-decoration: none;
+  display: none;
+}
+
+*:hover > a.heading-anchor {
+  display: inline;
 }
 
 h1 {

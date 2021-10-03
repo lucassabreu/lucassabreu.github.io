@@ -4,7 +4,7 @@
 <meta itemprop=description content="O que é isso? ¶ O Github Actions é primariamente uma ferramenta para implementar Continuous Integration, ou seja, automatizar a execução de ferramentas ou processos que ajudam a garantir a qualidade do código, seja teste unitários, análises de código estática, analises de segurança, simplesmente compilar/&ldquo;buildar&rdquo; o projeto.
 Além disso também podemos implementar fluxos de Continuous Delivery, fazendo o deploy ou bundle do projeto de forma automática sempre que um evento acontece, seja o push para uma branch, ou algum outro evento do Github."><meta itemprop=datePublished content="2021-09-12T00:00:00+00:00">
 <meta itemprop=dateModified content="2021-09-12T00:00:00+00:00">
-<meta itemprop=wordCount content="2108">
+<meta itemprop=wordCount content="2592">
 <meta itemprop=keywords content="Github,Github Actions,Continuous Integration,">
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
@@ -14,8 +14,8 @@ Além disso também podemos implementar fluxos de Continuous Delivery, fazendo o
 Github Actions |
 Lucas dos Santos Abreu
 </title>
-<link rel=stylesheet href="/preview/3/css/style.css?rnd=1633286555">
-<script src="/preview/3/js/index.js?rnd=1633286555"></script>
+<link rel=stylesheet href="/preview/3/css/style.css?rnd=1633286701">
+<script src="/preview/3/js/index.js?rnd=1633286701"></script>
 </head>
 <body>
 <a class=skip-to-content-link href=#main> Skip to content </a>
@@ -34,7 +34,7 @@ Lucas dos Santos Abreu
 <header>
 <h1>Github Actions</h1>
 <p>
-<span class=reading-time>10 minute read</span>
+<span class=reading-time>13 minute read</span>
 <span class=published-at>
 Published:
 <time datetime="2021-09-12 00:00:00 +0000 UTC">2021-09-12</time>
@@ -57,7 +57,12 @@ Published:
 <li><a href=#secrets>Secrets</a></li>
 </ol>
 </li>
-<li><a href=#outros-eventos-e-usos>Outros eventos e usos</a></li>
+<li><a href=#outros-eventos-e-usos>Outros eventos e usos</a>
+<ol>
+<li><a href=#cron>CRON</a></li>
+<li><a href=#comments-e-labels>Comments e Labels</a></li>
+</ol>
+</li>
 <li><a href=#criar-actions>Criar Actions</a></li>
 </ol>
 <ol>
@@ -581,31 +586,195 @@ própria e usar outra imagem como um <code>step</code>.</p>
 </div>
 </div><p class=code-legend>docker in docker</p>
 <h3 id=secrets>Secrets <a href=#secrets class=heading-anchor>¶</a></h3>
-<p>Fechando sobre como reaproveitar imagens do Docker, ou &ldquo;actions&rdquo; vindas do
-<a href=https://github.com/marketplace/actions>Github Marketplace</a>, ainda tem um ponto importante para vários
-fluxos de CI (e principalmente Continuous Delivery), que é lidar com
-informações sensíveis.</p>
-<p>Informações como chaves RSA, tokens de acesso, JWTs, OAuth Client secrets,
-senhas.</p>
-<p>Se o seu CI não estiver rodando dentro de uma plataforma integrada ao seu
-providor de infraestrutura, então você vai precisar de algum tipo de chave para
-acessar esse serviço, seja para copiar arquivos via RSYNC, push de imagens,
-conectar via SSH, ou apenas chamar outra plataforma para fazer o CD.</p>
-<p>E sendo informações sensíveis elas não podem ficar abertamente no seu
-repositório, direto no <code>workflow</code>, para esse tipo de informação o GH Actions
-tem os &ldquo;secrets&rdquo;, que é simplesmente uma seção na configuração do seu
-repositório para salvar esses segredos.</p>
+<p>Ainda tem um ponto importante para vários fluxos de CI (e principalmente
+Continuous Delivery), que é lidar com informações sensíveis (chaves RSA, tokens
+de acesso, JWTs, OAuth Client secrets, senhas).</p>
+<p>Exceto quando o seu CI esta integrado com o provedor que irá executar o seu
+ambiente (Openshift/Kubernetes), é provável que você vai precisar ter alguma
+chave para poder se conectar a sua VPS, seja para copiar arquivos via RSYNC,
+fazer o push de imagens para registros do Docker, conectar via SSH, ou apenas
+disparar algum evento no seu provedor.</p>
+<p>E ter essa chave aberta no YAML do <code>workflow</code> esta longe de ser uma boa
+prática, para resolver esse problema o Github permite que registremos valores
+para o repositório que são acessíveis apenas dentro do <code>actions</code>.</p>
+<p>Os &ldquo;segredos do repositório&rdquo;, que são acessíveis em todos os <code>workflows</code>
+abertamente (exceto por forks que nesse caso precisa que um colaborador
+aprove).</p>
 <p>
 <figure class=big>
 <img class="lazyload blur-up" loading=lazy data-src=./github-secrets.png alt=github-secrets>
 <figcaption><p>segredos do repositório</p></figcaption>
 </figure>
 </p>
+<p>Como falei, esses caras ficam disponíveis para todos os <code>workflows</code>, e pode ser
+usados simplesmente usando o contexto <code>secrets</code> no YAML.</p>
+<p>Por exemplo, se o seu repositório for privado, o Codecov obriga você a usar um
+token para enviar o relatório de cobertura.</p>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">30
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">31
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">32
+</span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">33
+</span></span><span style="margin-right:.4em;padding:0 .4em;color:#495050">34
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml>      - <span style=color:#268bd2>name</span>: Upload coverage to Codecov
+        <span style=color:#268bd2>uses</span>: codecov/codecov-action@v2
+        <span style=color:#268bd2>with</span>:
+<span style=display:block;width:100%;background-color:#19404a>          <span style=color:#268bd2>token</span>: ${{ secrets.CODECOV_TOKEN }}
+</span>          <span style=color:#268bd2>files</span>: ./clover.xml
+</code></pre></td></tr></table>
+</div>
+</div><p>Agora sempre que o <code>workflow</code> for executado o Github vai automaticamente
+injetar o segredo na <code>step</code>.</p>
 <h2 id=outros-eventos-e-usos>Outros eventos e usos <a href=#outros-eventos-e-usos class=heading-anchor>¶</a></h2>
-<p>Agora que temos uma ideia de como criar os <code>workflows</code> e como combinar
+<p>Agora que temos uma ideia de como criar os <code>workflows</code> e também como combinar
 <code>actions</code> prontas, seja do <a href=https://github.com/marketplace/actions>Github Marketplace</a> ou imagens do
 Docker.</p>
-<h2 id=criar-actions>Criar Actions <a href=#criar-actions class=heading-anchor>¶</a></h2>
+<p>Vamos dar uma explorada em alguns outros eventos interessantes que podemos usar
+nos <code>actions</code> que podem ser usados para alguns comportamentos customizados.</p>
+<h3 id=cron>CRON <a href=#cron class=heading-anchor>¶</a></h3>
+<p>As CRONs no Github Actions rodam automaticamente com base numa periodicidade
+que você definir, sempre usando a branch padrão do projeto.</p>
+<p>Com esse evento podemos, por exemplo, avaliar se PRs ou Issues no Github estão
+abertas por muito tempo, e dessa forma podem ser um risco, e marcar eles como
+<code>stale</code>, ou notificar o time no Slack para não ser esquecida.</p>
+<p>Também pode usá-lo para rodar processos que sejam muito grandes/lentos para se
+executar num PR ou no merge da branch.</p>
+<p>Outros usos legais são para automatizar e melhorar o seu perfil do Github, como
+o <code>gautamkrishnar/blog-post-workflow</code> e o <code>athul/waka-readme</code>.</p>
+<p>O <a href=https://github.com/gautamkrishnar/blog-post-workflow><code>gautamkrishnar/blog-post-workflow</code></a> consulta o RSS to seu blog
+e insere as ultimas postagens que você fez.</p>
+<p>E o <a href=https://github.com/athul/waka-readme><code>athul/waka-readme</code></a> puxa os dados do <a href=wip>Wakatime</a> e cria um
+gráfico ASCII com base neles.</p>
+<p>
+<figure class=big>
+<img class="lazyload blur-up" loading=lazy data-src=./github-cron-profile.png alt=github-file>
+<figcaption><p>exemplo de cron alterando perfil do github</p></figcaption>
+</figure>
+</p>
+<h3 id=comments-e-labels>Comments e Labels <a href=#comments-e-labels class=heading-anchor>¶</a></h3>
+<p>Também podemos ouvir quando são feitos comentários ou modificadas as <code>labels</code>
+de um PR ou Issue.</p>
+<p>Com ele podemos automatizar a subida de ambientes quando formos testar o mesmo,
+ou visualizar como uma postagem vai ficar sem de fato publicar ela nosso blog
+pessoal.</p>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span></span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span></span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">28
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">29
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">30
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">31
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">32
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">33
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#268bd2>name</span>: GH Pages (Preview PR)
+<span style=color:#268bd2>on</span>:
+<span style=display:block;width:100%;background-color:#19404a>  <span style=color:#268bd2>pull_request</span>:
+</span><span style=display:block;width:100%;background-color:#19404a>    <span style=color:#268bd2>types</span>: [labeled]
+</span>
+<span style=color:#268bd2>jobs</span>:
+  <span style=color:#268bd2>build-and-preview</span>:
+<span style=display:block;width:100%;background-color:#19404a>    <span style=color:#268bd2>if</span>: ${{ github.event.label.name == &#39;preview-pr&#39; }}
+</span>    <span style=color:#268bd2>runs-on</span>: ubuntu-latest
+    <span style=color:#268bd2>steps</span>:
+      - <span style=color:#268bd2>name</span>: Checkout 🛎️
+        <span style=color:#268bd2>uses</span>: actions/checkout@v2.3.1
+        <span style=color:#268bd2>with</span>:
+          <span style=color:#268bd2>submodules</span>: <span style=color:#cb4b16>true</span>
+          <span style=color:#268bd2>fetch-depth</span>: <span style=color:#2aa198>0</span>
+
+      - <span style=color:#268bd2>name</span>: Setup Hugo
+        <span style=color:#268bd2>uses</span>: peaceiris/actions-hugo@v2
+        <span style=color:#268bd2>with</span>:
+          <span style=color:#268bd2>hugo-version</span>: <span style=color:#2aa198>&#34;0.87.0&#34;</span>
+
+      - <span style=color:#268bd2>name</span>: Build
+        <span style=color:#268bd2>run</span>: |<span style=color:#2aa198>
+</span><span style=color:#2aa198>          REL=preview/${{ github.event.number }}
+</span><span style=color:#2aa198>          hugo -d public/$REL -v --minify \
+</span><span style=color:#2aa198>            -b http://www.lucassabreu.net.br/$REL</span>          
+
+      - <span style=color:#268bd2>name</span>: Deploy 🚀
+        <span style=color:#268bd2>uses</span>: JamesIves/github-pages-deploy-action@4.1.5
+        <span style=color:#268bd2>with</span>:
+          <span style=color:#268bd2>branch</span>: gh-pages
+          <span style=color:#268bd2>folder</span>: public
+          <span style=color:#268bd2>clean</span>: <span style=color:#cb4b16>false</span>
+</code></pre></td></tr></table>
+</div>
+</div><p class=code-legend>trigger preview deploy</p>
+<p>Se quiser ainda pode usar o <code>actions/github-script</code> para remover a <code>label</code> no
+fim do deploy, e colocar outra para indicar que concluiu. Mas já deixar pronto
+para iniciar o deploy de novo.</p>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">34
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">35
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">36
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">37
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">38
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">39
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">40
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">41
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">42
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">43
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">44
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">45
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">46
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">47
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">48
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">49
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml>      - <span style=color:#268bd2>uses</span>: actions/github-script@v4
+        <span style=color:#268bd2>if</span>: ${{ always() }}
+        <span style=color:#268bd2>with</span>:
+          <span style=color:#268bd2>script</span>: |<span style=color:#2aa198>
+</span><span style=color:#2aa198>            github.issues.removeLabel({
+</span><span style=color:#2aa198>              owner: context.repo.owner,
+</span><span style=color:#2aa198>              repo: context.repo.repo,
+</span><span style=color:#2aa198>              issue_number: context.payload.number,
+</span><span style=color:#2aa198>              name: &#39;preview-pr&#39;
+</span><span style=color:#2aa198>            })
+</span><span style=color:#2aa198>            github.issues.addLabels({
+</span><span style=color:#2aa198>              owner: context.repo.owner,
+</span><span style=color:#2aa198>              repo: context.repo.repo,
+</span><span style=color:#2aa198>              issue_number: context.payload.number,
+</span><span style=color:#2aa198>              labels: [&#39;preview-deployed&#39;]
+</span><span style=color:#2aa198>            })</span>            
+</code></pre></td></tr></table>
+</div>
+</div><h2 id=criar-actions>Criar Actions <a href=#criar-actions class=heading-anchor>¶</a></h2>
 <p>Para criar uma <code>action</code> e publicar ela basta criar um repositório público no
 Github, adicionar um <a href=https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions><code>action.yaml</code></a> na raiz do projeto, e
 publicar uma release, ao registrar ele irá confirmar se deseja adicionar no
@@ -661,7 +830,7 @@ and tagged
 <a href=/preview/3/tags/github>Github</a>
 <a href=/preview/3/tags/github-actions>Github Actions</a>
 <a href=/preview/3/tags/continuous-integration>Continuous Integration</a>
-using <span itemprop=wordCount>2108</span> words.
+using <span itemprop=wordCount>2592</span> words.
 </p>
 </section>
 </footer>
