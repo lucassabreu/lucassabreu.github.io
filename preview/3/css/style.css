@@ -93,8 +93,13 @@ h6 {
   font-size: 1rem;
   line-height: 1.3em;
   margin: 0;
+  margin-top: var(--paragraphmargin);
   margin-bottom: var(--paragraphmargin);
   color: var(--fontcolor);
+}
+
+a.heading-anchor:link {
+  text-decoration: none;
 }
 
 h1 {
@@ -299,6 +304,22 @@ article nav.toc li ol > li {
 
 article div.content {
   margin-top: var(--paragraphmargin);
+}
+
+article table pre {
+  margin: 0;
+}
+
+div.highlight table tr td:first-of-type pre {
+  padding-right: 0;
+}
+
+div.highlight table tr td:last-of-type pre {
+  padding-left: 0;
+}
+
+div.highlight pre {
+  line-height: 1.2em;
 }
 
 hr {

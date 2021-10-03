@@ -1,10 +1,10 @@
 <!doctype html><html lang=pt-br>
 <head>
 <meta itemprop=name content="Github Actions">
-<meta itemprop=description content="O que é isso? O Github Actions é primariamente uma ferramenta para implementar Continuous Integration, ou seja, automatizar a execução de ferramentas ou processos que ajudam a garantir a qualidade do código, seja teste unitários, análises de código estática, analises de segurança, simplesmente compilar/&ldquo;buildar&rdquo; o projeto.
+<meta itemprop=description content="O que é isso? ¶ O Github Actions é primariamente uma ferramenta para implementar Continuous Integration, ou seja, automatizar a execução de ferramentas ou processos que ajudam a garantir a qualidade do código, seja teste unitários, análises de código estática, analises de segurança, simplesmente compilar/&ldquo;buildar&rdquo; o projeto.
 Além disso também podemos implementar fluxos de Continuous Delivery, fazendo o deploy ou bundle do projeto de forma automática sempre que um evento acontece, seja o push para uma branch, ou algum outro evento do Github."><meta itemprop=datePublished content="2021-09-12T00:00:00+00:00">
 <meta itemprop=dateModified content="2021-09-12T00:00:00+00:00">
-<meta itemprop=wordCount content="1041">
+<meta itemprop=wordCount content="2108">
 <meta itemprop=keywords content="Github,Github Actions,Continuous Integration,">
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
@@ -14,8 +14,8 @@ Além disso também podemos implementar fluxos de Continuous Delivery, fazendo o
 Github Actions |
 Lucas dos Santos Abreu
 </title>
-<link rel=stylesheet href="/preview/3/css/style.css?rnd=1632265904">
-<script src="/preview/3/js/index.js?rnd=1632265904"></script>
+<link rel=stylesheet href="/preview/3/css/style.css?rnd=1633286555">
+<script src="/preview/3/js/index.js?rnd=1633286555"></script>
 </head>
 <body>
 <a class=skip-to-content-link href=#main> Skip to content </a>
@@ -34,7 +34,7 @@ Lucas dos Santos Abreu
 <header>
 <h1>Github Actions</h1>
 <p>
-<span class=reading-time>5 minute read</span>
+<span class=reading-time>10 minute read</span>
 <span class=published-at>
 Published:
 <time datetime="2021-09-12 00:00:00 +0000 UTC">2021-09-12</time>
@@ -51,7 +51,14 @@ Published:
 <li><a href=#lintsanalise-estática-com-annotations>Lints/Analise Estática com annotations</a></li>
 </ol>
 </li>
-<li><a href=#integrações-e-actions>Integrações e &ldquo;Actions&rdquo;</a></li>
+<li><a href=#integrações-e-actions>Integrações e &ldquo;Actions&rdquo;</a>
+<ol>
+<li><a href=#docker-steps>Docker Steps</a></li>
+<li><a href=#secrets>Secrets</a></li>
+</ol>
+</li>
+<li><a href=#outros-eventos-e-usos>Outros eventos e usos</a></li>
+<li><a href=#criar-actions>Criar Actions</a></li>
 </ol>
 <ol>
 <li><a href=#o-que-é-o-github-actions>o que é o github actions</a></li>
@@ -74,7 +81,7 @@ Published:
 </ol>
 </nav>
 <div class=content role=content>
-<h2 id=o-que-é-isso>O que é isso?</h2>
+<h2 id=o-que-é-isso>O que é isso? <a href=#o-que-%c3%a9-isso class=heading-anchor>¶</a></h2>
 <p>O Github Actions é primariamente uma ferramenta para implementar Continuous
 Integration, ou seja, automatizar a execução de ferramentas ou processos que
 ajudam a garantir a qualidade do código, seja teste unitários, análises de
@@ -88,7 +95,7 @@ controles/processos, mas o interessante do Github Actions é que ele esta integr
 com o sistema de eventos (webhooks) e com a API do Github, então quando você
 quer usar funcionalidades do Github com os <a href=oi>commit status</a>,
 <a href=oi>deployment status</a>, <a href=https://docs.github.com/en/github/collaborating-with-pull-requests/collaborating-on-repositories-with-code-quality-features/about-status-checks#checks>checks/annotations</a> o processo é bem simples.</p>
-<h2 id=como-temos-usado-o-github-actionsci-em-geral>Como temos usado o Github Actions/CI em geral</h2>
+<h2 id=como-temos-usado-o-github-actionsci-em-geral>Como temos usado o Github Actions/CI em geral <a href=#como-temos-usado-o-github-actionsci-em-geral class=heading-anchor>¶</a></h2>
 <p>Para a maioria dos projetos da <a href=https://coderockr.com>Coderockr</a> nós sempre adicionamos algumas
 ferramentas para CI, que são executadas em todos os PRs e a maioria no <code>push</code>
 para branchs &ldquo;principais&rdquo; (<code>main</code>, <code>develop</code>, <code>release</code>, etc).</p>
@@ -97,7 +104,7 @@ elas são &ldquo;scriptáveis&rdquo; e configuráveis, então podemos simplesmen
 script simples podemos executar elas, capturar os arquivos com problema (as
 vezes detalhando a linha específica) e notificar o desenvolvedor sobre os
 problemas e bloquear o merge/deploy baseado nelas.</p>
-<h2 id=show-me-the-code>Show me the code</h2>
+<h2 id=show-me-the-code>Show me the code <a href=#show-me-the-code class=heading-anchor>¶</a></h2>
 <p>Mas beleza, nós temos as ferramentas, como integrar elas no Github Actions?
 Para isso temos de criar um <code>workflow</code>, que é o termo que o Github usa para
 representar uma sequencia de etapas que é executada em resposta a um evento no
@@ -106,13 +113,42 @@ repositório ou API (<a href=#dispatch>voltamos nisso depois</a>).</p>
 <dt>💡 Todos os exemplos que vou mostrar podem ser vistos nesse repositório:</dt>
 <dd><a href=https://github.com/lucassabreu/github-actions-examples>lucassabreu/github-actions-examples</a></dd>
 </dl>
-<h3 id=workflow-simples>Workflow simples</h3>
+<h3 id=workflow-simples>Workflow simples <a href=#workflow-simples class=heading-anchor>¶</a></h3>
 <p>Para criar o <code>workflow</code> basta fazer o commit de um arquivo <code>yaml</code> dentro da pasta
 <code>.github/workflows</code>, e automaticamente o Github irá utilizar ele assim que o
 evento que você definiu acontecer com a branch que estiver (alguns eventos só
 vão funcionar se o <code>workflow</code> estiver na branch default).</p>
 <p>Um exemplo simples que temos em alguns projetos é esse:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#268bd2>name</span>: <span style=color:#2aa198>&#34;PHPUnit&#34;</span>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#268bd2>name</span>: <span style=color:#2aa198>&#34;PHPUnit&#34;</span>
 <span style=color:#268bd2>on</span>:
   <span style=color:#268bd2>pull_request</span>:
   <span style=color:#268bd2>push</span>:
@@ -121,9 +157,6 @@ vão funcionar se o <code>workflow</code> estiver na branch default).</p>
 <span style=color:#268bd2>jobs</span>:
   <span style=color:#268bd2>php-tests</span>:
     <span style=color:#268bd2>runs-on</span>: ubuntu-latest
-    <span style=color:#268bd2>timeout-minutes</span>: <span style=color:#2aa198>15</span>
-    <span style=color:#268bd2>env</span>:
-      <span style=color:#268bd2>COMPOSER_NO_INTERACTION</span>: <span style=color:#2aa198>1</span>
 
     <span style=color:#268bd2>steps</span>:
       - <span style=color:#268bd2>name</span>: Checkout code
@@ -140,7 +173,9 @@ vão funcionar se o <code>workflow</code> estiver na branch default).</p>
 
       - <span style=color:#268bd2>name</span>: Execute Unit Tests
         <span style=color:#268bd2>run</span>: php vendor/bin/phpunit
-</code></pre></div><p class=code-legend>.github/workflows/phpunit.yaml</p>
+</code></pre></td></tr></table>
+</div>
+</div><p class=code-legend>.github/workflows/phpunit.yaml</p>
 <p>Esse é o tipo mais simples de <code>workflow</code> que pode ser feito no Github Actions,
 apenas executa a cada push para a <code>main</code> e em todos os <code>pull requests</code>, e a
 única saída gerada é o &ldquo;commit status&rdquo;.</p>
@@ -160,7 +195,7 @@ click.</p>
 <figcaption><p>logs do phpunit no github actions</p></figcaption>
 </figure>
 </p>
-<h3 id=lintsanalise-estática-com-annotations>Lints/Analise Estática com annotations</h3>
+<h3 id=lintsanalise-estática-com-annotations>Lints/Analise Estática com annotations <a href=#lintsanalise-est%c3%a1tica-com-annotations class=heading-anchor>¶</a></h3>
 <p>Mas esse é só o básico podemos fazer algumas coisas mais avançadas com o Github
 Actions e a integração &ldquo;auto-mágica&rdquo; com a API do Github.</p>
 <p>Uma integração que precisava de um setup grande para fazer, mas que era muito boa
@@ -183,7 +218,39 @@ oferece, no caso do PHP quase todos os nossos projetos vão incluir o
 <a href=wip>PHPStan</a> (ou <a href=wip>Phan</a>), <a href=wip>PHPMD</a>, <a href=wip>PHPCS</a> e <a href=wip>PHP CS Fixer</a> para
 padronizar e analisar o código.</p>
 <p>O exemplo da imagem anterior é feita com o seguinte <code>workflow</code>:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#268bd2>name</span>: <span style=color:#2aa198>&#34;PHPStan&#34;</span>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">28
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#268bd2>name</span>: <span style=color:#2aa198>&#34;PHPStan&#34;</span>
 <span style=color:#268bd2>on</span>:
   <span style=color:#268bd2>pull_request</span>:
   <span style=color:#268bd2>push</span>:
@@ -211,7 +278,9 @@ padronizar e analisar o código.</p>
 
       - <span style=color:#268bd2>name</span>: Execute PHPStan
         <span style=color:#268bd2>run</span>: php vendor/bin/phpstan analyse src --level 8 --error-format=github
-</code></pre></div><p class=code-legend>exemplo de workflow com phpstan</p>
+</code></pre></td></tr></table>
+</div>
+</div><p class=code-legend>exemplo de workflow com phpstan</p>
 <p>O mesmo é basicamente igual ao <code>workflow</code> criado para o PHPUnit antes, apenas
 chamando o PHPStan dessa vez, e com isso ele já gera as <code>annotations</code>, isso
 porque o Actions tem um conceito de &ldquo;<a href=https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions>workflow message commands</a>&rdquo;.</p>
@@ -224,7 +293,20 @@ abaixo, ele destaca essa informação.</p>
 automaticamente cria um <code>annotation</code> com o mesmo &ldquo;nível&rdquo; no <code>pull request</code> (se
 existir um para a execução).</p>
 <p>Então se eu criar um <code>step</code> como o abaixo:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml>    - <span style=color:#268bd2>name</span>: Fake
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml>    - <span style=color:#268bd2>name</span>: Fake
       <span style=color:#268bd2>run</span>: |<span style=color:#2aa198>
 </span><span style=color:#2aa198>        echo ::notice \
 </span><span style=color:#2aa198>          file=$PWD/src/Hugger/Friendly.php,line=1,col=0::this is a notice
@@ -233,7 +315,9 @@ existir um para a execução).</p>
 </span><span style=color:#2aa198>        echo ::error \
 </span><span style=color:#2aa198>          file=$PWD/src/Hugger/Friendly.php,line=1,col=0::this is a error</span>        
 
-</code></pre></div><p>Vai gerar uma nova <code>annotation</code>:</p>
+</code></pre></td></tr></table>
+</div>
+</div><p>Vai gerar uma nova <code>annotation</code>:</p>
 <p>
 <figure class=big>
 <img class="lazyload blur-up" loading=lazy data-src=./fake-annotations.png alt="fake annotation">
@@ -242,28 +326,307 @@ existir um para a execução).</p>
 <p>Isso mostra quão fácil é integrar com essa funcionalidade do Github Actions,
 várias ferramentas tem formatos de saída prontos para integrar com ele, e as
 que não tem, bem estão a um <a href=https://github.com/lucassabreu/github-actions-examples/blob/f051cee06d489998f90e4e4cb6fc71afcc5fc7ca/.github/workflows/phpcs.yaml#L35-L38><code>sed</code></a> de distância.</p>
-<h2 id=integrações-e-actions>Integrações e &ldquo;Actions&rdquo;</h2>
+<h2 id=integrações-e-actions>Integrações e &ldquo;Actions&rdquo; <a href=#integra%c3%a7%c3%b5es-e-actions class=heading-anchor>¶</a></h2>
 <p>Para a maioria das ferramentas, principalmente para as que pode/devem ser
 executadas como parte do <code>pre-commit</code> usar o <code>step.run</code> é a melhor forma,
 fácil de entender e inclusive já mostra como executar localmente assim o
 desenvolvedor não precisa fazer o push para ver os resultados, ele pode apenas
 rodar o <code>php vendor/bin/phpunit</code> no terminal antes de fazer o commit e feito.</p>
 <p>Mas existem algumas etapas que podemos adicionar no <code>workflow</code> que não precisam
-ser executadas localmente, por exemplo: deploys, cache de arquivos, relatórios
-de cobertura, integrações com serviços externos, etc.</p>
-<hr>
-<h1 id=heading></h1>
-<h2 id=o-que-é-o-github-actions>o que é o github actions</h2>
-<h2 id=no-que-temos-usado-o-github-actionsci>no que temos usado o github actions/ci</h2>
-<h2 id=exemplos-para-pull-requestpush>exemplos para pull request/push</h2>
-<h3 id=shbash-annotations-usando-output-format>sh/bash, annotations usando output format</h3>
-<h3 id=usar-typescript-com-actions-kit>usar typescript com actions kit</h3>
-<h3 id=usar-imagens-do-dockerdockerfile-action>usar imagens do docker/dockerfile action</h3>
-<h2 id=eventos-interessantes>eventos interessantes</h2>
-<h3 id=cron-wakatime-profile>cron: wakatime profile</h3>
-<h3 id=issue-comment>issue comment</h3>
-<h3 id=workflow_dispatch-gh-workflow-run>workflow_dispatch: gh workflow run</h3>
-<h2 id=usar-os-runners-em-infra-própria>usar os runners em infra própria</h2>
+(talvez não devam) ser executadas localmente, por exemplo: deploys, cache de
+arquivos, relatórios de cobertura, integrações com serviços externos, setup de
+ferramentas para usar, etc.</p>
+<p>Um exemplo simples é uma etapa para enviar o relatório de cobertura para o
+<a href=wip>Codecov</a>:</p>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">35
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">36
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">37
+</span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">38
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">39
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">40
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">41
+</span></span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml>      - <span style=color:#268bd2>name</span>: Execute Unit Tests
+        <span style=color:#268bd2>run</span>: phpdbg -qrr vendor/bin/phpunit --coverage-clover=clover.xml
+
+<span style=display:block;width:100%;background-color:#19404a>      - <span style=color:#268bd2>name</span>: Upload coverage to Codecov
+</span><span style=display:block;width:100%;background-color:#19404a>        <span style=color:#268bd2>uses</span>: codecov/codecov-action@v2
+</span><span style=display:block;width:100%;background-color:#19404a>        <span style=color:#268bd2>with</span>:
+</span><span style=display:block;width:100%;background-color:#19404a>          <span style=color:#268bd2>files</span>: ./clover.xml
+</span></code></pre></td></tr></table>
+</div>
+</div><p>A etapa <code>Upload coverage to Codecov</code> usa uma <code>action</code> chamada
+<a href=https://github.com/marketplace/actions/codecov><code>codecov/codecov-action</code></a>, <code>actions</code> são o que dão o nome para a
+plataforma, e são plugins que podem ser adicionados aos <code>workflows</code> que
+resolvem algum problema específico, que podem ser os problemas que listei antes
+ou &ldquo;receitas prontas&rdquo; para alguma ferramenta.</p>
+<p>Diferente dos exemplos anteriores não passamos um script para ser executado na
+etapa, mas sim qual o nome da <code>action</code> com o <code>uses</code> e (dependendo da <code>action</code>)
+parâmetros complementares que ela possa receber.</p>
+<p>O Github tem um marketplace para eles que você pode usar tanto para publicar os
+seus próprios, quanto para procurar soluções prontas (por mais que o Google
+tenha sido melhor para pesquisar, mas a pagina no marketplace ajuda o Google
+pelo menos).</p>
+<p>
+<figure class=big>
+<img class="lazyload blur-up" loading=lazy data-src=./github-marketplace.png alt=marketplace>
+<figcaption><p>marketplace com alguns actions para php</p></figcaption>
+</figure>
+</p>
+<p>E podemos encontrar todo tipo de <code>action</code> pronta para ser adicionada aos
+<code>workflows</code>, no meu blog eu não precisei escrever lógica para instalar o <code>hugo</code>
+ou para &ldquo;buildar&rdquo; e fazer push dele para a branch <code>gh-pages</code>, isso tudo é feito
+por <code>actions</code> que outras pessoas escreveram.</p>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
+</span></span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">28
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">29
+</span></span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yml data-lang=yml><span style=color:#268bd2>name</span>: GH Pages
+<span style=color:#268bd2>on</span>:
+  <span style=color:#268bd2>push</span>:
+    <span style=color:#268bd2>branches</span>:
+      - main
+
+<span style=color:#268bd2>jobs</span>:
+  <span style=color:#268bd2>build-and-deploy</span>:
+    <span style=color:#268bd2>runs-on</span>: ubuntu-latest
+    <span style=color:#268bd2>steps</span>:
+      - <span style=color:#268bd2>name</span>: Checkout 🛎️
+        <span style=color:#268bd2>uses</span>: actions/checkout@v2.3.1
+        <span style=color:#268bd2>with</span>:
+          <span style=color:#268bd2>submodules</span>: <span style=color:#cb4b16>true</span>
+          <span style=color:#268bd2>fetch-depth</span>: <span style=color:#2aa198>0</span>
+
+<span style=display:block;width:100%;background-color:#19404a>      - <span style=color:#268bd2>name</span>: Setup Hugo
+</span><span style=display:block;width:100%;background-color:#19404a>        <span style=color:#268bd2>uses</span>: peaceiris/actions-hugo@v2
+</span><span style=display:block;width:100%;background-color:#19404a>        <span style=color:#268bd2>with</span>:
+</span><span style=display:block;width:100%;background-color:#19404a>          <span style=color:#268bd2>hugo-version</span>: <span style=color:#2aa198>&#34;0.87.0&#34;</span>
+</span>
+      - <span style=color:#268bd2>name</span>: Build
+        <span style=color:#268bd2>run</span>: hugo -v --minify -b http://www.lucassabreu.net.br
+
+<span style=display:block;width:100%;background-color:#19404a>      - <span style=color:#268bd2>name</span>: Deploy 🚀
+</span><span style=display:block;width:100%;background-color:#19404a>        <span style=color:#268bd2>uses</span>: JamesIves/github-pages-deploy-action@4.1.5
+</span><span style=display:block;width:100%;background-color:#19404a>        <span style=color:#268bd2>with</span>:
+</span><span style=display:block;width:100%;background-color:#19404a>          <span style=color:#268bd2>branch</span>: gh-pages
+</span><span style=display:block;width:100%;background-color:#19404a>          <span style=color:#268bd2>folder</span>: public
+</span></code></pre></td></tr></table>
+</div>
+</div><p class=code-legend>.github/workflows/gh-pages.yaml</p>
+<p>Existe uma grande variedade desses tipos de <code>actions</code> que fazem o setup para
+uma ferramenta, ou que interagem com o Github ou outros serviços de forma
+simplificada.</p>
+<h3 id=docker-steps>Docker Steps <a href=#docker-steps class=heading-anchor>¶</a></h3>
+<p>Nós usamos o Docker para o desenvolvimento local e em produção para a maioria
+dos projetos para manter os ambientes o mais próximos possível. E no <a href=wip>Drone
+CI</a> e <a href=wip>Buildkite</a> usamos as mesmas imagens (ou bem próximas) para executar
+as ferramentas de analise estática e testes unitários, porque se estamos usando
+uma imagem customizada é provável que eles falhem por não ter a referencia a
+alguma função ou classe.</p>
+<p>Nesse sentido no lugar de usar uma <code>action</code> para instalar a linguagem e ainda
+adicionar extensões ou customizações do ambiente, por mais que possível, acaba
+sendo um trabalho duplicado, e sempre temos de lembrar de atualizar a imagem
+base e o <code>workflow</code> toda vez, então quando isso acontece nós usamos imagens do
+Docker como etapas para rodar as operações.</p>
+<p>Usando uma imagem do Docker no nível do <code>runs-on</code> adicionamos qual o contêiner
+a ser usado:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-diff data-lang=diff>name: &#34;PHPUnit (with Docker)&#34;
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  php-tests:
+    runs-on: ubuntu-latest
+<span style=color:#719e07>+    container:
+</span><span style=color:#719e07>+      image: ghcr.io/lucassabreu/php-with-exts-example:main
+</span><span style=color:#719e07>+      options: --user root
+</span><span style=color:#719e07></span>
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+<span style=color:#dc322f>-      - name: Setup PHP
+</span><span style=color:#dc322f>-        uses: shivammathur/setup-php@v2
+</span><span style=color:#dc322f>-        with:
+</span><span style=color:#dc322f>-          php-version: 8.0
+</span><span style=color:#dc322f>-          tools: composer:v2
+</span><span style=color:#dc322f></span>
+      - name: Install dependencies
+        run: composer install --prefer-dist
+
+      - name: Execute Unit Tests
+        run: phpdbg -qrr vendor/bin/phpunit --coverage-clover=clover.xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          files: ./clover.xml
+</code></pre></div><p class=code-legend>exemplo usando docker</p>
+<p>A imagem desse exemplo é orientada para ser usada fora do Github também,
+então eu tive de adicionar o <code>--user root</code>, porque alguns <code>actions</code> precisam
+instalar pacotes (o <code>actions/checkout@v2</code> instala o <code>git</code> e outras coisas).</p>
+<p>Mas essa não é a única forma de usar o imagens do Docker se você ou a
+ferramenta que você normalmente usa tiver uma imagem para ser usada, então pode
+adicionar a mesma como um <code>step</code>:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#268bd2>name</span>: <span style=color:#2aa198>&#34;PHPInsights&#34;</span>
+<span style=color:#268bd2>on</span>:
+  <span style=color:#268bd2>pull_request</span>:
+  <span style=color:#268bd2>push</span>:
+    <span style=color:#268bd2>branches</span>: [main]
+
+<span style=color:#268bd2>jobs</span>:
+  <span style=color:#268bd2>check</span>:
+    <span style=color:#268bd2>runs-on</span>: ubuntu-latest
+
+    <span style=color:#268bd2>steps</span>:
+      - <span style=color:#268bd2>name</span>: Checkout code
+        <span style=color:#268bd2>uses</span>: actions/checkout@v2
+
+      - <span style=color:#268bd2>name</span>: PHPInsights
+        <span style=color:#268bd2>uses</span>: docker://nunomaduro/phpinsights
+        <span style=color:#268bd2>with</span>:
+          <span style=color:#268bd2>args</span>: --format=github-action
+</code></pre></div><p class=code-legend>docker como um `step`</p>
+<p>Se ela tiver um formato de saída compatível com os <a href=#lintsanalise-est%C3%A1tica-com-annotations>annotations commands</a>
+então fica parecendo que é uma <code>action</code> nativa.</p>
+<p>Podemos ainda executar Docker in Docker se for necessário combinar a sua imagem
+própria e usar outra imagem como um <code>step</code>.</p>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span></span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
+</span></span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#268bd2>name</span>: <span style=color:#2aa198>&#34;PHPCS (Docker in Docker)&#34;</span>
+<span style=color:#268bd2>on</span>:
+  <span style=color:#268bd2>pull_request</span>:
+  <span style=color:#268bd2>push</span>:
+    <span style=color:#268bd2>branches</span>: [main]
+
+<span style=color:#268bd2>jobs</span>:
+  <span style=color:#268bd2>check</span>:
+    <span style=color:#268bd2>runs-on</span>: ubuntu-latest
+<span style=display:block;width:100%;background-color:#19404a>    <span style=color:#268bd2>container</span>:
+</span><span style=display:block;width:100%;background-color:#19404a>      <span style=color:#268bd2>image</span>: ghcr.io/lucassabreu/php-with-exts-example:main
+</span><span style=display:block;width:100%;background-color:#19404a>      <span style=color:#268bd2>options</span>: --user root
+</span>
+    <span style=color:#268bd2>steps</span>:
+      - <span style=color:#268bd2>name</span>: Checkout code
+        <span style=color:#268bd2>uses</span>: actions/checkout@v2
+
+      - <span style=color:#268bd2>name</span>: Install dependencies
+        <span style=color:#268bd2>run</span>: composer install --prefer-dist
+
+<span style=display:block;width:100%;background-color:#19404a>      - <span style=color:#268bd2>name</span>: PHPCS
+</span><span style=display:block;width:100%;background-color:#19404a>        <span style=color:#268bd2>uses</span>: docker://phpqa/phpcs
+</span><span style=display:block;width:100%;background-color:#19404a>        <span style=color:#268bd2>with</span>:
+</span><span style=display:block;width:100%;background-color:#19404a>          <span style=color:#268bd2>args</span>: sh -c &#34;phpcs src --report=emacs | sed \&#34;s|^.*src|src|;s|\(.*\):\(.*\):\(.*\):\(.*\)|::error file=\1,line=\2,col=\3::\4|\&#34;&#34;
+</span></code></pre></td></tr></table>
+</div>
+</div><p class=code-legend>docker in docker</p>
+<h3 id=secrets>Secrets <a href=#secrets class=heading-anchor>¶</a></h3>
+<p>Fechando sobre como reaproveitar imagens do Docker, ou &ldquo;actions&rdquo; vindas do
+<a href=https://github.com/marketplace/actions>Github Marketplace</a>, ainda tem um ponto importante para vários
+fluxos de CI (e principalmente Continuous Delivery), que é lidar com
+informações sensíveis.</p>
+<p>Informações como chaves RSA, tokens de acesso, JWTs, OAuth Client secrets,
+senhas.</p>
+<p>Se o seu CI não estiver rodando dentro de uma plataforma integrada ao seu
+providor de infraestrutura, então você vai precisar de algum tipo de chave para
+acessar esse serviço, seja para copiar arquivos via RSYNC, push de imagens,
+conectar via SSH, ou apenas chamar outra plataforma para fazer o CD.</p>
+<p>E sendo informações sensíveis elas não podem ficar abertamente no seu
+repositório, direto no <code>workflow</code>, para esse tipo de informação o GH Actions
+tem os &ldquo;secrets&rdquo;, que é simplesmente uma seção na configuração do seu
+repositório para salvar esses segredos.</p>
+<p>
+<figure class=big>
+<img class="lazyload blur-up" loading=lazy data-src=./github-secrets.png alt=github-secrets>
+<figcaption><p>segredos do repositório</p></figcaption>
+</figure>
+</p>
+<h2 id=outros-eventos-e-usos>Outros eventos e usos <a href=#outros-eventos-e-usos class=heading-anchor>¶</a></h2>
+<p>Agora que temos uma ideia de como criar os <code>workflows</code> e como combinar
+<code>actions</code> prontas, seja do <a href=https://github.com/marketplace/actions>Github Marketplace</a> ou imagens do
+Docker.</p>
+<h2 id=criar-actions>Criar Actions <a href=#criar-actions class=heading-anchor>¶</a></h2>
+<p>Para criar uma <code>action</code> e publicar ela basta criar um repositório público no
+Github, adicionar um <a href=https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions><code>action.yaml</code></a> na raiz do projeto, e
+publicar uma release, ao registrar ele irá confirmar se deseja adicionar no
+marketplace e em qual categoria.</p>
+<p>
+<figure class=big>
+<img class="lazyload blur-up" loading=lazy data-src=./marketplace-release.png alt=marketplace-release>
+</figure>
+</p>
+<h1 id=heading> <a href=#heading class=heading-anchor>¶</a></h1>
+<h2 id=o-que-é-o-github-actions>o que é o github actions <a href=#o-que-%c3%a9-o-github-actions class=heading-anchor>¶</a></h2>
+<h2 id=no-que-temos-usado-o-github-actionsci>no que temos usado o github actions/ci <a href=#no-que-temos-usado-o-github-actionsci class=heading-anchor>¶</a></h2>
+<h2 id=exemplos-para-pull-requestpush>exemplos para pull request/push <a href=#exemplos-para-pull-requestpush class=heading-anchor>¶</a></h2>
+<h3 id=shbash-annotations-usando-output-format>sh/bash, annotations usando output format <a href=#shbash-annotations-usando-output-format class=heading-anchor>¶</a></h3>
+<h3 id=usar-typescript-com-actions-kit>usar typescript com actions kit <a href=#usar-typescript-com-actions-kit class=heading-anchor>¶</a></h3>
+<h3 id=usar-imagens-do-dockerdockerfile-action>usar imagens do docker/dockerfile action <a href=#usar-imagens-do-dockerdockerfile-action class=heading-anchor>¶</a></h3>
+<h2 id=eventos-interessantes>eventos interessantes <a href=#eventos-interessantes class=heading-anchor>¶</a></h2>
+<h3 id=cron-wakatime-profile>cron: wakatime profile <a href=#cron-wakatime-profile class=heading-anchor>¶</a></h3>
+<h3 id=issue-comment>issue comment <a href=#issue-comment class=heading-anchor>¶</a></h3>
+<h3 id=workflow_dispatch-gh-workflow-run>workflow_dispatch: gh workflow run <a href=#workflow_dispatch-gh-workflow-run class=heading-anchor>¶</a></h3>
+<h2 id=usar-os-runners-em-infra-própria>usar os runners em infra própria <a href=#usar-os-runners-em-infra-pr%c3%b3pria class=heading-anchor>¶</a></h2>
 </div><section class=share>
 <p>
 Share this post at
@@ -298,7 +661,7 @@ and tagged
 <a href=/preview/3/tags/github>Github</a>
 <a href=/preview/3/tags/github-actions>Github Actions</a>
 <a href=/preview/3/tags/continuous-integration>Continuous Integration</a>
-using <span itemprop=wordCount>1041</span> words.
+using <span itemprop=wordCount>2108</span> words.
 </p>
 </section>
 </footer>

@@ -3,7 +3,7 @@
 <meta itemprop=name content="Notas Kubernetes - Coderockr Jam 2017-03-11">
 <meta itemprop=description content="Algumas notas e detalhes que anotei sobre o Kubernetes para o Coderockr Jam"><meta itemprop=datePublished content="2017-03-11T00:00:00+00:00">
 <meta itemprop=dateModified content="2017-03-11T00:00:00+00:00">
-<meta itemprop=wordCount content="1004">
+<meta itemprop=wordCount content="1011">
 <meta itemprop=keywords content="Coderockr Jam,Kubernetes,Basics,">
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
@@ -13,8 +13,8 @@
 Notas Kubernetes - Coderockr Jam 2017-03-11 |
 Lucas dos Santos Abreu
 </title>
-<link rel=stylesheet href="/preview/3/css/style.css?rnd=1632265904">
-<script src="/preview/3/js/index.js?rnd=1632265904"></script>
+<link rel=stylesheet href="/preview/3/css/style.css?rnd=1633286555">
+<script src="/preview/3/js/index.js?rnd=1633286555"></script>
 </head>
 <body>
 <a class=skip-to-content-link href=#main> Skip to content </a>
@@ -47,20 +47,20 @@ Published:
 <p>Kubernetes ou K8s é uma plataforma open source para gestão de cluster de contêineres, desenvolvido pelo Google e doado a <em>Cloud Native Computing Foundation</em>, que é uma organização que existe abaixo do <em>Linux Foundation</em>.</p>
 <p>Tem por objetivo a automoção de um conjunto de funções de cluster: deploy, escalagem e executar aplicações de contêineres em vários hosts. Sendo que normalmente funciona usando <em>Docker</em>.</p>
 <p>Alguns conceitos importantes para entender a ferramenta:</p>
-<h2 id=pods>Pods</h2>
+<h2 id=pods>Pods <a href=#pods class=heading-anchor>¶</a></h2>
 <p>São o menor componente do K8s, definindo um nó do cluster, ou seja, uma máquina virtual dedicada apenas as funções definidas nela, com o acréscimo de alguns componentes para verificar estado e vida das aplicações sendo executadas dentro delas.</p>
 <p>Um <code>Pod</code> irá executar um conjunto de contêineres definidos nele e que devem ter a mesma finalidade ou estão ligados de uma forma tão forte que se um falhar os contêineres relacionados devem ser destruídos também.</p>
 <p>Também tem a caracteristica de serem tratados como efêmeros, de modo que destruí-los e recriá-los deve ser uma tarefa simples e sem remorços.</p>
-<h2 id=persistent-volume-claim-pvc>Persistent Volume Claim (PVC)</h2>
+<h2 id=persistent-volume-claim-pvc>Persistent Volume Claim (PVC) <a href=#persistent-volume-claim-pvc class=heading-anchor>¶</a></h2>
 <p>São volumes de dados persistentes, como os <code>Pods</code> tem a caracterica de serem criados e destruídos a qualquer momento existe o risco de perder seus dados, os <code>Persistent Volume Claims</code> tem por objetivo cobrir esse problema provendo storages que sobrevivem sem os <code>Pods</code>, assim quando o <code>Pod</code> for criado poderá se conectar ao mesmo <code>PVC</code> e continuar.</p>
 <p>Existem vários tipos de drivers de armazenamento para os <code>PVCs</code> utilizarem, mas que normalmente dependem do serviço provendo o K8s, por exemplo, o OpenShift apenas provê o EBS do AWS, mas no Google Cloud podem ser usados storages do Google, AWS, locais, etc.</p>
-<h2 id=cron-jobs>Cron Jobs</h2>
+<h2 id=cron-jobs>Cron Jobs <a href=#cron-jobs class=heading-anchor>¶</a></h2>
 <p>Um problema para contêineres é a execução de CRONs, que é por muitos considerado uma má prática gerenciar internamente ao contêiner, que o certo seria o host do contêiner instanciá-lo temporariamente para executar o comando. Assim a responsabidade de schedule da CRON ficaria para o host.</p>
 <p><code>CRON Jobs</code> representam a solução do K8s para isso, podem ser criadas schedules de execução de <code>Pods</code> do tipo <code>Job</code> que irão ser iniciados, executam uma tarefa e morrem.</p>
 <p>Caso ocorram falhas ou insucesso na execução um novo <code>Job</code> será criado para tentar concluir a tarefa, se assim for configurado.</p>
-<h2 id=labels-e-selectors>Labels e Selectors</h2>
+<h2 id=labels-e-selectors>Labels e Selectors <a href=#labels-e-selectors class=heading-anchor>¶</a></h2>
 <p>Labels é a forma pela qual os componentes (principalmente <code>Pods</code>) são marcados e agrupados, através destas marcações e nada mais Services e Controllers identificam seus <code>Pods</code>, de forma que uma estruturação ruim de labels/selectors pode levar a Services tentando acessar <code>Pods</code> inválidos e Controllers competirem por definições de <code>Pods</code>.</p>
-<h2 id=controllers>Controllers</h2>
+<h2 id=controllers>Controllers <a href=#controllers class=heading-anchor>¶</a></h2>
 <p><code>Constrollers</code> são regras de replicação e deploy que existem para os <code>Pods</code> dentro do K8s, eles tem por objetivo realizar a tarefa de deployment, escalagem, verificar vida dos contêineres e eventualmente destruí-los quando param de responder.</p>
 <p>Existem alguns tipos de <code>Controllers</code>, mas de forma geral eles trabalham mantendo conjuntos de contêineres com determidas definições ativos e criar novos de acordo com regras. Os <code>Controllers</code> irão criar ou adotar conjuntos <code>Pods</code> que teram uma mesma marcação de <code>labels</code>/<code>selectors</code> e possuem um &ldquo;template&rdquo; de <code>Pods</code> dentro deles para saberem como criá-los quando necessário.</p>
 <p>Os tipos possíveis são:</p>
@@ -72,11 +72,11 @@ Published:
 <li><strong>DaemonSet</strong>: é um <code>Controller</code> que garante que um certo tipo de <code>Pod</code> será adicionado a todos os nós do cluster. Os <code>Pods</code> que são criados por ele normalmente são do tipo de coleta de logs (<code>fluentd</code>, <code>logstash</code>), monitores (<code>New Relic</code>, <code>Prometheus Exporter</code>) e serviços semelhantes.</li>
 <li><strong>Job</strong>: é um <code>Controller</code> para executar <code>Pods</code> de vida curta, no sentido de pequenos comandos ou execuções que não precisam ser servidas. Normalmente são criados por <code>Cron Jobs</code> do K8s.</li>
 </ul>
-<h2 id=services>Services</h2>
+<h2 id=services>Services <a href=#services class=heading-anchor>¶</a></h2>
 <p>Como os <code>Pods</code> além de efêmeros, podem existir em números variados por culpa dos <code>Controllers</code>, não há forma confiável de tentar conectar dois <code>Pods</code> diretamente, seja porque o <code>Pod</code> que você está dependendo pode morrer e quando voltar terá outro IP, e provavelmente outro nome, ou porque o <code>Pod</code> que você &ldquo;fixou&rdquo; pode não ser o mas indicado (menos ocupado ou mais próximo).</p>
 <p>Para resolver esse problema existem os <code>Services</code>, em vez de tentar fazer as chamadas diretamente para um <code>Pod</code>, podemos chamar pelo nome de um <code>Service</code> e este irá rotear para um <code>Pod</code> que esteja abaixo dele.</p>
 <p>Os <code>Services</code> também são a forma padrão para se expor serviços do cluster para o mundo exterior.</p>
-<h2 id=arquitetura>Arquitetura</h2>
+<h2 id=arquitetura>Arquitetura <a href=#arquitetura class=heading-anchor>¶</a></h2>
 <figure class=big>
 <img class="lazyload blur-up" loading=lazy data-src=https://upload.wikimedia.org/wikipedia/commons/b/be/Kubernetes.png>
 <figcaption><p>arquitetura do kubernetes</p></figcaption>
@@ -115,7 +115,7 @@ and tagged
 <a href=/preview/3/tags/coderockr-jam>Coderockr Jam</a>
 <a href=/preview/3/tags/kubernetes>Kubernetes</a>
 <a href=/preview/3/tags/basics>Basics</a>
-using <span itemprop=wordCount>1004</span> words.
+using <span itemprop=wordCount>1011</span> words.
 </p>
 </section>
 </footer>
