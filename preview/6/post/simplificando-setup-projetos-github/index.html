@@ -1,0 +1,134 @@
+<!doctype html><html lang=pt-br>
+<head>
+<meta itemprop=name content="Simplificando o Setup de Projetos no GitHub">
+<meta itemprop=description content="Criamos um script para inicializar as labels dos nossos projetos no GitHub e queremos compartilhar isso"><meta itemprop=datePublished content="2017-01-10T00:00:00+00:00">
+<meta itemprop=dateModified content="2017-01-10T00:00:00+00:00">
+<meta itemprop=wordCount content="289"><meta itemprop=image content="http://www.lucassabreu.net.br/post/simplificando-setup-projetos-github/looking-for.gif">
+<meta itemprop=keywords content="Github,Coderockr Way,Script,Scripting,Project Management,">
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<style type=text/css>body{font-family:monospace}</style>
+<title>
+Simplificando o Setup de Projetos no GitHub |
+Lucas dos Santos Abreu
+</title>
+<link rel=stylesheet href="/preview/6/css/style.css?rnd=1633290146">
+<script src="/preview/6/js/index.js?rnd=1633290146"></script>
+</head>
+<body>
+<a class=skip-to-content-link href=#main> Skip to content </a>
+<header class=page-header>
+<nav arial-label=primary role=menu>
+<a href=/preview/6/preview/6/>Home</a>
+<a href=/preview/6/preview/6/resume>Resume</a>
+<a href=https://twitter.com/LucasSantAbreu>Twitter</a>
+<a href=https://github.com/lucassabreu>GitHub</a>
+<a href=https://medium.com/@lucassabreu>Medium</a>
+<a href=https://www.linkedin.com/in/lucassantosabreu>LinkedIn</a>
+</nav>
+</header>
+<main id=main>
+<article>
+<header>
+<h1>Simplificando o Setup de Projetos no GitHub</h1>
+<p>
+<span class=reading-time>2 minute read</span>
+<span class=published-at>
+Published:
+<time datetime="2017-01-10 00:00:00 +0000 UTC">2017-01-10</time>
+</span>
+</p>
+</header>
+<div class=content role=content>
+<p>Na <a href=http://blog.coderockr.com/>Coderockr</a> iniciamos e assumimos vários projetos, sejam para clientes que nos contratam ou para ações internas, e normalmente o <a href=http://github.com>GitHub</a> acaba sendo a ferramenta escolhida para eles.</p>
+<p>E ao longo dos anos acabamos definindo uma estrutura para controlarmos as nossas issues, usando as seguintes labels:</p>
+<figure>
+<img class="lazyload blur-up" loading=lazy data-src=/post/simplificando-setup-projetos-github/labels.png width=704 height=410>
+<figcaption><p>Conjunto de labels utilizadas no Coderockr Way</p></figcaption>
+</figure>
+<p>É um conjunto bem simples, mas que deixa bem claro as etapas, prioridades, tipos e estados das tarefas, de forma que fica bem fácil de acompanhá-las.</p>
+<p>Em todos os projetos cadastramos essas labels. Mas mesmo que você esteja de bom humor, vai ser um trabalho chato e moroso. E é bem provável que esqueça alguma delas, e precise revisar a lista para garantir que estão todas lá.</p>
+<figure>
+<img class="lazyload blur-up" loading=lazy data-src=/post/simplificando-setup-projetos-github/looking-for.gif width=444 height=358>
+<figcaption><p>Esqueci o "Stage: Testing"? Achei...</p></figcaption>
+</figure>
+<p>Pensando nessa monotonia e para economizar algum tempo de setup nos projetos resolvemos criar um script que fizesse esse processo, adicionando as labels a um projeto que fosse informado.</p>
+<p>O script acabou ficando bem mais simples que o esperado graças a simplicidade da API do GitHub, todo ele foi feito com cURL e alguns loops no bash para as labels.</p>
+<p>Até preparamos ele para não precisar ser baixado/instalado, basta dar um cURL direto do repositório do GitHub que ele pede os dados que precisa.</p>
+<figure>
+<img class="lazyload blur-up" loading=lazy data-src=/post/simplificando-setup-projetos-github/no-need-for-downloads.png width=652 height=108>
+<figcaption><p>nem precisa baixar</p></figcaption>
+</figure>
+<p>Resolvemos deixar o script que criamos em um repositório público no GitHub para quem estiver procurando uma solução parecida (ou que agora acha que vale a pena criar um também).</p>
+<p>O script e como usá-lo estão aqui:</p>
+<p><a href=https://github.com/Coderockr/coderockr-way-github-setup><strong>Coderockr/coderockr-way-github-setup</strong> - Basic setup to use the Coderockr Way methodology</a></p>
+<p>Conclusão, investir um pouco de tempo para entender as ferramentas que você usa, não só te poupa tempo a longo prazo, quanto também gera uns scripts legais de compartilhar :)</p>
+</div><section class=share>
+<p>
+Share this post at
+<a href="https://twitter.com/share?text=Simplificando%20o%20Setup%20de%20Projetos%20no%20GitHub&nbsp;-&nbsp;Lucas%20dos%20Santos%20Abreu&url=http%3a%2f%2fwww.lucassabreu.net.br%2fpreview%2f6%2fpost%2fsimplificando-setup-projetos-github%2f" onclick="return window.open(this.href,'twitter-share','width=550,height=235'),!1">
+Twitter
+</a>
+<a href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fwww.lucassabreu.net.br%2fpreview%2f6%2fpost%2fsimplificando-setup-projetos-github%2f" onclick="return window.open(this.href,'facebook-share','width=580,height=296'),!1">
+Facebook
+</a>
+<a href="http://pinterest.com/pin/create/button/?url=http%3a%2f%2fwww.lucassabreu.net.br%2fpreview%2f6%2fpost%2fsimplificando-setup-projetos-github%2f&description=Simplificando%20o%20Setup%20de%20Projetos%20no%20GitHub" onclick="return window.open(this.href,'pinterest-share','width=580,height=296'),!1">
+Pinterest
+</a>
+</p>
+</section>
+<footer>
+<section role=comment>
+<p>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//lucas-dos-santos-abreu.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</p>
+</section>
+<section>
+<p>
+Published
+by <span itemprop=author></span>
+<time datetime=2017-01-10T00:00:00+00:00>
+10 Jan, 2017
+</time>
+and tagged
+<a href=/preview/6/tags/github>Github</a>
+<a href=/preview/6/tags/coderockr-way>Coderockr Way</a>
+<a href=/preview/6/tags/script>Script</a>
+<a href=/preview/6/tags/scripting>Scripting</a>
+<a href=/preview/6/tags/project-management>Project Management</a>
+using <span itemprop=wordCount>289</span> words.
+</p>
+</section>
+</footer>
+</article>
+</main>
+<aside>
+<header>Related Content</header>
+<ul>
+<li>
+<a href=/preview/6/post/github-actions/>Github Actions</a> &ndash;
+<time>13 minute read</time>
+</li>
+<li>
+<a href=/preview/6/post/ambientes-por-branch-com-openshift-next-gen-usando-github/>Ambientes por Branch com OpenShift Next Gen usando GitHub</a> &ndash;
+<time>9 minute read</time>
+</li>
+<li>
+<a href=/preview/6/post/ambientes-por-branch-com-openshift-next-gen/>Ambientes por Branch com OpenShift Next Gen</a> &ndash;
+<time>9 minute read</time>
+</li>
+</ul>
+</aside>
+<footer>
+<p>
+&copy;
+2021 ·
+This page was generated using <a target=_blank rel=noopener href=https://github.com/colorchestra/smol>smol<a> for <a target=_blank rel=noopener href=https://gohugo.io/>Hugo</a>.
+</p>
+</footer>
+</body>
+</html>
