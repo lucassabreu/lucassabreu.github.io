@@ -4,7 +4,7 @@
 <meta itemprop=description content="O que é isso? ¶ O Github Actions é primariamente uma ferramenta para implementar Continuous Integration, ou seja, automatizar a execução de ferramentas ou processos que ajudam a garantir a qualidade do código, seja teste unitários, análises de código estática, analises de segurança, simplesmente compilar/&ldquo;buildar&rdquo; o projeto.
 Além disso também podemos implementar fluxos de Continuous Delivery, fazendo o deploy ou bundle do projeto de forma automática sempre que um evento acontece, seja o push para uma branch, ou algum outro evento do Github."><meta itemprop=datePublished content="2021-09-12T00:00:00+00:00">
 <meta itemprop=dateModified content="2021-09-12T00:00:00+00:00">
-<meta itemprop=wordCount content="2592">
+<meta itemprop=wordCount content="2649">
 <meta itemprop=keywords content="Github,Github Actions,Continuous Integration,">
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
@@ -14,8 +14,8 @@ Além disso também podemos implementar fluxos de Continuous Delivery, fazendo o
 Github Actions |
 Lucas dos Santos Abreu
 </title>
-<link rel=stylesheet href="/preview/6/css/style.css?rnd=1633292079">
-<script src="/preview/6/js/index.js?rnd=1633292079"></script>
+<link rel=stylesheet href="/preview/6/css/style.css?rnd=1633294472">
+<script src="/preview/6/js/index.js?rnd=1633294472"></script>
 </head>
 <body>
 <a class=skip-to-content-link href=#main> Skip to content </a>
@@ -773,7 +773,33 @@ para iniciar o deploy de novo.</p>
 </code></pre></td></tr></table>
 </div>
 </div><p class=code-legend>apenas um extra para facilitar</p>
-<h2 id=criar-actions>Criar Actions <a href=#criar-actions class=heading-anchor>¶</a></h2>
+<p>Se quiser que seja feito para todos os commits feitos para o PR então seria
+apenas mudar um pouco o cabeçalho do <code>workflow</code>:</p>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">9
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#268bd2>name</span>: GH Pages (Preview PR)
+<span style=color:#268bd2>on</span>:
+  <span style=color:#268bd2>pull_request</span>:
+    <span style=color:#268bd2>types</span>: [labeled, opened, synchronize, reopened]
+
+<span style=color:#268bd2>jobs</span>:
+  <span style=color:#268bd2>build-and-preview</span>:
+    <span style=color:#268bd2>if</span>: ${{ contains(github.event.pull_request.labels.*.name, &#39;preview-deployed&#39;) || github.event.label.name == &#39;preview-pr&#39; }}
+    <span style=color:#268bd2>runs-on</span>: ubuntu-latest
+</code></pre></td></tr></table>
+</div>
+</div><h2 id=criar-actions>Criar Actions <a href=#criar-actions class=heading-anchor>¶</a></h2>
 <p>Para criar uma <code>action</code> e publicar ela basta criar um repositório público no
 Github, adicionar um <a href=https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions><code>action.yaml</code></a> na raiz do projeto, e
 publicar uma release, ao registrar ele irá confirmar se deseja adicionar no
@@ -829,7 +855,7 @@ and tagged
 <a href=/preview/6/tags/github>Github</a>
 <a href=/preview/6/tags/github-actions>Github Actions</a>
 <a href=/preview/6/tags/continuous-integration>Continuous Integration</a>
-using <span itemprop=wordCount>2592</span> words.
+using <span itemprop=wordCount>2649</span> words.
 </p>
 </section>
 </footer>
