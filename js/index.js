@@ -26,4 +26,19 @@ document.addEventListener("DOMContentLoaded", function () {
     script.referrerpolicy = "no-referrer";
     document.body.appendChild(script);
   }
+
+  document.querySelectorAll("a.heading-anchor").forEach((anchor) => {
+    anchor.addEventListener("click", (e) => {
+      e.preventDefault();
+      const i = document.createElement("input");
+      i.style.visibility = "none";
+      i.value = anchor.href;
+
+      document.body.appendChild(i);
+      i.select();
+
+      document.execCommand("copy");
+      i.remove();
+    });
+  });
 });
