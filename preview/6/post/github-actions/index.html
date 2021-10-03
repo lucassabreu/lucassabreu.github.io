@@ -14,8 +14,8 @@ Além disso também podemos implementar fluxos de Continuous Delivery, fazendo o
 Github Actions |
 Lucas dos Santos Abreu
 </title>
-<link rel=stylesheet href="/preview/6/css/style.css?rnd=1633290288">
-<script src="/preview/6/js/index.js?rnd=1633290288"></script>
+<link rel=stylesheet href="/preview/6/css/style.css?rnd=1633290934">
+<script src="/preview/6/js/index.js?rnd=1633290934"></script>
 </head>
 <body>
 <a class=skip-to-content-link href=#main> Skip to content </a>
@@ -738,8 +738,7 @@ fim do deploy, e colocar outra para indicar que concluiu. Mas já deixar pronto
 para iniciar o deploy de novo.</p>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
 <table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">34
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">35
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">35
 </span><span style="margin-right:.4em;padding:0 .4em;color:#495050">36
 </span><span style="margin-right:.4em;padding:0 .4em;color:#495050">37
 </span><span style="margin-right:.4em;padding:0 .4em;color:#495050">38
@@ -757,7 +756,6 @@ para iniciar o deploy de novo.</p>
 </span></code></pre></td>
 <td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
 <pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml>      - <span style=color:#268bd2>uses</span>: actions/github-script@v4
-        <span style=color:#268bd2>if</span>: ${{ always() }}
         <span style=color:#268bd2>with</span>:
           <span style=color:#268bd2>script</span>: |<span style=color:#2aa198>
 </span><span style=color:#2aa198>            github.issues.removeLabel({
@@ -774,7 +772,8 @@ para iniciar o deploy de novo.</p>
 </span><span style=color:#2aa198>            })</span>            
 </code></pre></td></tr></table>
 </div>
-</div><h2 id=criar-actions>Criar Actions <a href=#criar-actions class=heading-anchor>¶</a></h2>
+</div><p class=code-legend>apenas um extra para facilitar</p>
+<h2 id=criar-actions>Criar Actions <a href=#criar-actions class=heading-anchor>¶</a></h2>
 <p>Para criar uma <code>action</code> e publicar ela basta criar um repositório público no
 Github, adicionar um <a href=https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions><code>action.yaml</code></a> na raiz do projeto, e
 publicar uma release, ao registrar ele irá confirmar se deseja adicionar no
