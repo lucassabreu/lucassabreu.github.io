@@ -4,7 +4,7 @@
 <meta itemprop=description content="O que é isso? ¶ O Github Actions é primariamente uma ferramenta para implementar Continuous Integration, ou seja, automatizar a execução de ferramentas ou processos que ajudam a garantir a qualidade do código, seja teste unitários, análises de código estática, analises de segurança, simplesmente compilar/&ldquo;buildar&rdquo; o projeto.
 Além disso também podemos implementar fluxos de Continuous Delivery, fazendo o deploy ou bundle do projeto de forma automática sempre que um evento acontece, seja o push para uma branch, ou algum outro evento do Github."><meta itemprop=datePublished content="2021-09-12T00:00:00+00:00">
 <meta itemprop=dateModified content="2021-09-12T00:00:00+00:00">
-<meta itemprop=wordCount content="2644">
+<meta itemprop=wordCount content="3033">
 <meta itemprop=keywords content="Github,Github Actions,Continuous Integration,">
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
@@ -14,8 +14,8 @@ Além disso também podemos implementar fluxos de Continuous Delivery, fazendo o
 Github Actions |
 Lucas dos Santos Abreu
 </title>
-<link rel=stylesheet href="/preview/6/css/style.css?rnd=1633297650">
-<script src="/preview/6/js/index.js?rnd=1633297650"></script>
+<link rel=stylesheet href="/preview/6/css/style.css?rnd=1633486423">
+<script src="/preview/6/js/index.js?rnd=1633486423"></script>
 </head>
 <body>
 <a class=skip-to-content-link href=#main> Skip to content </a>
@@ -34,7 +34,7 @@ Lucas dos Santos Abreu
 <header>
 <h1>Github Actions</h1>
 <p>
-<span class=reading-time>13 minute read</span>
+<span class=reading-time>15 minute read</span>
 <span class=published-at>
 Published:
 <time datetime="2021-09-12 00:00:00 +0000 UTC">2021-09-12</time>
@@ -59,30 +59,13 @@ Published:
 </li>
 <li><a href=#outros-eventos-e-usos>Outros eventos e usos</a>
 <ol>
-<li><a href=#cron>CRON</a></li>
-<li><a href=#pull-request-labels>Pull Request Labels</a></li>
+<li><a href=#cron-schedule>CRON (<code>schedule</code>)</a></li>
+<li><a href=#pull-request-labels-labelled>Pull Request Labels (<code>labelled</code>)</a></li>
+<li><a href=#comentários-issue_comment>Comentários (<code>issue_comment</code>)</a></li>
+<li><a href=#manual-workflow_dispatch-e-repository_dispatch>Manual (<code>workflow_dispatch</code> e <code>repository_dispatch</code>)</a></li>
 </ol>
 </li>
 <li><a href=#criar-actions>Criar Actions</a></li>
-</ol>
-<ol>
-<li><a href=#o-que-é-o-github-actions>o que é o github actions</a></li>
-<li><a href=#no-que-temos-usado-o-github-actionsci>no que temos usado o github actions/ci</a></li>
-<li><a href=#exemplos-para-pull-requestpush>exemplos para pull request/push</a>
-<ol>
-<li><a href=#shbash-annotations-usando-output-format>sh/bash, annotations usando output format</a></li>
-<li><a href=#usar-typescript-com-actions-kit>usar typescript com actions kit</a></li>
-<li><a href=#usar-imagens-do-dockerdockerfile-action>usar imagens do docker/dockerfile action</a></li>
-</ol>
-</li>
-<li><a href=#eventos-interessantes>eventos interessantes</a>
-<ol>
-<li><a href=#cron-wakatime-profile>cron: wakatime profile</a></li>
-<li><a href=#issue-comment>issue comment</a></li>
-<li><a href=#workflow_dispatch-gh-workflow-run>workflow_dispatch: gh workflow run</a></li>
-</ol>
-</li>
-<li><a href=#usar-os-runners-em-infra-própria>usar os runners em infra própria</a></li>
 </ol>
 </nav>
 <div class=content role=content>
@@ -634,7 +617,7 @@ injetar o segredo na <code>step</code>.</p>
 Docker.</p>
 <p>Vamos dar uma explorada em alguns outros eventos interessantes que podemos usar
 nos <code>actions</code> que podem ser usados para alguns comportamentos customizados.</p>
-<h3 id=cron>CRON <a href=#cron class=heading-anchor>¶</a></h3>
+<h3 id=cron-schedule>CRON (<code>schedule</code>) <a href=#cron-schedule class=heading-anchor>¶</a></h3>
 <p>As CRONs no Github Actions rodam automaticamente com base numa periodicidade
 que você definir, sempre usando a branch padrão do projeto.</p>
 <p>Com esse evento podemos, por exemplo, avaliar se PRs ou Issues no Github estão
@@ -654,7 +637,42 @@ gráfico ASCII com base neles.</p>
 <figcaption><p>exemplo de cron alterando perfil do github</p></figcaption>
 </figure>
 </p>
-<h3 id=pull-request-labels>Pull Request Labels <a href=#pull-request-labels class=heading-anchor>¶</a></h3>
+<p>O <code>workflow</code> para atualizar o perfil com o Wakatime é esse:</p>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#268bd2>name</span>: Wakatime
+<span style=color:#268bd2>on</span>:
+  <span style=color:#268bd2>schedule</span>:
+    - <span style=color:#268bd2>cron</span>: <span style=color:#2aa198>&#34;0 0 * * *&#34;</span>
+
+<span style=color:#268bd2>jobs</span>:
+  <span style=color:#268bd2>update-readme</span>:
+    <span style=color:#268bd2>name</span>: Update this repo&#39;s README
+    <span style=color:#268bd2>runs-on</span>: ubuntu-latest
+    <span style=color:#268bd2>steps</span>:
+      - <span style=color:#268bd2>uses</span>: lucassabreu/waka-readme@master
+        <span style=color:#268bd2>with</span>:
+          <span style=color:#268bd2>WAKATIME_API_KEY</span>: ${{ secrets.WAKATIME_API_KEY }}
+          <span style=color:#268bd2>SHOW_TIME</span>: <span style=color:#cb4b16>false</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=pull-request-labels-labelled>Pull Request Labels (<code>labelled</code>) <a href=#pull-request-labels-labelled class=heading-anchor>¶</a></h3>
 <p>Podemos ouvir quando são modificadas as <code>labels</code> de um PR e com isso podemos
 automatizar a subida de ambientes quando formos testar o mesmo, ou visualizar
 como uma postagem vai ficar sem de fato publicar ela nosso blog pessoal.</p>
@@ -797,7 +815,77 @@ apenas mudar um pouco o cabeçalho do <code>workflow</code>:</p>
     <span style=color:#268bd2>runs-on</span>: ubuntu-latest
 </code></pre></td></tr></table>
 </div>
-</div><h2 id=criar-actions>Criar Actions <a href=#criar-actions class=heading-anchor>¶</a></h2>
+</div><h3 id=comentários-issue_comment>Comentários (<code>issue_comment</code>) <a href=#coment%c3%a1rios-issue_comment class=heading-anchor>¶</a></h3>
+<p>Ouvindo comentários é possível criar comportamentos ainda mais complexos,
+podendo criar um mini &ldquo;chat bot&rdquo; que reage a comentários específicos ou a
+padrões de comando, que nem o bots do Slack ou do Discord.</p>
+<p>Como esse <code>workflow</code> reage a eventos que não tem necessariamente relação a
+código ele precisa estar estar na branch padrão para funcionar, então se
+estiver criando alguma automação para um PR você não vai conseguir testar ele
+até chegar na <code>main</code>.</p>
+<p>Usando apenas a API do Github da para fazer a uma versão no <a href=https://en.wikipedia.org/wiki/Cowsay><code>cowsay</code></a>
+via comentários.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#268bd2>name</span>: <span style=color:#2aa198>&#34;Octocat say&#34;</span>
+<span style=color:#268bd2>on</span>:
+  <span style=color:#268bd2>issue_comment</span>:
+    <span style=color:#268bd2>types</span>: [created]
+
+<span style=color:#268bd2>jobs</span>:
+  <span style=color:#268bd2>cowsay</span>:
+    <span style=color:#268bd2>if</span>: <span style=color:#2aa198>&#34;${{ startsWith(github.event.comment.body, &#39;/say&#39;) }}&#34;</span>
+    <span style=color:#268bd2>runs-on</span>: ubuntu-latest
+
+    <span style=color:#268bd2>steps</span>:
+      - <span style=color:#268bd2>name</span>: Octocat says
+        <span style=color:#268bd2>uses</span>: actions/github-script@v5
+        <span style=color:#268bd2>with</span>:
+          <span style=color:#268bd2>script</span>: |<span style=color:#2aa198>
+</span><span style=color:#2aa198>            const message = context.payload.comment.body.substring(5) ||
+</span><span style=color:#2aa198>              (await github.rest.meta.getZen()).data;
+</span><span style=color:#2aa198>            const say = await github.rest.meta.getOctocat({
+</span><span style=color:#2aa198>              s: message
+</span><span style=color:#2aa198>            });
+</span><span style=color:#2aa198>            github.rest.issues.createComment({
+</span><span style=color:#2aa198>              owner: context.repo.owner,
+</span><span style=color:#2aa198>              repo: context.repo.repo,
+</span><span style=color:#2aa198>              issue_number: context.payload.issue.number,
+</span><span style=color:#2aa198>              body: &#34;```\n&#34; + (new TextDecoder().decode(say.data)) + &#34;\n```&#34;,
+</span><span style=color:#2aa198>            });</span>            
+</code></pre></div><p class=code-legend>`workflow` para responder comentários</p>
+<p>O <code>workflow</code> acima pode gerar esses dois resultados:</p>
+<p>
+<figure class=big>
+<img class="lazyload blur-up" loading=lazy data-src=./octocat-say-quote.png alt>
+<figcaption><p>uma frase aleatória com octocat</p></figcaption>
+</figure>
+<figure class=big>
+<img class="lazyload blur-up" loading=lazy data-src=./octocat-say-repeat-me.png alt>
+<figcaption><p>repete a frase passada</p></figcaption>
+</figure>
+</p>
+<p>E aqui abre as portas da criatividade&mldr;</p>
+<ul>
+<li>iniciar um deploy e passar um prefixo para ser usado? <em>Dá para fazer!</em></li>
+<li>promover a branch do PR para um ambiente específico? <em>Dá para fazer!!</em></li>
+<li>mandar uma cópia do comentário que acabou de escrever e os últimos
+comentários feitos no PR para um canal específico no Slack para continuar a
+conversar de forma mais síncrona? <em>Dá para fazer!!!</em></li>
+</ul>
+<h3 id=manual-workflow_dispatch-e-repository_dispatch>Manual (<code>workflow_dispatch</code> e <code>repository_dispatch</code>) <a href=#manual-workflow_dispatch-e-repository_dispatch class=heading-anchor>¶</a></h3>
+<p>O <code>workflow_dispatch</code> e o <code>repository_dispatch</code> atende a situação em que você
+precisa iniciar um <code>workflow</code> para reagir a algum evento externo ao Github,
+ele até pode ser automático do ponto de vista do seu processo, mas para o Github é
+praticamente o equivalente a um webhook.</p>
+<p>Similar ao <code>issue_comment</code> como esses <code>workflows</code> reagem a ações não
+necessariamente relacionadas a PRs, você vai precisar que eles estejam na
+branch padrão para funcionar.</p>
+<p>Dos dois o <code>workflow_dispatch</code> é o mais orientado a ideia de ser um humano
+disparando o mesmo, tendo uma sessão para descrever as entradas que ele espera
+e uma UI do Github com base nessas entradas para facilitar o disparo.</p>
+<p>Como nos outros casos, aqui é uma questão de criatividade e necessidade quanto
+ao que pode ser feito, o mais comum é criar um <code>workflow</code> para deploy do
+projeto onde você pode informar qual o ambiente que será atualizado e qual</p>
+<h2 id=criar-actions>Criar Actions <a href=#criar-actions class=heading-anchor>¶</a></h2>
 <p>Para criar uma <code>action</code> e publicar ela basta criar um repositório público no
 Github, adicionar um <a href=https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions><code>action.yaml</code></a> na raiz do projeto, e
 publicar uma release, ao registrar ele irá confirmar se deseja adicionar no
@@ -807,18 +895,6 @@ marketplace e em qual categoria.</p>
 <img class="lazyload blur-up" loading=lazy data-src=./marketplace-release.png alt=marketplace-release>
 </figure>
 </p>
-<h1 id=heading> <a href=#heading class=heading-anchor>¶</a></h1>
-<h2 id=o-que-é-o-github-actions>o que é o github actions <a href=#o-que-%c3%a9-o-github-actions class=heading-anchor>¶</a></h2>
-<h2 id=no-que-temos-usado-o-github-actionsci>no que temos usado o github actions/ci <a href=#no-que-temos-usado-o-github-actionsci class=heading-anchor>¶</a></h2>
-<h2 id=exemplos-para-pull-requestpush>exemplos para pull request/push <a href=#exemplos-para-pull-requestpush class=heading-anchor>¶</a></h2>
-<h3 id=shbash-annotations-usando-output-format>sh/bash, annotations usando output format <a href=#shbash-annotations-usando-output-format class=heading-anchor>¶</a></h3>
-<h3 id=usar-typescript-com-actions-kit>usar typescript com actions kit <a href=#usar-typescript-com-actions-kit class=heading-anchor>¶</a></h3>
-<h3 id=usar-imagens-do-dockerdockerfile-action>usar imagens do docker/dockerfile action <a href=#usar-imagens-do-dockerdockerfile-action class=heading-anchor>¶</a></h3>
-<h2 id=eventos-interessantes>eventos interessantes <a href=#eventos-interessantes class=heading-anchor>¶</a></h2>
-<h3 id=cron-wakatime-profile>cron: wakatime profile <a href=#cron-wakatime-profile class=heading-anchor>¶</a></h3>
-<h3 id=issue-comment>issue comment <a href=#issue-comment class=heading-anchor>¶</a></h3>
-<h3 id=workflow_dispatch-gh-workflow-run>workflow_dispatch: gh workflow run <a href=#workflow_dispatch-gh-workflow-run class=heading-anchor>¶</a></h3>
-<h2 id=usar-os-runners-em-infra-própria>usar os runners em infra própria <a href=#usar-os-runners-em-infra-pr%c3%b3pria class=heading-anchor>¶</a></h2>
 </div><section class=share>
 <p>
 Share this post at
@@ -853,7 +929,7 @@ and tagged
 <a href=/preview/6/tags/github>Github</a>
 <a href=/preview/6/tags/github-actions>Github Actions</a>
 <a href=/preview/6/tags/continuous-integration>Continuous Integration</a>
-using <span itemprop=wordCount>2644</span> words.
+using <span itemprop=wordCount>3033</span> words.
 </p>
 </section>
 </footer>

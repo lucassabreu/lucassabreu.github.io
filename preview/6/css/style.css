@@ -81,7 +81,8 @@ a:active {
 
 a[href*="//"]::after
 {
-  content: " " var(--externalicon);
+  content: var(--externalicon);
+  margin-left: 0.5ex;
 }
 
 h1,
@@ -164,6 +165,20 @@ p code {
   font-weight: 700;
 }
 
+h1 code::before,
+h1 code::after,
+h2 code::before,
+h2 code::after,
+h3 code::before,
+h3 code::after,
+h4 code::before,
+h4 code::after,
+h5 code::before,
+h5 code::after,
+h6 code::before,
+h6 code::after,
+.toc code::before,
+.toc code::after,
 p code::before,
 p code::after {
   content: "`";
