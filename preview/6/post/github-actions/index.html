@@ -4,7 +4,7 @@
 <meta itemprop=description content="O que é isso? ¶ O Github Actions é primariamente uma ferramenta para implementar Continuous Integration, ou seja, automatizar a execução de ferramentas ou processos que ajudam a garantir a qualidade do código, seja teste unitários, análises de código estática, analises de segurança, simplesmente compilar/&ldquo;buildar&rdquo; o projeto.
 Além disso também podemos implementar fluxos de Continuous Delivery, fazendo o deploy ou bundle do projeto de forma automática sempre que um evento acontece, seja o push para uma branch, ou algum outro evento do Github."><meta itemprop=datePublished content="2021-09-12T00:00:00+00:00">
 <meta itemprop=dateModified content="2021-09-12T00:00:00+00:00">
-<meta itemprop=wordCount content="3293">
+<meta itemprop=wordCount content="3345">
 <meta itemprop=keywords content="Github,Github Actions,Continuous Integration,">
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
@@ -14,8 +14,8 @@ Além disso também podemos implementar fluxos de Continuous Delivery, fazendo o
 Github Actions |
 Lucas dos Santos Abreu
 </title>
-<link rel=stylesheet href="/preview/6/css/style.css?rnd=1633572248">
-<script src="/preview/6/js/index.js?rnd=1633572248"></script>
+<link rel=stylesheet href="/preview/6/css/style.css?rnd=1633606087">
+<script src="/preview/6/js/index.js?rnd=1633606087"></script>
 </head>
 <body>
 <a class=skip-to-content-link href=#main> Skip to content </a>
@@ -965,6 +965,11 @@ To see runs for this workflow, try: gh run list --workflow=blog.yml
 do <code>workflow_dispatch</code> que indica a execução de um <code>workflow</code> apenas, este
 serve para vincular um ou mais <code>workflows</code> a um evento customizado do no
 repositório.</p>
+<p>A ideia é que você pode ter um evento externo ao Github que acontece com o
+projeto e que tem efeito no repositório.</p>
+<p>Vamos dizer que você tenha um monorepo com várias partes que podem ser
+construídas individualmente para serem entregues no futuro. Cada um desses
+processos acontece ser depender do outro</p>
 </div><section class=share>
 <p>
 Share this post at
@@ -999,7 +1004,7 @@ and tagged
 <a href=/preview/6/tags/github>Github</a>
 <a href=/preview/6/tags/github-actions>Github Actions</a>
 <a href=/preview/6/tags/continuous-integration>Continuous Integration</a>
-using <span itemprop=wordCount>3293</span> words.
+using <span itemprop=wordCount>3345</span> words.
 </p>
 </section>
 </footer>
