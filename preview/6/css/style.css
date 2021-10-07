@@ -21,8 +21,8 @@ html {
   --activecolor: white;
   --activebgcolor: var(--linkcolor);
 
-  --highlightcolor: #f8f8f2;
-  --highlightbgcolor: #272822;
+  --highlightcolor: #93a1a1;
+  --highlightbgcolor: #002b36;
   --precolor: var(--highlightcolor);
   --prebgcolor: var(--highlightbgcolor);
 
@@ -41,8 +41,6 @@ html {
   :root {
     --bgcolor: black;
     --fontcolor: white;
-    --precolor: #fff;
-    --prebgcolor: #383838;
     --emphasisbgcolor: #111;
   }
 }
@@ -342,7 +340,7 @@ div.highlight pre {
   line-height: 1.2em;
 }
 
-hr {
+kkkk hr {
   height: 1em;
   border: 0;
   overflow: hidden;

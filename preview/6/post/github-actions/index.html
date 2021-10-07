@@ -4,7 +4,7 @@
 <meta itemprop=description content="O que é isso? ¶ O Github Actions é primariamente uma ferramenta para implementar Continuous Integration, ou seja, automatizar a execução de ferramentas ou processos que ajudam a garantir a qualidade do código, seja teste unitários, análises de código estática, analises de segurança, simplesmente compilar/&ldquo;buildar&rdquo; o projeto.
 Além disso também podemos implementar fluxos de Continuous Delivery, fazendo o deploy ou bundle do projeto de forma automática sempre que um evento acontece, seja o push para uma branch, ou algum outro evento do Github."><meta itemprop=datePublished content="2021-09-12T00:00:00+00:00">
 <meta itemprop=dateModified content="2021-09-12T00:00:00+00:00">
-<meta itemprop=wordCount content="3033">
+<meta itemprop=wordCount content="3293">
 <meta itemprop=keywords content="Github,Github Actions,Continuous Integration,">
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
@@ -14,8 +14,8 @@ Além disso também podemos implementar fluxos de Continuous Delivery, fazendo o
 Github Actions |
 Lucas dos Santos Abreu
 </title>
-<link rel=stylesheet href="/preview/6/css/style.css?rnd=1633486433">
-<script src="/preview/6/js/index.js?rnd=1633486433"></script>
+<link rel=stylesheet href="/preview/6/css/style.css?rnd=1633572242">
+<script src="/preview/6/js/index.js?rnd=1633572242"></script>
 </head>
 <body>
 <a class=skip-to-content-link href=#main> Skip to content </a>
@@ -34,7 +34,7 @@ Lucas dos Santos Abreu
 <header>
 <h1>Github Actions</h1>
 <p>
-<span class=reading-time>15 minute read</span>
+<span class=reading-time>16 minute read</span>
 <span class=published-at>
 Published:
 <time datetime="2021-09-12 00:00:00 +0000 UTC">2021-09-12</time>
@@ -62,10 +62,14 @@ Published:
 <li><a href=#cron-schedule>CRON (<code>schedule</code>)</a></li>
 <li><a href=#pull-request-labels-labelled>Pull Request Labels (<code>labelled</code>)</a></li>
 <li><a href=#comentários-issue_comment>Comentários (<code>issue_comment</code>)</a></li>
-<li><a href=#manual-workflow_dispatch-e-repository_dispatch>Manual (<code>workflow_dispatch</code> e <code>repository_dispatch</code>)</a></li>
+<li><a href=#manual-workflow_dispatch-e-repository_dispatch>Manual (<code>workflow_dispatch</code> e <code>repository_dispatch</code>)</a>
+<ol>
+<li><a href=#workflow_dispatch><code>workflow_dispatch</code></a></li>
+<li><a href=#repository_dispatch><code>repository_dispatch</code></a></li>
 </ol>
 </li>
-<li><a href=#criar-actions>Criar Actions</a></li>
+</ol>
+</li>
 </ol>
 </nav>
 <div class=content role=content>
@@ -879,22 +883,88 @@ praticamente o equivalente a um webhook.</p>
 <p>Similar ao <code>issue_comment</code> como esses <code>workflows</code> reagem a ações não
 necessariamente relacionadas a PRs, você vai precisar que eles estejam na
 branch padrão para funcionar.</p>
+<p>Como nos outros casos, aqui é uma questão de criatividade e necessidade quanto
+ao que pode ser feito, o mais comum é criar um <code>workflow</code> para deploy do
+projeto onde você pode informar qual o ambiente que será atualizado e qual
+referencia usar.</p>
+<h4 id=workflow_dispatch><code>workflow_dispatch</code> <a href=#workflow_dispatch class=heading-anchor>¶</a></h4>
 <p>Dos dois o <code>workflow_dispatch</code> é o mais orientado a ideia de ser um humano
 disparando o mesmo, tendo uma sessão para descrever as entradas que ele espera
 e uma UI do Github com base nessas entradas para facilitar o disparo.</p>
-<p>Como nos outros casos, aqui é uma questão de criatividade e necessidade quanto
-ao que pode ser feito, o mais comum é criar um <code>workflow</code> para deploy do
-projeto onde você pode informar qual o ambiente que será atualizado e qual</p>
-<h2 id=criar-actions>Criar Actions <a href=#criar-actions class=heading-anchor>¶</a></h2>
-<p>Para criar uma <code>action</code> e publicar ela basta criar um repositório público no
-Github, adicionar um <a href=https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions><code>action.yaml</code></a> na raiz do projeto, e
-publicar uma release, ao registrar ele irá confirmar se deseja adicionar no
-marketplace e em qual categoria.</p>
+<p>É interessante vincular o <code>workflow_dispatch</code> a todos os <code>workflows</code> que sejam
+CRONs, pois o Github trata eles de forma especial e mostra um botão para rodar
+o mesmo diretamente da aba &ldquo;Actions&rdquo; do repositório.</p>
+<p>Ainda mais um diferencial que é permitir informar entradas customizadas como
+parte da declaração para serem usadas nos <code>jobs</code>. E se tiver declarado esses
+campos eles vão aparecer para serem informados quando clicar no botão &ldquo;run
+workflow&rdquo;.</p>
 <p>
-<figure class=big>
-<img class="lazyload blur-up" loading=lazy data-src=./marketplace-release.png alt=marketplace-release>
+<figure>
+<img class="lazyload blur-up" loading=lazy data-src=./github-workflow-dispatch.png alt>
+<figcaption><p>formulário de disparo do github</p></figcaption>
 </figure>
 </p>
+<p>Para ter um formulário como o acima você cria um YAML como o abaixo:</p>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span></span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
+</span></span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#268bd2>name</span>: Blog in Readme
+
+<span style=color:#268bd2>on</span>:
+  <span style=color:#268bd2>workflow_dispatch</span>:
+<span style=display:block;width:100%;background-color:#19404a>    <span style=color:#268bd2>inputs</span>:
+</span><span style=display:block;width:100%;background-color:#19404a>      <span style=color:#268bd2>postsCount</span>:
+</span><span style=display:block;width:100%;background-color:#19404a>        <span style=color:#268bd2>description</span>: number of posts to show
+</span><span style=display:block;width:100%;background-color:#19404a>        <span style=color:#268bd2>required</span>: <span style=color:#cb4b16>false</span>
+</span><span style=display:block;width:100%;background-color:#19404a>        <span style=color:#268bd2>default</span>: <span style=color:#2aa198>3</span>
+</span>
+<span style=color:#268bd2>jobs</span>:
+  <span style=color:#268bd2>update</span>:
+    <span style=color:#268bd2>runs-on</span>: ubuntu-latest
+    <span style=color:#268bd2>steps</span>:
+      - <span style=color:#268bd2>uses</span>: actions/checkout@v2
+      - <span style=color:#268bd2>uses</span>: gautamkrishnar/blog-post-workflow@master
+        <span style=color:#268bd2>with</span>:
+          <span style=color:#268bd2>feed_list</span>: https://www.lucassabreu.net.br/index.xml
+<span style=display:block;width:100%;background-color:#19404a>          <span style=color:#268bd2>max_post_count</span>: ${{ github.event.inputs.postsCount || 3 }}
+</span></code></pre></td></tr></table>
+</div>
+</div><p>Podem ser criadas várias entradas, é apenas o caso de repetir a estrutura do
+<code>postsCount</code> varias vezes, sendo que cada um deve ter um nome único. Os valores
+dos <code>inputs</code> vão ser adicionados ao contexto <code>github.event.inputs</code> podendo ser
+usados como qualquer outro valor de contexto.</p>
+<p>Como a imagem sugere você pode rodar o <code>workflow</code> em outras branchs que não a
+padrão, uma coisa que a interface do Github não permite, mas que usando o
+<a href=https://github.com/cli/cli><code>gh</code></a> ou API você consegue é usar uma tag/release como a referencia.</p>
+<pre><code>▶ gh workflow run blog.yml -f postsCount=5 --ref v0.1
+✓ Created workflow_dispatch event for blog.yml at v0.1
+
+To see runs for this workflow, try: gh run list --workflow=blog.yml
+</code></pre><h4 id=repository_dispatch><code>repository_dispatch</code> <a href=#repository_dispatch class=heading-anchor>¶</a></h4>
+<p>O <code>repository_dispatch</code> também é considerado um &ldquo;evento manual&rdquo;, mas diferente
+do <code>workflow_dispatch</code> que indica a execução de um <code>workflow</code> apenas, este
+serve para vincular um ou mais <code>workflows</code> a um evento customizado do no
+repositório.</p>
 </div><section class=share>
 <p>
 Share this post at
@@ -929,7 +999,7 @@ and tagged
 <a href=/preview/6/tags/github>Github</a>
 <a href=/preview/6/tags/github-actions>Github Actions</a>
 <a href=/preview/6/tags/continuous-integration>Continuous Integration</a>
-using <span itemprop=wordCount>3033</span> words.
+using <span itemprop=wordCount>3293</span> words.
 </p>
 </section>
 </footer>
