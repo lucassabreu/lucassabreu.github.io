@@ -4,7 +4,7 @@
 <meta itemprop=description content="O que é isso? ¶ O Github Actions é primariamente uma ferramenta para implementar Continuous Integration, ou seja, automatizar a execução de ferramentas ou processos que ajudam a garantir a qualidade do código, seja teste unitários, análises de código estática, analises de segurança, simplesmente compilar/&ldquo;buildar&rdquo; o projeto.
 Além disso também podemos implementar fluxos de Continuous Delivery, fazendo o deploy ou bundle do projeto de forma automática sempre que um evento acontece, seja o push para uma branch, ou algum outro evento do Github."><meta itemprop=datePublished content="2021-09-12T00:00:00+00:00">
 <meta itemprop=dateModified content="2021-09-12T00:00:00+00:00">
-<meta itemprop=wordCount content="3345">
+<meta itemprop=wordCount content="3401">
 <meta itemprop=keywords content="Github,Github Actions,Continuous Integration,">
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
@@ -14,8 +14,8 @@ Além disso também podemos implementar fluxos de Continuous Delivery, fazendo o
 Github Actions |
 Lucas dos Santos Abreu
 </title>
-<link rel=stylesheet href="/preview/6/css/style.css?rnd=1633606087">
-<script src="/preview/6/js/index.js?rnd=1633606087"></script>
+<link rel=stylesheet href="/preview/6/css/style.css?rnd=1633692842">
+<script src="/preview/6/js/index.js?rnd=1633692842"></script>
 </head>
 <body>
 <a class=skip-to-content-link href=#main> Skip to content </a>
@@ -962,14 +962,48 @@ padrão, uma coisa que a interface do Github não permite, mas que usando o
 To see runs for this workflow, try: gh run list --workflow=blog.yml
 </code></pre><h4 id=repository_dispatch><code>repository_dispatch</code> <a href=#repository_dispatch class=heading-anchor>¶</a></h4>
 <p>O <code>repository_dispatch</code> também é considerado um &ldquo;evento manual&rdquo;, mas diferente
-do <code>workflow_dispatch</code> que indica a execução de um <code>workflow</code> apenas, este
-serve para vincular um ou mais <code>workflows</code> a um evento customizado do no
-repositório.</p>
-<p>A ideia é que você pode ter um evento externo ao Github que acontece com o
-projeto e que tem efeito no repositório.</p>
-<p>Vamos dizer que você tenha um monorepo com várias partes que podem ser
-construídas individualmente para serem entregues no futuro. Cada um desses
-processos acontece ser depender do outro</p>
+do <code>workflow_dispatch</code> que indica a execução de um <code>workflow</code> apenas, este pode
+disparar um ou mais <code>workflows</code> a um evento customizado do no repositório.</p>
+<p>Ouvir eventos customizados permite que possamos iniciar o <code>workflow</code> sem saber
+o ID do mesmo, ou sequer o arquivo. Então se você tiver um processos externo ao
+Github que você gostaria que executa-se algo no repositório você pode fazer uma
+chamada como a abaixo.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>curl -vs <span style=color:#2aa198>&#34;https://api.github/com/repos/</span><span style=color:#2aa198>${</span><span style=color:#268bd2>owner</span><span style=color:#2aa198>}</span><span style=color:#2aa198>/</span><span style=color:#2aa198>${</span><span style=color:#268bd2>repo</span><span style=color:#2aa198>}</span><span style=color:#2aa198>/dispatches&#34;</span> <span style=color:#cb4b16>\
+</span><span style=color:#cb4b16></span>  -H <span style=color:#2aa198>&#34;content-type: applicatin/json&#34;</span> <span style=color:#cb4b16>\
+</span><span style=color:#cb4b16></span>  -H <span style=color:#2aa198>&#34;accept: application/vnd.github.v3+json&#34;</span> <span style=color:#cb4b16>\
+</span><span style=color:#cb4b16></span>  -H <span style=color:#2aa198>&#34;authorization: bearer </span><span style=color:#2aa198>${</span><span style=color:#268bd2>GITHUB_TOKEN</span><span style=color:#2aa198>}</span><span style=color:#2aa198>&#34;</span> <span style=color:#cb4b16>\
+</span><span style=color:#cb4b16></span>  -d <span style=color:#2aa198>&#39;{&#34;event_type&#34;: &#34;update-collaborators-contribution&#34;}&#39;</span>
+</code></pre></div><p>E para ouvir esse evento customizado você precisa ter um <code>workflow</code> como esse
+aqui na sua branch padrão.</p>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span></span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#268bd2>name</span>: Compile Contributions
+
+<span style=color:#268bd2>on</span>:
+<span style=display:block;width:100%;background-color:#19404a>  <span style=color:#268bd2>repository_dispatch</span>:
+</span><span style=display:block;width:100%;background-color:#19404a>    <span style=color:#268bd2>types</span>: [<span style=color:#2aa198>&#34;update-collaborators-contribution&#34;</span>]
+</span>
+<span style=color:#268bd2>jobs</span>:
+  <span style=color:#268bd2>compile</span>:
+    <span style=color:#268bd2>runs-on</span>: ubuntu-latest
+    <span style=color:#268bd2>steps</span>:
+      - <span style=color:#268bd2>run</span>: echo &#34;something?&#34;
+</code></pre></td></tr></table>
+</div>
+</div>
 </div><section class=share>
 <p>
 Share this post at
@@ -1004,7 +1038,7 @@ and tagged
 <a href=/preview/6/tags/github>Github</a>
 <a href=/preview/6/tags/github-actions>Github Actions</a>
 <a href=/preview/6/tags/continuous-integration>Continuous Integration</a>
-using <span itemprop=wordCount>3345</span> words.
+using <span itemprop=wordCount>3401</span> words.
 </p>
 </section>
 </footer>
