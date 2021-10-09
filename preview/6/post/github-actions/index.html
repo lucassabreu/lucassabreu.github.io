@@ -4,7 +4,7 @@
 <meta itemprop=description content="O que é isso?          O Github Actions é primariamente uma ferramenta para implementar Continuous Integration (CI), ou seja, automatizar a execução de ferramentas ou processos que ajudam a garantir a qualidade do código, sejam teste unitários, análises de código estática, analises de segurança, ou simplesmente compilar/&ldquo;buildar&rdquo; o projeto.
 Além disso também podemos implementar fluxos de Continuous Delivery (CD), fazendo o deploy ou bundle do projeto de forma automática sempre que um evento acontece, seja o push para uma branch, ou algum outro evento do Github."><meta itemprop=datePublished content="2021-09-12T00:00:00+00:00">
 <meta itemprop=dateModified content="2021-09-12T00:00:00+00:00">
-<meta itemprop=wordCount content="3625">
+<meta itemprop=wordCount content="3573">
 <meta itemprop=keywords content="Github,Github Actions,Continuous Integration,">
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
@@ -14,8 +14,8 @@ Além disso também podemos implementar fluxos de Continuous Delivery (CD), faze
 Github Actions |
 Lucas dos Santos Abreu
 </title>
-<link rel=stylesheet href="/preview/6/css/style.css?rnd=1633796173">
-<script src="/preview/6/js/index.js?rnd=1633796173"></script>
+<link rel=stylesheet href="/preview/6/css/style.css?rnd=1633821635">
+<script src="/preview/6/js/index.js?rnd=1633821635"></script>
 </head>
 <body>
 <a class=skip-to-content-link href=#main> Skip to content </a>
@@ -34,7 +34,7 @@ Lucas dos Santos Abreu
 <header>
 <h1>Github Actions</h1>
 <p>
-<span class=reading-time>18 minute read</span>
+<span class=reading-time>17 minute read</span>
 <span class=published-at>
 Published:
 <time datetime="2021-09-12 00:00:00 +0000 UTC">2021-09-12</time>
@@ -170,8 +170,7 @@ quando um ou mais eventos acontecem.</p>
 <ul>
 <li><code>triggers</code> (gatilhos) que irão disparar o <code>workflow</code>. Linhas 2 a 5.</li>
 <li><code>jobs</code> (trabalhos) representando um conjunto de ações sequenciais que
-compartilham uma mesma espaço de trabalho, dentro de um mesmo <code>runner</code>
-(instancia de máquina usada na execução). Linhas 7 a 11</li>
+compartilham um mesmo ambiente virtual. Linhas 7 a 11</li>
 <li><code>steps</code> (passos) que são executados em sequencia para executar um trabalho,
 podendo ser comandos de shell simples, imagens do Docker ou pacotes de
 ações. Cada um dos itens dentro de <code>steps</code> na linha 12 em diante.</li>
@@ -478,8 +477,8 @@ adicionar extensões ou customizações do ambiente, por mais que possível, aca
 sendo um trabalho duplicado, e sempre temos de lembrar de atualizar a imagem
 base e o <code>workflow</code> toda vez, para evitar esse retrabalho nós usamos imagens do
 Docker como etapas para rodar as operações.</p>
-<p>Usando uma imagem do Docker no nível do <code>runs-on</code> adicionamos qual o contêiner
-a ser usado:</p>
+<p>Podemos configurar para o <code>job</code> usar um contêiner além do ambiente virtual,
+alterando o primeiro <code>workflow</code> fica assim:</p>
 <div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-diff data-lang=diff>name: &#34;PHPUnit (with Docker)&#34;
 on:
   pull_request:
@@ -514,12 +513,12 @@ jobs:
         with:
           files: ./clover.xml
 </code></pre></div><p class=code-legend>exemplo usando docker</p>
-<p>A imagem desse exemplo é orientada para ser usada fora do Github também,
-então eu tive de adicionar o <code>--user root</code>, porque alguns <code>actions</code> precisam
-instalar pacotes (o <code>actions/checkout@v2</code> instala o <code>git</code> e outras coisas).</p>
-<p>Mas essa não é a única forma de usar o imagens do Docker, se você ou a
-ferramenta que você normalmente usa tiver uma imagem para ser usada, então pode
-adicionar a mesma como um <code>step</code>:</p>
+<p>A imagem desse exemplo pode ser usada fora do Github, então eu tive de
+adicionar o <code>--user root</code>, porque alguns <code>actions</code> precisam instalar pacotes (o
+<code>actions/checkout@v2</code> instala o <code>git</code> e outras coisas).</p>
+<p>Essa não é a única forma de usar imagens do Docker, se você ou a ferramenta que
+você normalmente usa tiver uma imagem para ser usada, então pode adicionar a
+mesma como um <code>step</code>:</p>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
 <table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
 <pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
@@ -565,7 +564,7 @@ adicionar a mesma como um <code>step</code>:</p>
 </div><p class=code-legend>docker como um `step`</p>
 <p>Se ela tiver um formato de saída compatível com os <a href=#lintsanalise-est%C3%A1tica-com-annotations>annotations commands</a>
 então fica parecendo que é uma <code>action</code> nativa.</p>
-<p>Podemos ainda executar Docker in Docker se for necessário combinar a sua imagem
+<p>Podemos ainda executar &ldquo;Docker in Docker&rdquo; se for necessário combinar a sua imagem
 própria e usar outra imagem como um <code>step</code>.</p>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
 <table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
@@ -593,10 +592,10 @@ própria e usar outra imagem como um <code>step</code>.</p>
 </span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
 </span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
 </span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
-</span></span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
-</span></code></pre></td>
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
+</span></span></code></pre></td>
 <td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
 <pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#268bd2>name</span>: <span style=color:#2aa198>&#34;PHPCS (Docker in Docker)&#34;</span>
 <span style=color:#268bd2>on</span>:
@@ -622,10 +621,10 @@ própria e usar outra imagem como um <code>step</code>.</p>
 </span><span style=display:block;width:100%;background-color:#19404a>        <span style=color:#268bd2>uses</span>: docker://phpqa/phpcs
 </span><span style=display:block;width:100%;background-color:#19404a>        <span style=color:#268bd2>with</span>:
 </span><span style=display:block;width:100%;background-color:#19404a>          <span style=color:#268bd2>args</span>: |<span style=color:#2aa198>
-</span></span><span style=color:#2aa198>            sh -c &#34;phpcs src --report=emacs \
-</span><span style=color:#2aa198>              | sed \&#34;s|^.*src|src|;s|\(.*\):\(.*\):\(.*\):\(.*\)|\
-</span><span style=color:#2aa198>                ::error file=\1,line=\2,col=\3::\4|\&#34;&#34;</span>            
-</code></pre></td></tr></table>
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style=color:#2aa198>            sh -c &#34;phpcs src --report=emacs \
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style=color:#2aa198>              | sed \&#34;s|^.*src|src|;s|\(.*\):\(.*\):\(.*\):\(.*\)|\
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style=color:#2aa198>                ::error file=\1,line=\2,col=\3::\4|\&#34;&#34;</span>            
+</span></code></pre></td></tr></table>
 </div>
 </div><p class=code-legend>docker in docker</p>
 <h3 id=secrets>
@@ -636,7 +635,7 @@ Secrets
 <p>Ainda tem um ponto importante para vários fluxos de CI (e principalmente
 Continuous Delivery), que é lidar com informações sensíveis (chaves RSA, tokens
 de acesso, JWTs, OAuth Client secrets, senhas).</p>
-<p>Exceto quando o seu CI esta integrado com o provedor que irá executar o seu
+<p>Exceto se o seu CI esta integrado com o provedor que irá executar o seu
 ambiente (Openshift/Kubernetes), é provável que você vai precisar ter alguma
 chave para poder se conectar a sua VPS, seja para copiar arquivos via RSYNC,
 fazer o push de imagens para registros do Docker, conectar via SSH, ou apenas
@@ -644,17 +643,14 @@ disparar algum evento no seu provedor.</p>
 <p>E ter essa chave aberta no YAML do <code>workflow</code> esta longe de ser uma boa
 prática, para resolver esse problema o Github permite que registremos valores
 para o repositório que são acessíveis apenas dentro do <code>actions</code>.</p>
-<p>Os &ldquo;segredos do repositório&rdquo;, que são acessíveis em todos os <code>workflows</code>
-abertamente (exceto por forks que nesse caso precisa que um colaborador
-aprove).</p>
 <p>
 <figure class=big>
 <img class="lazyload blur-up" loading=lazy data-src=./github-secrets.png alt=github-secrets>
 <figcaption><p>segredos do repositório</p></figcaption>
 </figure>
 </p>
-<p>Como falei, esses caras ficam disponíveis para todos os <code>workflows</code>, e pode ser
-usados simplesmente usando o contexto <code>secrets</code> no YAML.</p>
+<p>Esses caras ficam disponíveis para todos os <code>workflows</code>, e pode ser usados
+simplesmente usando o contexto <code>secrets</code> no YAML.</p>
 <p>Por exemplo, se o seu repositório for privado, o Codecov obriga você a usar um
 token para enviar o relatório de cobertura.</p>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
@@ -697,19 +693,8 @@ abertas por muito tempo, e dessa forma podem ser um risco, e marcar eles como
 <code>stale</code>, ou notificar o time no Slack para não ser esquecida.</p>
 <p>Também pode usá-lo para rodar processos que sejam muito grandes/lentos para se
 executar num PR ou no merge da branch.</p>
-<p>Outros usos legais são para automatizar e melhorar o seu perfil do Github, como
-o <code>gautamkrishnar/blog-post-workflow</code> e o <code>athul/waka-readme</code>.</p>
-<p>O <a href=https://github.com/gautamkrishnar/blog-post-workflow><code>gautamkrishnar/blog-post-workflow</code></a> consulta o RSS to seu blog
-e insere as ultimas postagens que você fez.</p>
-<p>E o <a href=https://github.com/athul/waka-readme><code>athul/waka-readme</code></a> puxa os dados do <a href=https://wakatime.com/>Wakatime</a> e cria um
-gráfico ASCII com base neles.</p>
-<p>
-<figure class=big>
-<img class="lazyload blur-up" loading=lazy data-src=./github-cron-profile.png alt=github-file>
-<figcaption><p>exemplo de cron alterando perfil do github</p></figcaption>
-</figure>
-</p>
-<p>O <code>workflow</code> para atualizar o perfil com o Wakatime é esse:</p>
+<p>Uma coisa legal para automatizar e melhorar o seu perfil do Github, é o
+<code>gautamkrishnar/blog-post-workflow</code>.</p>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
 <table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
 <pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
@@ -744,7 +729,17 @@ gráfico ASCII com base neles.</p>
           <span style=color:#268bd2>SHOW_TIME</span>: <span style=color:#cb4b16>false</span>
 </code></pre></td></tr></table>
 </div>
-</div><h3 id=pull-request-labels-labelled>
+</div><p>O <a href=https://github.com/gautamkrishnar/blog-post-workflow><code>gautamkrishnar/blog-post-workflow</code></a> consulta o RSS to seu blog
+e insere as ultimas postagens que você fez, no caso essa CRON executa todo dia
+a meia noite.</p>
+<p>
+<figure class=big>
+<img class="lazyload blur-up" loading=lazy data-src=./github-cron-profile.png alt=github-file>
+<figcaption><p>exemplo de cron alterando perfil do github</p></figcaption>
+</figure>
+</p>
+<p>A expressão que vai na propriedade <code>cron</code> é o padrão <a href=https://en.wikipedia.org/wiki/Cron><em>POSIX</em></a>.</p>
+<h3 id=pull-request-labels-labelled>
 Pull Request Labels (<code>labelled</code>)
 <a href=#pull-request-labels-labelled class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
 </a>
@@ -824,7 +819,9 @@ como uma postagem vai ficar sem de fato publicar ela nosso blog pessoal.</p>
           <span style=color:#268bd2>clean</span>: <span style=color:#cb4b16>false</span>
 </code></pre></td></tr></table>
 </div>
-</div><p class=code-legend>trigger preview deploy</p>
+</div><div class=code-legend>
+<p><a href=https://github.com/lucassabreu/lucassabreu.github.io/blob/6a466ef778bd446b47fc6452fa6775b9c4f07f83/.github/workflows/render-preview.yaml>.github/workflows/render-preview.yaml</a></p>
+</div>
 <p>Se quiser ainda pode usar o <code>actions/github-script</code> para remover a <code>label</code> no
 fim do deploy, e colocar outra para indicar que concluiu. Mas já deixar pronto
 para iniciar o deploy de novo.</p>
@@ -1202,7 +1199,7 @@ and tagged
 <a href=/preview/6/tags/github>Github</a>
 <a href=/preview/6/tags/github-actions>Github Actions</a>
 <a href=/preview/6/tags/continuous-integration>Continuous Integration</a>
-using <span itemprop=wordCount>3625</span> words.
+using <span itemprop=wordCount>3573</span> words.
 </p>
 </section>
 </footer>
