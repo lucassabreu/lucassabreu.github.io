@@ -106,6 +106,13 @@ a.heading-anchor:link {
   display: inline;
 }
 
+*:hover > a.heading-anchor svg {
+  height: 1em;
+  fill: var(--linkcolor);
+  position: absolute;
+  margin-left: 1ex;
+}
+
 h1 {
   margin: 0;
   position: relative;
@@ -154,7 +161,9 @@ pre code {
 
 p,
 hr,
-dl {
+dl,
+nav.toc,
+div.feature {
   margin-top: var(--paragraphmargin);
   margin-bottom: var(--paragraphmargin);
 }
@@ -270,10 +279,15 @@ header .reading-time::before {
 
 article nav.toc,
 div.feature {
+  --featureborder: 2rem;
   background-color: var(--emphasisbgcolor);
-  padding: calc(2rem - var(--paragraphmargin)) 2rem;
-  margin: 0 -2rem;
-  margin-top: var(--paragraphmargin);
+  padding: calc(var(--featureborder) - var(--paragraphmargin))
+    var(--featureborder);
+  margin: var(--paragraphmargin) calc(var(--featureborder) * -1);
+}
+
+article nav.toc {
+  padding: var(--featureborder);
 }
 
 article nav.toc > ol {
@@ -322,7 +336,7 @@ div.highlight pre {
   line-height: 1.2em;
 }
 
-kkkk hr {
+hr {
   height: 1em;
   border: 0;
   overflow: hidden;
@@ -355,8 +369,7 @@ aside *:first-child {
 
 /** summary */
 
-article.article-summary,
-main nav[role="navigation"] {
+article.article-summary {
   padding: var(--sumarrypadding);
 }
 

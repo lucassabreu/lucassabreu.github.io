@@ -1,10 +1,10 @@
 <!doctype html><html lang=pt-br>
 <head>
 <meta itemprop=name content="Github Actions">
-<meta itemprop=description content="O que é isso? ¶ O Github Actions é primariamente uma ferramenta para implementar Continuous Integration (CI), ou seja, automatizar a execução de ferramentas ou processos que ajudam a garantir a qualidade do código, sejam teste unitários, análises de código estática, analises de segurança, ou simplesmente compilar/&ldquo;buildar&rdquo; o projeto.
+<meta itemprop=description content="O que é isso?          O Github Actions é primariamente uma ferramenta para implementar Continuous Integration (CI), ou seja, automatizar a execução de ferramentas ou processos que ajudam a garantir a qualidade do código, sejam teste unitários, análises de código estática, analises de segurança, ou simplesmente compilar/&ldquo;buildar&rdquo; o projeto.
 Além disso também podemos implementar fluxos de Continuous Delivery (CD), fazendo o deploy ou bundle do projeto de forma automática sempre que um evento acontece, seja o push para uma branch, ou algum outro evento do Github."><meta itemprop=datePublished content="2021-09-12T00:00:00+00:00">
 <meta itemprop=dateModified content="2021-09-12T00:00:00+00:00">
-<meta itemprop=wordCount content="3613">
+<meta itemprop=wordCount content="3603">
 <meta itemprop=keywords content="Github,Github Actions,Continuous Integration,">
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
@@ -14,8 +14,8 @@ Além disso também podemos implementar fluxos de Continuous Delivery (CD), faze
 Github Actions |
 Lucas dos Santos Abreu
 </title>
-<link rel=stylesheet href="/preview/6/css/style.css?rnd=1633746378">
-<script src="/preview/6/js/index.js?rnd=1633746378"></script>
+<link rel=stylesheet href="/preview/6/css/style.css?rnd=1633789666">
+<script src="/preview/6/js/index.js?rnd=1633789666"></script>
 </head>
 <body>
 <a class=skip-to-content-link href=#main> Skip to content </a>
@@ -46,7 +46,7 @@ Published:
 <li><a href=#o-que-é-isso>O que é isso?</a></li>
 <li><a href=#como-temos-usado-o-github-actionsci>Como temos usado o Github Actions/CI</a></li>
 <li><a href=#como-usar-o-github-action-para-cicd>Como usar o Github Action para CI/CD</a></li>
-<li><a href=#lintsanalise-estática-com-annotations>Lints/Analise Estática com annotations</a></li>
+<li><a href=#lintsanálise-estática-com-annotations>Lints/Análise Estática com annotations</a></li>
 <li><a href=#integrações-e-actions>Integrações e &ldquo;Actions&rdquo;</a>
 <ol>
 <li><a href=#docker-steps>Docker Steps</a></li>
@@ -69,7 +69,11 @@ Published:
 </ol>
 </nav>
 <div class=content role=content>
-<h2 id=o-que-é-isso>O que é isso? <a href=#o-que-%c3%a9-isso class=heading-anchor>¶</a></h2>
+<h2 id=o-que-é-isso>
+O que é isso?
+<a href=#o-que-%c3%a9-isso class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
+</a>
+</h2>
 <p>O Github Actions é primariamente uma ferramenta para implementar Continuous
 Integration (CI), ou seja, automatizar a execução de ferramentas ou processos
 que ajudam a garantir a qualidade do código, sejam teste unitários, análises de
@@ -83,7 +87,11 @@ interessante do Github Actions é que ele esta integrado com a API do Github,
 então quando você quer usar funcionalidades do Github como os <a href=https://docs.github.com/en/rest/reference/repos#statuses>commit
 status</a>, <a href=https://docs.github.com/en/rest/reference/repos#deployments>deployment status</a>, <a href=https://docs.github.com/en/github/collaborating-with-pull-requests/collaborating-on-repositories-with-code-quality-features/about-status-checks#checks>checks/annotations</a> o processo
 é bem simples.</p>
-<h2 id=como-temos-usado-o-github-actionsci>Como temos usado o Github Actions/CI <a href=#como-temos-usado-o-github-actionsci class=heading-anchor>¶</a></h2>
+<h2 id=como-temos-usado-o-github-actionsci>
+Como temos usado o Github Actions/CI
+<a href=#como-temos-usado-o-github-actionsci class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
+</a>
+</h2>
 <p>Para a maioria dos projetos da <a href=https://coderockr.com>Coderockr</a> nós sempre adicionamos algumas
 ferramentas para CI, que são executadas em todos os PRs e a maioria no <code>push</code>
 para branchs &ldquo;principais&rdquo; (<code>main</code>, <code>develop</code>, <code>release</code>, etc).</p>
@@ -92,7 +100,11 @@ são &ldquo;scriptáveis&rdquo; e configuráveis, então podemos executar elas u
 scripts simples, capturar os arquivos com problema e suas falhas; e notificar a
 pessoa desenvolvedora sobre os problemas e segurar o merge/deploy até os
 problemas serem resolvidos.</p>
-<h2 id=como-usar-o-github-action-para-cicd>Como usar o Github Action para CI/CD <a href=#como-usar-o-github-action-para-cicd class=heading-anchor>¶</a></h2>
+<h2 id=como-usar-o-github-action-para-cicd>
+Como usar o Github Action para CI/CD
+<a href=#como-usar-o-github-action-para-cicd class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
+</a>
+</h2>
 <p>Mas beleza, nós temos as ferramentas, como integrar elas no Github Actions?
 Para fazer qualquer coisa com Actions precisamos criar um <code>workflow</code>, que são
 arquivos YAML que contem um ou mais conjuntos de passos a serem executados
@@ -164,12 +176,8 @@ compartilham uma mesma espaço de trabalho, dentro de um mesmo <code>runner</cod
 podendo ser comandos de shell simples, imagens do Docker ou pacotes de
 ações. Cada um dos itens dentro de <code>steps</code> na linha 12 em diante.</li>
 </ul>
-<div class=feature>
-<p>💡 Todos os exemplos que vou mostrar podem ser vistos nesse repositório:
-<a href=https://github.com/lucassabreu/github-actions-examples>lucassabreu/github-actions-examples</a></p>
-</div>
 <p>Para adicionar o <code>workflow</code> que passei antes ao repositório basta fazer o
-commit de um arquivo <code>yaml</code> dentro da pasta <code>.github/workflows</code>, e
+commit de um arquivo YAML dentro da pasta <code>.github/workflows</code>, e
 automaticamente o Github irá utilizar ele assim que o evento que você definiu
 acontecer com a branch que estiver (alguns eventos só vão funcionar se o
 <code>workflow</code> estiver na branch padrão).</p>
@@ -182,20 +190,24 @@ saída gerada é o &ldquo;commit status&rdquo;.</p>
 <figcaption><p>commit status gerados pelo workflow</p></figcaption>
 </figure>
 </p>
-<p>Mas com isso já possível bloquear <code>pull requests</code> que não atendem a qualidade
+<p>Mas com isso já podemos bloquear <code>pull requests</code> que não atendem a qualidade
 esperada, ou que quebrem algo no caso do PHPUnit; para todas as pessoas
-desenvolvedoras do projeto o acesso a porquê o commit não passou esta a apenas
-um click.</p>
+desenvolvedoras do projeto o acesso ao porquê o commit não passou esta a apenas
+um clique de distância.</p>
 <p>
 <figure class=big>
 <img class="lazyload blur-up" loading=lazy data-src=./github-actions-check-details.png alt="check details">
 <figcaption><p>logs do phpunit no github actions</p></figcaption>
 </figure>
 </p>
-<h2 id=lintsanalise-estática-com-annotations>Lints/Analise Estática com annotations <a href=#lintsanalise-est%c3%a1tica-com-annotations class=heading-anchor>¶</a></h2>
-<p>Mas esse é só o básico, podemos fazer algumas coisas mais avançadas com o Github
-Actions e a integração &ldquo;auto-mágica&rdquo; com a API do Github.</p>
-<p>Uma integração que fora do Github Actions precisava de um setup grande para
+<h2 id=lintsanálise-estática-com-annotations>
+Lints/Análise Estática com annotations
+<a href=#lintsan%c3%a1lise-est%c3%a1tica-com-annotations class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
+</a>
+</h2>
+<p>Podemos fazer algumas coisas mais avançadas com o Github Actions e a integração
+&ldquo;auto-mágica&rdquo; com a API do Github.</p>
+<p>Uma integração que fora do Github Actions precisava de um setup chatinho para
 fazer, mas que é muito boa para auxiliar no revisão automática PRs são os
 <a href=https://docs.github.com/en/github/collaborating-with-pull-requests/collaborating-on-repositories-with-code-quality-features/about-status-checks#checks>annotations</a>. Com eles podemos criar &ldquo;comentários&rdquo; diretamente nos arquivos
 do PR/repositório de forma automatizada, marcando inclusive qual a linha que
@@ -322,7 +334,11 @@ estiver rodando para um PR).</p>
 <p>Isso mostra quão fácil é integrar com essa funcionalidade do Github Actions,
 várias ferramentas tem formatos de saída prontos para integrar com ele, e as
 que não tem, bem estão a um <a href=https://github.com/lucassabreu/github-actions-examples/blob/f051cee06d489998f90e4e4cb6fc71afcc5fc7ca/.github/workflows/phpcs.yaml#L35-L38><code>sed</code></a> de distância.</p>
-<h2 id=integrações-e-actions>Integrações e &ldquo;Actions&rdquo; <a href=#integra%c3%a7%c3%b5es-e-actions class=heading-anchor>¶</a></h2>
+<h2 id=integrações-e-actions>
+Integrações e &ldquo;Actions&rdquo;
+<a href=#integra%c3%a7%c3%b5es-e-actions class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
+</a>
+</h2>
 <p>Para a maioria das ferramentas, principalmente para as que pode/devem ser
 executadas como parte do <code>pre-commit</code> usar o <code>step.run</code> é a melhor forma,
 fácil de entender e inclusive já mostra como executar localmente assim o
@@ -444,7 +460,11 @@ por <code>actions</code> que outras pessoas escreveram.</p>
 <p>Existe uma grande variedade desses tipos de <code>actions</code> que fazem o setup para
 uma ferramenta, ou que interagem com o Github ou outros serviços de forma
 simplificada.</p>
-<h3 id=docker-steps>Docker Steps <a href=#docker-steps class=heading-anchor>¶</a></h3>
+<h3 id=docker-steps>
+Docker Steps
+<a href=#docker-steps class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
+</a>
+</h3>
 <p>Nós usamos o Docker para o desenvolvimento local e em produção para a maioria
 dos projetos para manter os ambientes o mais próximos possível. E no <a href=https://www.drone.io/>Drone
 CI</a> e <a href=https://buildkite.com/>Buildkite</a> usamos as mesmas imagens (ou bem próximas) para executar
@@ -582,7 +602,11 @@ própria e usar outra imagem como um <code>step</code>.</p>
 </code></pre></td></tr></table>
 </div>
 </div><p class=code-legend>docker in docker</p>
-<h3 id=secrets>Secrets <a href=#secrets class=heading-anchor>¶</a></h3>
+<h3 id=secrets>
+Secrets
+<a href=#secrets class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
+</a>
+</h3>
 <p>Ainda tem um ponto importante para vários fluxos de CI (e principalmente
 Continuous Delivery), que é lidar com informações sensíveis (chaves RSA, tokens
 de acesso, JWTs, OAuth Client secrets, senhas).</p>
@@ -625,13 +649,21 @@ token para enviar o relatório de cobertura.</p>
 </div>
 </div><p>Agora sempre que o <code>workflow</code> for executado o Github vai automaticamente
 injetar o segredo na <code>step</code>.</p>
-<h2 id=outros-eventos-e-usos>Outros eventos e usos <a href=#outros-eventos-e-usos class=heading-anchor>¶</a></h2>
+<h2 id=outros-eventos-e-usos>
+Outros eventos e usos
+<a href=#outros-eventos-e-usos class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
+</a>
+</h2>
 <p>Agora que temos uma ideia de como criar os <code>workflows</code> e também como combinar
 <code>actions</code> prontas, seja do <a href=https://github.com/marketplace/actions>Github Marketplace</a> ou imagens do
 Docker.</p>
 <p>Vamos dar uma explorada em alguns outros eventos interessantes que podemos usar
 nos <code>actions</code> que podem ser usados para alguns comportamentos customizados.</p>
-<h3 id=cron-schedule>CRON (<code>schedule</code>) <a href=#cron-schedule class=heading-anchor>¶</a></h3>
+<h3 id=cron-schedule>
+CRON (<code>schedule</code>)
+<a href=#cron-schedule class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
+</a>
+</h3>
 <p>As CRONs no Github Actions rodam automaticamente com base numa periodicidade
 que você definir, sempre usando a branch padrão do projeto.</p>
 <p>Com esse evento podemos, por exemplo, avaliar se PRs ou Issues no Github estão
@@ -686,7 +718,11 @@ gráfico ASCII com base neles.</p>
           <span style=color:#268bd2>SHOW_TIME</span>: <span style=color:#cb4b16>false</span>
 </code></pre></td></tr></table>
 </div>
-</div><h3 id=pull-request-labels-labelled>Pull Request Labels (<code>labelled</code>) <a href=#pull-request-labels-labelled class=heading-anchor>¶</a></h3>
+</div><h3 id=pull-request-labels-labelled>
+Pull Request Labels (<code>labelled</code>)
+<a href=#pull-request-labels-labelled class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
+</a>
+</h3>
 <p>Podemos ouvir quando são modificadas as <code>labels</code> de um PR e com isso podemos
 automatizar a subida de ambientes quando formos testar o mesmo, ou visualizar
 como uma postagem vai ficar sem de fato publicar ela nosso blog pessoal.</p>
@@ -829,7 +865,11 @@ apenas mudar um pouco o cabeçalho do <code>workflow</code>:</p>
     <span style=color:#268bd2>runs-on</span>: ubuntu-latest
 </code></pre></td></tr></table>
 </div>
-</div><h3 id=comentários-issue_comment>Comentários (<code>issue_comment</code>) <a href=#coment%c3%a1rios-issue_comment class=heading-anchor>¶</a></h3>
+</div><h3 id=comentários-issue_comment>
+Comentários (<code>issue_comment</code>)
+<a href=#coment%c3%a1rios-issue_comment class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
+</a>
+</h3>
 <p>Ouvindo comentários é possível criar comportamentos ainda mais complexos,
 podendo criar um mini &ldquo;chat bot&rdquo; que reage a comentários específicos ou a
 padrões de comando, que nem o bots do Slack ou do Discord.</p>
@@ -885,7 +925,11 @@ via comentários.</p>
 comentários feitos no PR para um canal específico no Slack para continuar a
 conversar de forma mais síncrona? <em>Dá para fazer!!!</em></li>
 </ul>
-<h3 id=manual-workflow_dispatch-e-repository_dispatch>Manual (<code>workflow_dispatch</code> e <code>repository_dispatch</code>) <a href=#manual-workflow_dispatch-e-repository_dispatch class=heading-anchor>¶</a></h3>
+<h3 id=manual-workflow_dispatch-e-repository_dispatch>
+Manual (<code>workflow_dispatch</code> e <code>repository_dispatch</code>)
+<a href=#manual-workflow_dispatch-e-repository_dispatch class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
+</a>
+</h3>
 <p>O <code>workflow_dispatch</code> e o <code>repository_dispatch</code> atende a situação em que você
 precisa iniciar um <code>workflow</code> para reagir a algum evento externo ao Github,
 ele até pode ser automático do ponto de vista do seu processo, mas para o Github é
@@ -897,7 +941,11 @@ branch padrão para funcionar.</p>
 ao que pode ser feito, o mais comum é criar um <code>workflow</code> para deploy do
 projeto onde você pode informar qual o ambiente que será atualizado e qual
 referencia usar.</p>
-<h4 id=workflow_dispatch><code>workflow_dispatch</code> <a href=#workflow_dispatch class=heading-anchor>¶</a></h4>
+<h4 id=workflow_dispatch>
+<code>workflow_dispatch</code>
+<a href=#workflow_dispatch class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
+</a>
+</h4>
 <p>Dos dois o <code>workflow_dispatch</code> é o mais orientado a ideia de ser um humano
 disparando o mesmo, tendo uma sessão para descrever as entradas que ele espera
 e uma UI do Github com base nessas entradas para facilitar o disparo.</p>
@@ -970,7 +1018,11 @@ padrão, uma coisa que a interface do Github não permite, mas que usando o
 ✓ Created workflow_dispatch event for blog.yml at v0.1
 
 To see runs for this workflow, try: gh run list --workflow=blog.yml
-</code></pre><h4 id=repository_dispatch><code>repository_dispatch</code> <a href=#repository_dispatch class=heading-anchor>¶</a></h4>
+</code></pre><h4 id=repository_dispatch>
+<code>repository_dispatch</code>
+<a href=#repository_dispatch class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
+</a>
+</h4>
 <p>O <code>repository_dispatch</code> também é considerado um &ldquo;evento manual&rdquo;, mas diferente
 do <code>workflow_dispatch</code> que indica a execução de um <code>workflow</code> apenas, este pode
 disparar um ou mais <code>workflows</code> a um evento customizado do no repositório.</p>
@@ -1080,7 +1132,11 @@ com o <code>client_payload</code> no corpo.</p>
 </span><span style=color:#cb4b16></span>  -H <span style=color:#2aa198>&#34;content-type: applicatin/json&#34;</span> -H <span style=color:#2aa198>&#34;accept: application/vnd.github.v3+json&#34;</span> <span style=color:#cb4b16>\
 </span><span style=color:#cb4b16></span>  -H <span style=color:#2aa198>&#34;authorization: bearer </span><span style=color:#2aa198>${</span><span style=color:#268bd2>GITHUB_TOKEN</span><span style=color:#2aa198>}</span><span style=color:#2aa198>&#34;</span> <span style=color:#cb4b16>\
 </span><span style=color:#cb4b16></span>  -d <span style=color:#2aa198>&#39;{&#34;event_type&#34;: &#34;update-readme&#34;,&#34;client_payload&#34;:{&#34;postsCount&#34;: 10}}&#39;</span>
-</code></pre></div>
+</code></pre></div><hr>
+<div class=feature>
+<p>Caso queira ver o fonte como um todo, ou mais exemplos de <code>workflow</code>, eu usei o
+fonte presente nesse repositório: <a href=https://github.com/lucassabreu/github-actions-examples>lucassabreu/github-actions-examples</a></p>
+</div>
 </div><section class=share>
 <p>
 Share this post at
@@ -1115,7 +1171,7 @@ and tagged
 <a href=/preview/6/tags/github>Github</a>
 <a href=/preview/6/tags/github-actions>Github Actions</a>
 <a href=/preview/6/tags/continuous-integration>Continuous Integration</a>
-using <span itemprop=wordCount>3613</span> words.
+using <span itemprop=wordCount>3603</span> words.
 </p>
 </section>
 </footer>
