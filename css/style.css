@@ -35,6 +35,8 @@ html {
   --paragraphmargin: 1.75rem;
 
   --sumarrypadding: 1rem;
+
+  --featureborder: 2rem;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -279,7 +281,6 @@ header .reading-time::before {
 
 article nav.toc,
 div.feature {
-  --featureborder: 2rem;
   background-color: var(--emphasisbgcolor);
   padding: calc(var(--featureborder) - var(--paragraphmargin))
     var(--featureborder);
@@ -288,6 +289,10 @@ div.feature {
 
 article nav.toc {
   padding: var(--featureborder);
+}
+
+article nav.toc code {
+  font-weight: normal;
 }
 
 article nav.toc > ol {
