@@ -1,10 +1,10 @@
 <!doctype html><html lang=pt-br>
 <head>
 <meta itemprop=name content="Github Actions">
-<meta itemprop=description content="O que é isso? ¶ O Github Actions é primariamente uma ferramenta para implementar Continuous Integration, ou seja, automatizar a execução de ferramentas ou processos que ajudam a garantir a qualidade do código, seja teste unitários, análises de código estática, analises de segurança, simplesmente compilar/&ldquo;buildar&rdquo; o projeto.
-Além disso também podemos implementar fluxos de Continuous Delivery, fazendo o deploy ou bundle do projeto de forma automática sempre que um evento acontece, seja o push para uma branch, ou algum outro evento do Github."><meta itemprop=datePublished content="2021-09-12T00:00:00+00:00">
+<meta itemprop=description content="O que é isso? ¶ O Github Actions é primariamente uma ferramenta para implementar Continuous Integration (CI), ou seja, automatizar a execução de ferramentas ou processos que ajudam a garantir a qualidade do código, sejam teste unitários, análises de código estática, analises de segurança, ou simplesmente compilar/&ldquo;buildar&rdquo; o projeto.
+Além disso também podemos implementar fluxos de Continuous Delivery (CD), fazendo o deploy ou bundle do projeto de forma automática sempre que um evento acontece, seja o push para uma branch, ou algum outro evento do Github."><meta itemprop=datePublished content="2021-09-12T00:00:00+00:00">
 <meta itemprop=dateModified content="2021-09-12T00:00:00+00:00">
-<meta itemprop=wordCount content="3417">
+<meta itemprop=wordCount content="3613">
 <meta itemprop=keywords content="Github,Github Actions,Continuous Integration,">
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
@@ -14,8 +14,8 @@ Além disso também podemos implementar fluxos de Continuous Delivery, fazendo o
 Github Actions |
 Lucas dos Santos Abreu
 </title>
-<link rel=stylesheet href="/preview/6/css/style.css?rnd=1633693268">
-<script src="/preview/6/js/index.js?rnd=1633693268"></script>
+<link rel=stylesheet href="/preview/6/css/style.css?rnd=1633746378">
+<script src="/preview/6/js/index.js?rnd=1633746378"></script>
 </head>
 <body>
 <a class=skip-to-content-link href=#main> Skip to content </a>
@@ -44,13 +44,9 @@ Published:
 <nav role=navigation class=toc><strong>TOC</strong>
 <ol>
 <li><a href=#o-que-é-isso>O que é isso?</a></li>
-<li><a href=#como-temos-usado-o-github-actionsci-em-geral>Como temos usado o Github Actions/CI em geral</a></li>
-<li><a href=#show-me-the-code>Show me the code</a>
-<ol>
-<li><a href=#workflow-simples>Workflow simples</a></li>
+<li><a href=#como-temos-usado-o-github-actionsci>Como temos usado o Github Actions/CI</a></li>
+<li><a href=#como-usar-o-github-action-para-cicd>Como usar o Github Action para CI/CD</a></li>
 <li><a href=#lintsanalise-estática-com-annotations>Lints/Analise Estática com annotations</a></li>
-</ol>
-</li>
 <li><a href=#integrações-e-actions>Integrações e &ldquo;Actions&rdquo;</a>
 <ol>
 <li><a href=#docker-steps>Docker Steps</a></li>
@@ -75,42 +71,32 @@ Published:
 <div class=content role=content>
 <h2 id=o-que-é-isso>O que é isso? <a href=#o-que-%c3%a9-isso class=heading-anchor>¶</a></h2>
 <p>O Github Actions é primariamente uma ferramenta para implementar Continuous
-Integration, ou seja, automatizar a execução de ferramentas ou processos que
-ajudam a garantir a qualidade do código, seja teste unitários, análises de
-código estática, analises de segurança, simplesmente compilar/&ldquo;buildar&rdquo; o
+Integration (CI), ou seja, automatizar a execução de ferramentas ou processos
+que ajudam a garantir a qualidade do código, sejam teste unitários, análises de
+código estática, analises de segurança, ou simplesmente compilar/&ldquo;buildar&rdquo; o
 projeto.</p>
-<p>Além disso também podemos implementar fluxos de Continuous Delivery, fazendo o
-deploy ou bundle do projeto de forma automática sempre que um evento acontece,
-seja o <code>push</code> para uma branch, ou algum outro evento do Github.</p>
-<p>A grande maioria das ferramentas de CI permite fazer esses tipos de
-controles/processos, mas o interessante do Github Actions é que ele esta integrado
-com o sistema de eventos (webhooks) e com a API do Github, então quando você
-quer usar funcionalidades do Github com os <a href=oi>commit status</a>,
-<a href=oi>deployment status</a>, <a href=https://docs.github.com/en/github/collaborating-with-pull-requests/collaborating-on-repositories-with-code-quality-features/about-status-checks#checks>checks/annotations</a> o processo é bem simples.</p>
-<h2 id=como-temos-usado-o-github-actionsci-em-geral>Como temos usado o Github Actions/CI em geral <a href=#como-temos-usado-o-github-actionsci-em-geral class=heading-anchor>¶</a></h2>
+<p>Além disso também podemos implementar fluxos de Continuous Delivery (CD),
+fazendo o deploy ou bundle do projeto de forma automática sempre que um evento
+acontece, seja o <code>push</code> para uma branch, ou algum outro evento do Github.</p>
+<p>Quase todas as ferramentas de CI permitem fazer esses tipos de coisa, mas o
+interessante do Github Actions é que ele esta integrado com a API do Github,
+então quando você quer usar funcionalidades do Github como os <a href=https://docs.github.com/en/rest/reference/repos#statuses>commit
+status</a>, <a href=https://docs.github.com/en/rest/reference/repos#deployments>deployment status</a>, <a href=https://docs.github.com/en/github/collaborating-with-pull-requests/collaborating-on-repositories-with-code-quality-features/about-status-checks#checks>checks/annotations</a> o processo
+é bem simples.</p>
+<h2 id=como-temos-usado-o-github-actionsci>Como temos usado o Github Actions/CI <a href=#como-temos-usado-o-github-actionsci class=heading-anchor>¶</a></h2>
 <p>Para a maioria dos projetos da <a href=https://coderockr.com>Coderockr</a> nós sempre adicionamos algumas
 ferramentas para CI, que são executadas em todos os PRs e a maioria no <code>push</code>
 para branchs &ldquo;principais&rdquo; (<code>main</code>, <code>develop</code>, <code>release</code>, etc).</p>
-<p>Essas ferramentas são fazem lint, analise estática e testes unitários, todas
-elas são &ldquo;scriptáveis&rdquo; e configuráveis, então podemos simplesmente com um shell
-script simples podemos executar elas, capturar os arquivos com problema (as
-vezes detalhando a linha específica) e notificar o desenvolvedor sobre os
-problemas e bloquear o merge/deploy baseado nelas.</p>
-<h2 id=show-me-the-code>Show me the code <a href=#show-me-the-code class=heading-anchor>¶</a></h2>
+<p>Essas ferramentas fazem lint, analise estática e testes unitários; e todas elas
+são &ldquo;scriptáveis&rdquo; e configuráveis, então podemos executar elas usando shell
+scripts simples, capturar os arquivos com problema e suas falhas; e notificar a
+pessoa desenvolvedora sobre os problemas e segurar o merge/deploy até os
+problemas serem resolvidos.</p>
+<h2 id=como-usar-o-github-action-para-cicd>Como usar o Github Action para CI/CD <a href=#como-usar-o-github-action-para-cicd class=heading-anchor>¶</a></h2>
 <p>Mas beleza, nós temos as ferramentas, como integrar elas no Github Actions?
-Para isso temos de criar um <code>workflow</code>, que é o termo que o Github usa para
-representar uma sequencia de etapas que é executada em resposta a um evento no
-repositório ou API (<a href=#dispatch>voltamos nisso depois</a>).</p>
-<dl>
-<dt>💡 Todos os exemplos que vou mostrar podem ser vistos nesse repositório:</dt>
-<dd><a href=https://github.com/lucassabreu/github-actions-examples>lucassabreu/github-actions-examples</a></dd>
-</dl>
-<h3 id=workflow-simples>Workflow simples <a href=#workflow-simples class=heading-anchor>¶</a></h3>
-<p>Para criar o <code>workflow</code> basta fazer o commit de um arquivo <code>yaml</code> dentro da pasta
-<code>.github/workflows</code>, e automaticamente o Github irá utilizar ele assim que o
-evento que você definiu acontecer com a branch que estiver (alguns eventos só
-vão funcionar se o <code>workflow</code> estiver na branch default).</p>
-<p>Um exemplo simples que temos em alguns projetos é esse:</p>
+Para fazer qualquer coisa com Actions precisamos criar um <code>workflow</code>, que são
+arquivos YAML que contem um ou mais conjuntos de passos a serem executados
+quando um ou mais eventos acontecem.</p>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
 <table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
 <pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
@@ -167,10 +153,29 @@ vão funcionar se o <code>workflow</code> estiver na branch default).</p>
         <span style=color:#268bd2>run</span>: php vendor/bin/phpunit
 </code></pre></td></tr></table>
 </div>
-</div><p class=code-legend>.github/workflows/phpunit.yaml</p>
+</div><p class=code-legend>exemplo de `workflow`</p>
+<p>Um <code>workflow</code> vai ser composto de três partes:</p>
+<ul>
+<li><code>triggers</code> (gatilhos) que irão disparar o <code>workflow</code>. Linhas 2 a 5.</li>
+<li><code>jobs</code> (trabalhos) representando um conjunto de ações sequenciais que
+compartilham uma mesma espaço de trabalho, dentro de um mesmo <code>runner</code>
+(instancia de máquina usada na execução). Linhas 7 a 11</li>
+<li><code>steps</code> (passos) que são executados em sequencia para executar um trabalho,
+podendo ser comandos de shell simples, imagens do Docker ou pacotes de
+ações. Cada um dos itens dentro de <code>steps</code> na linha 12 em diante.</li>
+</ul>
+<div class=feature>
+<p>💡 Todos os exemplos que vou mostrar podem ser vistos nesse repositório:
+<a href=https://github.com/lucassabreu/github-actions-examples>lucassabreu/github-actions-examples</a></p>
+</div>
+<p>Para adicionar o <code>workflow</code> que passei antes ao repositório basta fazer o
+commit de um arquivo <code>yaml</code> dentro da pasta <code>.github/workflows</code>, e
+automaticamente o Github irá utilizar ele assim que o evento que você definiu
+acontecer com a branch que estiver (alguns eventos só vão funcionar se o
+<code>workflow</code> estiver na branch padrão).</p>
 <p>Esse é o tipo mais simples de <code>workflow</code> que pode ser feito no Github Actions,
-apenas executa a cada push para a <code>main</code> e em todos os <code>pull requests</code>, e a
-única saída gerada é o &ldquo;commit status&rdquo;.</p>
+executa a cada push para a <code>main</code> e em todos os <code>pull requests</code>, e a única
+saída gerada é o &ldquo;commit status&rdquo;.</p>
 <p>
 <figure class=big>
 <img class="lazyload blur-up" loading=lazy data-src=phpunit-basic-checks.png alt="commit status" width=944 height=223>
@@ -178,36 +183,35 @@ apenas executa a cada push para a <code>main</code> e em todos os <code>pull req
 </figure>
 </p>
 <p>Mas com isso já possível bloquear <code>pull requests</code> que não atendem a qualidade
-esperada, ou que quebrem algo no caso do PHPUnit; para todos os
-desenvolvedores do projeto o acesso a porquê o commit não passou esta a um
-click.</p>
+esperada, ou que quebrem algo no caso do PHPUnit; para todas as pessoas
+desenvolvedoras do projeto o acesso a porquê o commit não passou esta a apenas
+um click.</p>
 <p>
 <figure class=big>
 <img class="lazyload blur-up" loading=lazy data-src=./github-actions-check-details.png alt="check details">
 <figcaption><p>logs do phpunit no github actions</p></figcaption>
 </figure>
 </p>
-<h3 id=lintsanalise-estática-com-annotations>Lints/Analise Estática com annotations <a href=#lintsanalise-est%c3%a1tica-com-annotations class=heading-anchor>¶</a></h3>
-<p>Mas esse é só o básico podemos fazer algumas coisas mais avançadas com o Github
+<h2 id=lintsanalise-estática-com-annotations>Lints/Analise Estática com annotations <a href=#lintsanalise-est%c3%a1tica-com-annotations class=heading-anchor>¶</a></h2>
+<p>Mas esse é só o básico, podemos fazer algumas coisas mais avançadas com o Github
 Actions e a integração &ldquo;auto-mágica&rdquo; com a API do Github.</p>
-<p>Uma integração que precisava de um setup grande para fazer, mas que era muito boa
-para auxiliar no revisão automática são os <a href=https://docs.github.com/en/github/collaborating-with-pull-requests/collaborating-on-repositories-with-code-quality-features/about-status-checks#checks>annotations</a>. Com eles podemos
-criar &ldquo;comentários&rdquo; diretamente nos arquivos do PR/repositório de forma
-automatizada, marcando inclusive qual a linha que tem o problema e qual o
-problema daquela linha.</p>
+<p>Uma integração que fora do Github Actions precisava de um setup grande para
+fazer, mas que é muito boa para auxiliar no revisão automática PRs são os
+<a href=https://docs.github.com/en/github/collaborating-with-pull-requests/collaborating-on-repositories-with-code-quality-features/about-status-checks#checks>annotations</a>. Com eles podemos criar &ldquo;comentários&rdquo; diretamente nos arquivos
+do PR/repositório de forma automatizada, marcando inclusive qual a linha que
+tem o problema e qual o problema daquela linha.</p>
 <p>
 <figure class=big>
 <img class="lazyload blur-up" loading=lazy data-src=./phpstan-github-annotation.png alt="phpstan github annotations">
 <figcaption><p>exemplo de annotations</p></figcaption>
 </figure>
 </p>
-<p>A utilidade disso é que agora quando o time for revisar o PR podemos focar no
-design da solução e na regra de negócio que esta sendo implementada, no lugar de
-revisar se o fonte possui problemas estruturais ou erros de
-compilação/interpretação que possam acontecer.</p>
+<p>A vantagem é que agora quando formos revisar o PR podemos focar no design da
+solução e regra de negócio que esta sendo implementada, no lugar de revisar se
+o fonte possui problemas estruturais ou erros de compilação/interpretação.</p>
 <p>Isso é claro depende do ferramental que a linguagem que você esta trabalhando
 oferece, no caso do PHP quase todos os nossos projetos vão incluir o
-<a href=wip>PHPStan</a> (ou <a href=wip>Phan</a>), <a href=wip>PHPMD</a>, <a href=wip>PHPCS</a> e <a href=wip>PHP CS Fixer</a> para
+<a href=https://github.com/phpstan/phpstan>PHPStan</a> (ou <a href=https://github.com/phan/phan>Phan</a>), <a href=https://phpmd.org/>PHPMD</a>, <a href=https://github.com/squizlabs/PHP_CodeSniffer>PHPCS</a> e <a href=https://cs.symfony.com/>PHP CS Fixer</a> para
 padronizar e analisar o código.</p>
 <p>O exemplo da imagem anterior é feita com o seguinte <code>workflow</code>:</p>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
@@ -273,18 +277,18 @@ padronizar e analisar o código.</p>
 </code></pre></td></tr></table>
 </div>
 </div><p class=code-legend>exemplo de workflow com phpstan</p>
-<p>O mesmo é basicamente igual ao <code>workflow</code> criado para o PHPUnit antes, apenas
+<p>O mesmo é basicamente igual ao <code>workflow</code> criado para o PHPUnit antes, mas
 chamando o PHPStan dessa vez, e com isso ele já gera as <code>annotations</code>, isso
 porque o Actions tem um conceito de &ldquo;<a href=https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions>workflow message commands</a>&rdquo;.</p>
-<p>Ele interpreta a saída do <code>workflow</code> e se a linha repeitar um dos formatos
+<p>Ele interpreta a saída do <code>workflow</code> e se a linha respeitar um dos formatos
 abaixo, ele destaca essa informação.</p>
 <pre><code>::notice file={name},line={line},endLine={endLine},title={title}::{message}
 ::warning file={name},line={line},endLine={endLine},title={title}::{message}
 ::error file={name},line={line},endLine={endLine},title={title}::{message}
-</code></pre><p>Quando o Actios identifica um desses formatos no output do <code>workflow</code> ele
-automaticamente cria um <code>annotation</code> com o mesmo &ldquo;nível&rdquo; no <code>pull request</code> (se
-existir um para a execução).</p>
-<p>Então se eu criar um <code>step</code> como o abaixo:</p>
+</code></pre><p>Quando o Actions identifica um desses padrões ele automaticamente cria uma
+<code>annotation</code> com o mesmo &ldquo;nível de atenção&rdquo; no <code>pull request</code> (se o <code>workflow</code>
+estiver rodando para um PR).</p>
+<p>Se eu criar um <code>step</code> como o abaixo:</p>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
 <table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
 <pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
@@ -309,7 +313,7 @@ existir um para a execução).</p>
 
 </code></pre></td></tr></table>
 </div>
-</div><p>Vai gerar uma nova <code>annotation</code>:</p>
+</div><p>Vai gerar estas <code>annotations</code>:</p>
 <p>
 <figure class=big>
 <img class="lazyload blur-up" loading=lazy data-src=./fake-annotations.png alt="fake annotation">
@@ -329,7 +333,7 @@ rodar o <code>php vendor/bin/phpunit</code> no terminal antes de fazer o commit 
 arquivos, relatórios de cobertura, integrações com serviços externos, setup de
 ferramentas para usar, etc.</p>
 <p>Um exemplo simples é uma etapa para enviar o relatório de cobertura para o
-<a href=wip>Codecov</a>:</p>
+<a href=https://about.codecov.io/>Codecov</a>:</p>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
 <table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
 <pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">35
@@ -442,8 +446,8 @@ uma ferramenta, ou que interagem com o Github ou outros serviços de forma
 simplificada.</p>
 <h3 id=docker-steps>Docker Steps <a href=#docker-steps class=heading-anchor>¶</a></h3>
 <p>Nós usamos o Docker para o desenvolvimento local e em produção para a maioria
-dos projetos para manter os ambientes o mais próximos possível. E no <a href=wip>Drone
-CI</a> e <a href=wip>Buildkite</a> usamos as mesmas imagens (ou bem próximas) para executar
+dos projetos para manter os ambientes o mais próximos possível. E no <a href=https://www.drone.io/>Drone
+CI</a> e <a href=https://buildkite.com/>Buildkite</a> usamos as mesmas imagens (ou bem próximas) para executar
 as ferramentas de analise estática e testes unitários, porque se estamos usando
 uma imagem customizada é provável que eles falhem por não ter a referencia a
 alguma função ou classe.</p>
@@ -543,7 +547,10 @@ própria e usar outra imagem como um <code>step</code>.</p>
 </span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
 </span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
 </span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
-</span></span></code></pre></td>
+</span></span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
+</span></code></pre></td>
 <td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
 <pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#268bd2>name</span>: <span style=color:#2aa198>&#34;PHPCS (Docker in Docker)&#34;</span>
 <span style=color:#268bd2>on</span>:
@@ -568,8 +575,11 @@ própria e usar outra imagem como um <code>step</code>.</p>
 <span style=display:block;width:100%;background-color:#19404a>      - <span style=color:#268bd2>name</span>: PHPCS
 </span><span style=display:block;width:100%;background-color:#19404a>        <span style=color:#268bd2>uses</span>: docker://phpqa/phpcs
 </span><span style=display:block;width:100%;background-color:#19404a>        <span style=color:#268bd2>with</span>:
-</span><span style=display:block;width:100%;background-color:#19404a>          <span style=color:#268bd2>args</span>: sh -c &#34;phpcs src --report=emacs | sed \&#34;s|^.*src|src|;s|\(.*\):\(.*\):\(.*\):\(.*\)|::error file=\1,line=\2,col=\3::\4|\&#34;&#34;
-</span></code></pre></td></tr></table>
+</span><span style=display:block;width:100%;background-color:#19404a>          <span style=color:#268bd2>args</span>: |<span style=color:#2aa198>
+</span></span><span style=color:#2aa198>            sh -c &#34;phpcs src --report=emacs \
+</span><span style=color:#2aa198>              | sed \&#34;s|^.*src|src|;s|\(.*\):\(.*\):\(.*\):\(.*\)|\
+</span><span style=color:#2aa198>                ::error file=\1,line=\2,col=\3::\4|\&#34;&#34;</span>            
+</code></pre></td></tr></table>
 </div>
 </div><p class=code-legend>docker in docker</p>
 <h3 id=secrets>Secrets <a href=#secrets class=heading-anchor>¶</a></h3>
@@ -633,7 +643,7 @@ executar num PR ou no merge da branch.</p>
 o <code>gautamkrishnar/blog-post-workflow</code> e o <code>athul/waka-readme</code>.</p>
 <p>O <a href=https://github.com/gautamkrishnar/blog-post-workflow><code>gautamkrishnar/blog-post-workflow</code></a> consulta o RSS to seu blog
 e insere as ultimas postagens que você fez.</p>
-<p>E o <a href=https://github.com/athul/waka-readme><code>athul/waka-readme</code></a> puxa os dados do <a href=wip>Wakatime</a> e cria um
+<p>E o <a href=https://github.com/athul/waka-readme><code>athul/waka-readme</code></a> puxa os dados do <a href=https://wakatime.com/>Wakatime</a> e cria um
 gráfico ASCII com base neles.</p>
 <p>
 <figure class=big>
@@ -956,7 +966,7 @@ usados como qualquer outro valor de contexto.</p>
 <p>Como a imagem sugere você pode rodar o <code>workflow</code> em outras branchs que não a
 padrão, uma coisa que a interface do Github não permite, mas que usando o
 <a href=https://github.com/cli/cli><code>gh</code></a> ou API você consegue é usar uma tag/release como a referencia.</p>
-<pre><code>▶ gh workflow run blog.yml -f postsCount=5 --ref v0.1
+<pre><code>❯ gh workflow run blog.yml -f postsCount=5 --ref v0.1
 ✓ Created workflow_dispatch event for blog.yml at v0.1
 
 To see runs for this workflow, try: gh run list --workflow=blog.yml
@@ -968,9 +978,8 @@ disparar um ou mais <code>workflows</code> a um evento customizado do no reposit
 o ID do mesmo, ou sequer o arquivo. Então se você tiver um processos externo ao
 Github que você gostaria que executa-se algo no repositório você pode fazer uma
 chamada como a abaixo.</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>curl -vs <span style=color:#2aa198>&#34;https://api.github/com/repos/</span><span style=color:#2aa198>${</span><span style=color:#268bd2>owner</span><span style=color:#2aa198>}</span><span style=color:#2aa198>/</span><span style=color:#2aa198>${</span><span style=color:#268bd2>repo</span><span style=color:#2aa198>}</span><span style=color:#2aa198>/dispatches&#34;</span> <span style=color:#cb4b16>\
-</span><span style=color:#cb4b16></span>  -H <span style=color:#2aa198>&#34;content-type: applicatin/json&#34;</span> <span style=color:#cb4b16>\
-</span><span style=color:#cb4b16></span>  -H <span style=color:#2aa198>&#34;accept: application/vnd.github.v3+json&#34;</span> <span style=color:#cb4b16>\
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>curl -vs <span style=color:#2aa198>&#34;https://api.github.com/repos/</span><span style=color:#2aa198>${</span><span style=color:#268bd2>owner</span><span style=color:#2aa198>}</span><span style=color:#2aa198>/</span><span style=color:#2aa198>${</span><span style=color:#268bd2>repo</span><span style=color:#2aa198>}</span><span style=color:#2aa198>/dispatches&#34;</span> <span style=color:#cb4b16>\
+</span><span style=color:#cb4b16></span>  -H <span style=color:#2aa198>&#34;content-type: applicatin/json&#34;</span> -H <span style=color:#2aa198>&#34;accept: application/vnd.github.v3+json&#34;</span> <span style=color:#cb4b16>\
 </span><span style=color:#cb4b16></span>  -H <span style=color:#2aa198>&#34;authorization: bearer </span><span style=color:#2aa198>${</span><span style=color:#268bd2>GITHUB_TOKEN</span><span style=color:#2aa198>}</span><span style=color:#2aa198>&#34;</span> <span style=color:#cb4b16>\
 </span><span style=color:#cb4b16></span>  -d <span style=color:#2aa198>&#39;{&#34;event_type&#34;: &#34;update-collaborators-contribution&#34;}&#39;</span>
 </code></pre></div><p>E para ouvir esse evento customizado você precisa ter um <code>workflow</code> como esse
@@ -1003,7 +1012,75 @@ aqui na sua branch padrão.</p>
       - <span style=color:#268bd2>run</span>: echo &#34;something?&#34;
 </code></pre></td></tr></table>
 </div>
-</div><p>Olhando na internet um dos usos legais é compilar a sua GH Pages sempre que voc</p>
+</div><p>Caso seja necessário fornecer algum parâmetro específico para o <code>workflow</code>
+você pode passar um objeto JSON no campo <code>client_payload</code> com eles.</p>
+<p>Alterando o exemplo do <code>workflow_dispatch</code> para suportar o
+<code>repository_dispatch</code> ficaria assim:</p>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span></span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
+</span></span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#268bd2>name</span>: Blog in Readme
+
+<span style=color:#268bd2>on</span>:
+<span style=display:block;width:100%;background-color:#19404a>  <span style=color:#268bd2>repository_dispatch</span>:
+</span><span style=display:block;width:100%;background-color:#19404a>    <span style=color:#268bd2>types</span>: [ update-readme ]
+</span>  <span style=color:#268bd2>workflow_dispatch</span>:
+    <span style=color:#268bd2>inputs</span>:
+      <span style=color:#268bd2>postsCount</span>:
+        <span style=color:#268bd2>description</span>: number of posts to show
+        <span style=color:#268bd2>required</span>: <span style=color:#cb4b16>false</span>
+        <span style=color:#268bd2>default</span>: <span style=color:#2aa198>3</span>
+
+<span style=color:#268bd2>jobs</span>:
+  <span style=color:#268bd2>update</span>:
+    <span style=color:#268bd2>runs-on</span>: ubuntu-latest
+    <span style=color:#268bd2>steps</span>:
+      - <span style=color:#268bd2>uses</span>: actions/checkout@v2
+      - <span style=color:#268bd2>uses</span>: gautamkrishnar/blog-post-workflow@master
+        <span style=color:#268bd2>with</span>:
+          <span style=color:#268bd2>feed_list</span>: https://www.lucassabreu.net.br/index.xml
+          <span style=color:#268bd2>max_post_count</span>: |<span style=color:#2aa198>
+</span><span style=color:#2aa198>            ${{
+</span><span style=color:#2aa198>              github.event.inputs.postsCount ||
+</span><span style=display:block;width:100%;background-color:#19404a><span style=color:#2aa198>              github.event.client_payload.postsCount ||
+</span></span><span style=color:#2aa198>              3
+</span><span style=color:#2aa198>            }}</span>            
+</code></pre></td></tr></table>
+</div>
+</div><p>Se por algum motivo eu resolver que quero mostrar 10 post é executar um <code>CURL</code>
+com o <code>client_payload</code> no corpo.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>curl -vs <span style=color:#2aa198>&#34;https://api.github.com/repos/</span><span style=color:#2aa198>${</span><span style=color:#268bd2>owner</span><span style=color:#2aa198>}</span><span style=color:#2aa198>/</span><span style=color:#2aa198>${</span><span style=color:#268bd2>repo</span><span style=color:#2aa198>}</span><span style=color:#2aa198>/dispatches&#34;</span> <span style=color:#cb4b16>\
+</span><span style=color:#cb4b16></span>  -H <span style=color:#2aa198>&#34;content-type: applicatin/json&#34;</span> -H <span style=color:#2aa198>&#34;accept: application/vnd.github.v3+json&#34;</span> <span style=color:#cb4b16>\
+</span><span style=color:#cb4b16></span>  -H <span style=color:#2aa198>&#34;authorization: bearer </span><span style=color:#2aa198>${</span><span style=color:#268bd2>GITHUB_TOKEN</span><span style=color:#2aa198>}</span><span style=color:#2aa198>&#34;</span> <span style=color:#cb4b16>\
+</span><span style=color:#cb4b16></span>  -d <span style=color:#2aa198>&#39;{&#34;event_type&#34;: &#34;update-readme&#34;,&#34;client_payload&#34;:{&#34;postsCount&#34;: 10}}&#39;</span>
+</code></pre></div>
 </div><section class=share>
 <p>
 Share this post at
@@ -1038,7 +1115,7 @@ and tagged
 <a href=/preview/6/tags/github>Github</a>
 <a href=/preview/6/tags/github-actions>Github Actions</a>
 <a href=/preview/6/tags/continuous-integration>Continuous Integration</a>
-using <span itemprop=wordCount>3417</span> words.
+using <span itemprop=wordCount>3613</span> words.
 </p>
 </section>
 </footer>

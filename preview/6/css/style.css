@@ -159,26 +159,12 @@ dl {
   margin-bottom: var(--paragraphmargin);
 }
 
-p code {
+article :not(pre) > code {
   font-weight: 700;
 }
 
-h1 code::before,
-h1 code::after,
-h2 code::before,
-h2 code::after,
-h3 code::before,
-h3 code::after,
-h4 code::before,
-h4 code::after,
-h5 code::before,
-h5 code::after,
-h6 code::before,
-h6 code::after,
-.toc code::before,
-.toc code::after,
-p code::before,
-p code::after {
+article *:not(pre) > code::before,
+article *:not(pre) > code::after {
   content: "`";
 }
 
@@ -283,15 +269,11 @@ header .reading-time::before {
 }
 
 article nav.toc,
-dl {
+div.feature {
   background-color: var(--emphasisbgcolor);
-  padding: 2rem;
-  margin: 0 -1rem;
+  padding: calc(2rem - var(--paragraphmargin)) 2rem;
+  margin: 0 -2rem;
   margin-top: var(--paragraphmargin);
-}
-
-dl {
-  margin-bottom: var(--paragraphmargin);
 }
 
 article nav.toc > ol {
