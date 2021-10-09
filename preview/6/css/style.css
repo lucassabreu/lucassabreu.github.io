@@ -153,7 +153,7 @@ h6::before {
 
 header,
 figcaption,
-p.code-legend {
+.code-legend {
   color: var(--captioncolor);
 }
 
@@ -212,7 +212,8 @@ figure.big img {
 }
 
 figcaption p,
-p.code-legend {
+p.code-legend,
+.code-legend p {
   margin-top: calc(var(--paragraphmargin) / 2);
   font-size: 80%;
   text-align: center;

@@ -4,7 +4,7 @@
 <meta itemprop=description content="O que é isso?          O Github Actions é primariamente uma ferramenta para implementar Continuous Integration (CI), ou seja, automatizar a execução de ferramentas ou processos que ajudam a garantir a qualidade do código, sejam teste unitários, análises de código estática, analises de segurança, ou simplesmente compilar/&ldquo;buildar&rdquo; o projeto.
 Além disso também podemos implementar fluxos de Continuous Delivery (CD), fazendo o deploy ou bundle do projeto de forma automática sempre que um evento acontece, seja o push para uma branch, ou algum outro evento do Github."><meta itemprop=datePublished content="2021-09-12T00:00:00+00:00">
 <meta itemprop=dateModified content="2021-09-12T00:00:00+00:00">
-<meta itemprop=wordCount content="3603">
+<meta itemprop=wordCount content="3625">
 <meta itemprop=keywords content="Github,Github Actions,Continuous Integration,">
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
@@ -14,8 +14,8 @@ Além disso também podemos implementar fluxos de Continuous Delivery (CD), faze
 Github Actions |
 Lucas dos Santos Abreu
 </title>
-<link rel=stylesheet href="/preview/6/css/style.css?rnd=1633790095">
-<script src="/preview/6/js/index.js?rnd=1633790095"></script>
+<link rel=stylesheet href="/preview/6/css/style.css?rnd=1633796173">
+<script src="/preview/6/js/index.js?rnd=1633796173"></script>
 </head>
 <body>
 <a class=skip-to-content-link href=#main> Skip to content </a>
@@ -34,7 +34,7 @@ Lucas dos Santos Abreu
 <header>
 <h1>Github Actions</h1>
 <p>
-<span class=reading-time>17 minute read</span>
+<span class=reading-time>18 minute read</span>
 <span class=published-at>
 Published:
 <time datetime="2021-09-12 00:00:00 +0000 UTC">2021-09-12</time>
@@ -292,15 +292,13 @@ padronizar e analisar o código.</p>
 <p>O mesmo é basicamente igual ao <code>workflow</code> criado para o PHPUnit antes, mas
 chamando o PHPStan dessa vez, e com isso ele já gera as <code>annotations</code>, isso
 porque o Actions tem um conceito de &ldquo;<a href=https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions>workflow message commands</a>&rdquo;.</p>
-<p>Ele interpreta a saída do <code>workflow</code> e se a linha respeitar um dos formatos
-abaixo, ele destaca essa informação.</p>
+<p>O Actions interpreta a saída do <code>workflow</code> e se identificar um desses padrões
+abaixo ele automaticamente cria uma <code>annotation</code> com o mesmo &ldquo;nível de atenção&rdquo;
+no <code>pull request</code> (se o <code>workflow</code> estiver rodando para um PR).</p>
 <pre><code>::notice file={name},line={line},endLine={endLine},title={title}::{message}
 ::warning file={name},line={line},endLine={endLine},title={title}::{message}
 ::error file={name},line={line},endLine={endLine},title={title}::{message}
-</code></pre><p>Quando o Actions identifica um desses padrões ele automaticamente cria uma
-<code>annotation</code> com o mesmo &ldquo;nível de atenção&rdquo; no <code>pull request</code> (se o <code>workflow</code>
-estiver rodando para um PR).</p>
-<p>Se eu criar um <code>step</code> como o abaixo:</p>
+</code></pre><p>Então se eu criar um <code>step</code> como o abaixo:</p>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
 <table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
 <pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
@@ -311,7 +309,6 @@ estiver rodando para um PR).</p>
 </span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
 </span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
 </span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
 </span></code></pre></td>
 <td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
 <pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml>    - <span style=color:#268bd2>name</span>: Fake
@@ -322,7 +319,6 @@ estiver rodando para um PR).</p>
 </span><span style=color:#2aa198>          file=$PWD/src/Hugger/Friendly.php,line=1,col=0::this is a warning
 </span><span style=color:#2aa198>        echo ::error \
 </span><span style=color:#2aa198>          file=$PWD/src/Hugger/Friendly.php,line=1,col=0::this is a error</span>        
-
 </code></pre></td></tr></table>
 </div>
 </div><p>Vai gerar estas <code>annotations</code>:</p>
@@ -331,19 +327,24 @@ estiver rodando para um PR).</p>
 <img class="lazyload blur-up" loading=lazy data-src=./fake-annotations.png alt="fake annotation">
 </figure>
 </p>
-<p>Isso mostra quão fácil é integrar com essa funcionalidade do Github Actions,
-várias ferramentas tem formatos de saída prontos para integrar com ele, e as
-que não tem, bem estão a um <a href=https://github.com/lucassabreu/github-actions-examples/blob/f051cee06d489998f90e4e4cb6fc71afcc5fc7ca/.github/workflows/phpcs.yaml#L35-L38><code>sed</code></a> de distância.</p>
+<p>Isso mostra quão fácil é integrar com essa funcionalidade do Github Actions, se
+a ferramenta que você usa não suporta esse formato de saída você sempre pode
+aplicar um <a href=https://github.com/lucassabreu/github-actions-examples/blob/f051cee06d489998f90e4e4cb6fc71afcc5fc7ca/.github/workflows/phpcs.yaml#L35-L38><code>sed</code></a> para resolver isso.</p>
+<div class=feature>
+<p>Se não estiver usando o Github Actions, uma ferramenta que ajudou a gente na
+integração foi o <a href=https://github.com/roverdotcom/checkbridge>https://github.com/roverdotcom/checkbridge</a>.</p>
+</div>
 <h2 id=integrações-e-actions>
 Integrações e &ldquo;Actions&rdquo;
 <a href=#integra%c3%a7%c3%b5es-e-actions class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
 </a>
 </h2>
-<p>Para a maioria das ferramentas, principalmente para as que pode/devem ser
-executadas como parte do <code>pre-commit</code> usar o <code>step.run</code> é a melhor forma,
-fácil de entender e inclusive já mostra como executar localmente assim o
-desenvolvedor não precisa fazer o push para ver os resultados, ele pode apenas
-rodar o <code>php vendor/bin/phpunit</code> no terminal antes de fazer o commit e feito.</p>
+<p>Para a maioria das ferramentas, principalmente para as que podem/devem ser
+executadas como parte do <code>pre-commit</code> usar o <code>step.run</code> é a melhor forma, ele é
+fácil de entender e inclusive já mostra como executar a ferramenta sua própria
+máquina. Se a pessoa desenvolvedora quiser ela não precisa fazer o push para
+ver os se conseguiu resolver o problema, é só pegar o comando e executar no
+terminal antes de fazer o commit e pronto.</p>
 <p>Mas existem algumas etapas que podemos adicionar no <code>workflow</code> que não precisam
 (talvez não devam) ser executadas localmente, por exemplo: deploys, cache de
 arquivos, relatórios de cobertura, integrações com serviços externos, setup de
@@ -371,24 +372,26 @@ ferramentas para usar, etc.</p>
 </span></code></pre></td></tr></table>
 </div>
 </div><p>A etapa <code>Upload coverage to Codecov</code> usa uma <code>action</code> chamada
-<a href=https://github.com/marketplace/actions/codecov><code>codecov/codecov-action</code></a>, <code>actions</code> são o que dão o nome para a
-plataforma, e são plugins que podem ser adicionados aos <code>workflows</code> que
-resolvem algum problema específico, que podem ser os problemas que listei antes
-ou &ldquo;receitas prontas&rdquo; para alguma ferramenta.</p>
+<a href=https://github.com/marketplace/actions/codecov><code>codecov/codecov-action</code></a>, <code>actions</code> são o que dão o nome para
+a plataforma, e são plugins que podem ser adicionados aos <code>workflows</code> que
+resolvem algum problema específico, que pode ser instalar o linguagem ou
+ferramenta que você vai usar, como é o caso do <code>shivammathur/setup-php@v2</code>, ou
+problemas como os que listei antes ou &ldquo;receitas prontas&rdquo; para alguma
+ferramenta.</p>
 <p>Diferente dos exemplos anteriores não passamos um script para ser executado na
 etapa, mas sim qual o nome da <code>action</code> com o <code>uses</code> e (dependendo da <code>action</code>)
-parâmetros complementares que ela possa receber.</p>
-<p>O Github tem um marketplace para eles que você pode usar tanto para publicar os
-seus próprios, quanto para procurar soluções prontas (por mais que o Google
-tenha sido melhor para pesquisar, mas a pagina no marketplace ajuda o Google
-pelo menos).</p>
+parâmetros complementares via <code>with</code>.</p>
+<p>O Github tem um marketplace que você pode usar tanto para publicar os seus
+próprios, quanto para procurar soluções prontas (por mais que o Google tenha
+sido melhor para pesquisar, mas a pagina no marketplace ajuda o Google pelo
+menos).</p>
 <p>
 <figure class=big>
 <img class="lazyload blur-up" loading=lazy data-src=./github-marketplace.png alt=marketplace>
 <figcaption><p>marketplace com alguns actions para php</p></figcaption>
 </figure>
 </p>
-<p>E podemos encontrar todo tipo de <code>action</code> pronta para ser adicionada aos
+<p>Podemos encontrar todo tipo de <code>action</code> pronta para ser adicionada aos
 <code>workflows</code>, no meu blog eu não precisei escrever lógica para instalar o <code>hugo</code>
 ou para &ldquo;buildar&rdquo; e fazer push dele para a branch <code>gh-pages</code>, isso tudo é feito
 por <code>actions</code> que outras pessoas escreveram.</p>
@@ -456,10 +459,9 @@ por <code>actions</code> que outras pessoas escreveram.</p>
 </span><span style=display:block;width:100%;background-color:#19404a>          <span style=color:#268bd2>folder</span>: public
 </span></code></pre></td></tr></table>
 </div>
-</div><p class=code-legend>.github/workflows/gh-pages.yaml</p>
-<p>Existe uma grande variedade desses tipos de <code>actions</code> que fazem o setup para
-uma ferramenta, ou que interagem com o Github ou outros serviços de forma
-simplificada.</p>
+</div><div class=code-legend>
+<p><a href=https://github.com/lucassabreu/lucassabreu.github.io/blob/6a466ef778bd446b47fc6452fa6775b9c4f07f83/.github/workflows/gh-pages.yaml>.github/workflows/gh-pages.yaml</a></p>
+</div>
 <h3 id=docker-steps>
 Docker Steps
 <a href=#docker-steps class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
@@ -474,7 +476,7 @@ alguma função ou classe.</p>
 <p>Nesse sentido no lugar de usar uma <code>action</code> para instalar a linguagem e ainda
 adicionar extensões ou customizações do ambiente, por mais que possível, acaba
 sendo um trabalho duplicado, e sempre temos de lembrar de atualizar a imagem
-base e o <code>workflow</code> toda vez, então quando isso acontece nós usamos imagens do
+base e o <code>workflow</code> toda vez, para evitar esse retrabalho nós usamos imagens do
 Docker como etapas para rodar as operações.</p>
 <p>Usando uma imagem do Docker no nível do <code>runs-on</code> adicionamos qual o contêiner
 a ser usado:</p>
@@ -515,10 +517,32 @@ jobs:
 <p>A imagem desse exemplo é orientada para ser usada fora do Github também,
 então eu tive de adicionar o <code>--user root</code>, porque alguns <code>actions</code> precisam
 instalar pacotes (o <code>actions/checkout@v2</code> instala o <code>git</code> e outras coisas).</p>
-<p>Mas essa não é a única forma de usar o imagens do Docker se você ou a
+<p>Mas essa não é a única forma de usar o imagens do Docker, se você ou a
 ferramenta que você normalmente usa tiver uma imagem para ser usada, então pode
 adicionar a mesma como um <code>step</code>:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#268bd2>name</span>: <span style=color:#2aa198>&#34;PHPInsights&#34;</span>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
+</span></span><span style=display:block;width:100%;background-color:#19404a><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
+</span></span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#268bd2>name</span>: <span style=color:#2aa198>&#34;PHPInsights&#34;</span>
 <span style=color:#268bd2>on</span>:
   <span style=color:#268bd2>pull_request</span>:
   <span style=color:#268bd2>push</span>:
@@ -532,11 +556,13 @@ adicionar a mesma como um <code>step</code>:</p>
       - <span style=color:#268bd2>name</span>: Checkout code
         <span style=color:#268bd2>uses</span>: actions/checkout@v2
 
-      - <span style=color:#268bd2>name</span>: PHPInsights
-        <span style=color:#268bd2>uses</span>: docker://nunomaduro/phpinsights
-        <span style=color:#268bd2>with</span>:
-          <span style=color:#268bd2>args</span>: --format=github-action
-</code></pre></div><p class=code-legend>docker como um `step`</p>
+<span style=display:block;width:100%;background-color:#19404a>      - <span style=color:#268bd2>name</span>: PHPInsights
+</span><span style=display:block;width:100%;background-color:#19404a>        <span style=color:#268bd2>uses</span>: docker://nunomaduro/phpinsights
+</span><span style=display:block;width:100%;background-color:#19404a>        <span style=color:#268bd2>with</span>:
+</span><span style=display:block;width:100%;background-color:#19404a>          <span style=color:#268bd2>args</span>: --format=github-action
+</span></code></pre></td></tr></table>
+</div>
+</div><p class=code-legend>docker como um `step`</p>
 <p>Se ela tiver um formato de saída compatível com os <a href=#lintsanalise-est%C3%A1tica-com-annotations>annotations commands</a>
 então fica parecendo que é uma <code>action</code> nativa.</p>
 <p>Podemos ainda executar Docker in Docker se for necessário combinar a sua imagem
@@ -1135,7 +1161,12 @@ com o <code>client_payload</code> no corpo.</p>
 </code></pre></div><hr>
 <div class=feature>
 <p>Caso queira ver o fonte como um todo, ou mais exemplos de <code>workflow</code>, eu usei o
-fonte presente nesse repositório: <a href=https://github.com/lucassabreu/github-actions-examples>lucassabreu/github-actions-examples</a></p>
+fonte presente nesses repositórios:</p>
+<ul>
+<li><a href=https://github.com/lucassabreu/github-actions-examples>lucassabreu/github-actions-examples</a></li>
+<li><a href=https://github.com/lucassabreu/lucassabreu/tree/main/.github/workflows>lucassabreu/lucassabreu</a></li>
+<li><a href=https://github.com/lucassabreu/lucassabreu.github.io/tree/main/.github/workflows>lucassabreu/lucassabreu.github.io</a></li>
+</ul>
 </div>
 </div><section class=share>
 <p>
@@ -1171,7 +1202,7 @@ and tagged
 <a href=/preview/6/tags/github>Github</a>
 <a href=/preview/6/tags/github-actions>Github Actions</a>
 <a href=/preview/6/tags/continuous-integration>Continuous Integration</a>
-using <span itemprop=wordCount>3603</span> words.
+using <span itemprop=wordCount>3625</span> words.
 </p>
 </section>
 </footer>
