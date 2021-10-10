@@ -415,3 +415,18 @@ article.article-summary p:last-of-type {
   top: 0;
   transform: translateY(0%);
 }
+
+/** back to the top */
+
+#back-to-top {
+  position: fixed;
+  bottom: -3rem;
+  right: 1rem;
+  transform: translateY(0%);
+  transition: transform 0.3s;
+}
+
+#back-to-top.show {
+  bottom: 1rem;
+  transform: translateY(-100%);
+}

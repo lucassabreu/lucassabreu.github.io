@@ -1,8 +1,10 @@
 <!doctype html><html lang=pt-br>
 <head>
 <meta itemprop=name content="Github Actions">
-<meta itemprop=description content="O que é isso?          O Github Actions é primariamente uma ferramenta para implementar Continuous Integration (CI), ou seja, automatizar a execução de ferramentas ou processos que ajudam a garantir a qualidade do código, sejam teste unitários, análises de código estática, analises de segurança, ou simplesmente compilar/&ldquo;buildar&rdquo; o projeto.
-Além disso também podemos implementar fluxos de Continuous Delivery (CD), fazendo o deploy ou bundle do projeto de forma automática sempre que um evento acontece, seja o push para uma branch, ou algum outro evento do Github."><meta itemprop=datePublished content="2021-09-12T00:00:00+00:00">
+<meta itemprop=description content="Como e onde podemos usar o Github Actions para automatizar os processos do
+dia-a-dia de um repositório, e alguns outros usos interessantes que podemos
+fazer com a API de eventos disponível.
+"><meta itemprop=datePublished content="2021-09-12T00:00:00+00:00">
 <meta itemprop=dateModified content="2021-09-12T00:00:00+00:00">
 <meta itemprop=wordCount content="3577">
 <meta itemprop=keywords content="Github,Github Actions,Continuous Integration,">
@@ -14,8 +16,8 @@ Além disso também podemos implementar fluxos de Continuous Delivery (CD), faze
 Github Actions |
 Lucas dos Santos Abreu
 </title>
-<link rel=stylesheet href="/preview/6/css/style.css?rnd=1633823843">
-<script src="/preview/6/js/index.js?rnd=1633823843"></script>
+<link rel=stylesheet href="/preview/6/css/style.css?rnd=1633826272">
+<script src="/preview/6/js/index.js?rnd=1633826272"></script>
 </head>
 <body>
 <a class=skip-to-content-link href=#main> Skip to content </a>
@@ -71,7 +73,7 @@ Published:
 <div class=content role=content>
 <h2 id=o-que-é-isso>
 O que é isso?
-<a href=#o-que-%c3%a9-isso class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
+<a href=#o-que-%c3%a9-isso class=heading-anchor aria-label="copy link to this section" title="Copy link to this section"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
 </a>
 </h2>
 <p>O Github Actions é primariamente uma ferramenta para implementar Continuous
@@ -89,7 +91,7 @@ status</a>, <a href=https://docs.github.com/en/rest/reference/repos#deployments>
 é bem simples.</p>
 <h2 id=como-temos-usado-o-github-actionsci>
 Como temos usado o Github Actions/CI
-<a href=#como-temos-usado-o-github-actionsci class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
+<a href=#como-temos-usado-o-github-actionsci class=heading-anchor aria-label="copy link to this section" title="Copy link to this section"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
 </a>
 </h2>
 <p>Para a maioria dos projetos da <a href=https://coderockr.com>Coderockr</a> nós sempre adicionamos algumas
@@ -102,7 +104,7 @@ pessoa desenvolvedora sobre os problemas e segurar o merge/deploy até os
 problemas serem resolvidos.</p>
 <h2 id=como-usar-o-github-action-para-cicd>
 Como usar o Github Action para CI/CD
-<a href=#como-usar-o-github-action-para-cicd class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
+<a href=#como-usar-o-github-action-para-cicd class=heading-anchor aria-label="copy link to this section" title="Copy link to this section"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
 </a>
 </h2>
 <p>Mas beleza, nós temos as ferramentas, como integrar elas no Github Actions?
@@ -201,7 +203,7 @@ um clique de distância.</p>
 </p>
 <h2 id=lintsanálise-estática-com-annotations>
 Lints/Análise Estática com annotations
-<a href=#lintsan%c3%a1lise-est%c3%a1tica-com-annotations class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
+<a href=#lintsan%c3%a1lise-est%c3%a1tica-com-annotations class=heading-anchor aria-label="copy link to this section" title="Copy link to this section"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
 </a>
 </h2>
 <p>Podemos fazer algumas coisas mais avançadas com o Github Actions e a integração
@@ -335,7 +337,7 @@ integração foi o <a href=https://github.com/roverdotcom/checkbridge>https://gi
 </div>
 <h2 id=integrações-e-actions>
 Integrações e &ldquo;Actions&rdquo;
-<a href=#integra%c3%a7%c3%b5es-e-actions class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
+<a href=#integra%c3%a7%c3%b5es-e-actions class=heading-anchor aria-label="copy link to this section" title="Copy link to this section"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
 </a>
 </h2>
 <p>Para a maioria das ferramentas, principalmente para as que podem/devem ser
@@ -463,7 +465,7 @@ por <code>actions</code> que outras pessoas escreveram.</p>
 </div>
 <h3 id=docker-steps>
 Docker Steps
-<a href=#docker-steps class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
+<a href=#docker-steps class=heading-anchor aria-label="copy link to this section" title="Copy link to this section"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
 </a>
 </h3>
 <p>Nós usamos o Docker para o desenvolvimento local e em produção para a maioria
@@ -629,7 +631,7 @@ própria e usar outra imagem como um <code>step</code>.</p>
 </div><p class=code-legend>docker in docker</p>
 <h3 id=secrets>
 Secrets
-<a href=#secrets class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
+<a href=#secrets class=heading-anchor aria-label="copy link to this section" title="Copy link to this section"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
 </a>
 </h3>
 <p>Ainda tem um ponto importante para vários fluxos de CI (e principalmente
@@ -673,7 +675,7 @@ token para enviar o relatório de cobertura.</p>
 injetar o segredo na <code>step</code>.</p>
 <h2 id=outros-eventos-e-usos>
 Outros eventos e usos
-<a href=#outros-eventos-e-usos class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
+<a href=#outros-eventos-e-usos class=heading-anchor aria-label="copy link to this section" title="Copy link to this section"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
 </a>
 </h2>
 <p>Agora que temos uma ideia de como criar os <code>workflows</code> e também como combinar
@@ -683,7 +685,7 @@ Docker.</p>
 nos <code>actions</code> que podem ser usados para alguns comportamentos customizados.</p>
 <h3 id=cron-schedule>
 CRON (<code>schedule</code>)
-<a href=#cron-schedule class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
+<a href=#cron-schedule class=heading-anchor aria-label="copy link to this section" title="Copy link to this section"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
 </a>
 </h3>
 <p>As CRONs no Github Actions rodam automaticamente com base numa periodicidade
@@ -741,7 +743,7 @@ a meia noite.</p>
 <p>A expressão que vai na propriedade <code>cron</code> é o padrão <a href=https://en.wikipedia.org/wiki/Cron><em>POSIX</em></a>.</p>
 <h3 id=pull-request-labels-labelled>
 Pull Request Labels (<code>labelled</code>)
-<a href=#pull-request-labels-labelled class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
+<a href=#pull-request-labels-labelled class=heading-anchor aria-label="copy link to this section" title="Copy link to this section"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
 </a>
 </h3>
 <p>Podemos ouvir quando são modificadas as <code>labels</code> de um PR e com isso podemos
@@ -898,7 +900,7 @@ de adicionar a <code>label</code>, é só caso de mudar um pouco o cabeçalho do
 </div>
 </div><h3 id=comentários-issue_comment>
 Comentários (<code>issue_comment</code>)
-<a href=#coment%c3%a1rios-issue_comment class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
+<a href=#coment%c3%a1rios-issue_comment class=heading-anchor aria-label="copy link to this section" title="Copy link to this section"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
 </a>
 </h3>
 <p>Ouvindo os comentários é possível criar comportamentos ainda mais complexos,
@@ -958,7 +960,7 @@ conversar de forma mais síncrona? <em>Dá para fazer!!!</em></li>
 </ul>
 <h3 id=manual-workflow_dispatch-e-repository_dispatch>
 Manual (<code>workflow_dispatch</code> e <code>repository_dispatch</code>)
-<a href=#manual-workflow_dispatch-e-repository_dispatch class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
+<a href=#manual-workflow_dispatch-e-repository_dispatch class=heading-anchor aria-label="copy link to this section" title="Copy link to this section"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
 </a>
 </h3>
 <p>O <code>workflow_dispatch</code> e o <code>repository_dispatch</code> atende a situação em que você
@@ -974,7 +976,7 @@ projeto onde você pode informar qual o ambiente que será atualizado e qual
 referencia usar.</p>
 <h4 id=workflow_dispatch>
 <code>workflow_dispatch</code>
-<a href=#workflow_dispatch class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
+<a href=#workflow_dispatch class=heading-anchor aria-label="copy link to this section" title="Copy link to this section"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
 </a>
 </h4>
 <p>Dos dois o <code>workflow_dispatch</code> é o mais orientado a ideia de um humano
@@ -1050,7 +1052,7 @@ padrão, uma coisa que a interface do Github não permite, mas que usando o
 To see runs for this workflow, try: gh run list --workflow=blog.yml
 </code></pre><h4 id=repository_dispatch>
 <code>repository_dispatch</code>
-<a href=#repository_dispatch class=heading-anchor><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
+<a href=#repository_dispatch class=heading-anchor aria-label="copy link to this section" title="Copy link to this section"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
 </a>
 </h4>
 <p>O <code>repository_dispatch</code> também é considerado um &ldquo;evento manual&rdquo;, mas diferente
@@ -1229,6 +1231,7 @@ using <span itemprop=wordCount>3577</span> words.
 </li>
 </ul>
 </aside>
+<a href=#main id=back-to-top>Back to the top</a>
 <footer>
 <p>
 &copy;
