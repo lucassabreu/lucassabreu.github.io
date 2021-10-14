@@ -5,7 +5,11 @@ on:
 
 jobs:
   build-and-preview:
-    if: ${{ github.event.label.name == 'preview-pr' || contains(github.event.pull_request.labels.*.name, 'preview-deployed')}}
+    if: |
+      ${{
+        github.event.label.name == 'preview-pr' ||
+        contains(github.event.pull_request.labels.*.name, 'preview-deployed')
+      }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
