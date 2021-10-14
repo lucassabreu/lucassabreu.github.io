@@ -153,7 +153,7 @@ h6::before {
 
 header,
 figcaption,
-p.code-legend {
+.code-legend {
   color: var(--captioncolor);
 }
 
@@ -212,7 +212,8 @@ figure.big img {
 }
 
 figcaption p,
-p.code-legend {
+p.code-legend,
+.code-legend p {
   margin-top: calc(var(--paragraphmargin) / 2);
   font-size: 80%;
   text-align: center;
@@ -413,4 +414,19 @@ article.article-summary p:last-of-type {
 .skip-to-content-link:focus {
   top: 0;
   transform: translateY(0%);
+}
+
+/** back to the top */
+
+#back-to-top {
+  position: fixed;
+  bottom: -3rem;
+  right: 1rem;
+  transform: translateY(0%);
+  transition: transform 0.3s;
+}
+
+#back-to-top.show {
+  bottom: 1rem;
+  transform: translateY(-100%);
 }
