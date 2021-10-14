@@ -384,6 +384,10 @@ article.article-summary:hover {
   background-color: var(--emphasisbgcolor);
 }
 
+article.article-summary h2 {
+  margin-top: 0;
+}
+
 article.article-summary p:last-of-type {
   margin-bottom: 0;
 }
