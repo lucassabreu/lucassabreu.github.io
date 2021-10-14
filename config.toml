@@ -6,6 +6,8 @@ theme = "smol"
 disqusShortname = "lucas-dos-santos-abreu"
 enableEmoji = true
 
+ignoreFiles = ["node_modules"]
+
 [Params]
   dateFmt = "2006-01-02"
   headingAnchors = true
