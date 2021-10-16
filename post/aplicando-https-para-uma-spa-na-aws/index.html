@@ -1,9 +1,18 @@
 <!doctype html><html lang=pt-br>
 <head>
 <meta itemprop=name content="Aplicando HTTPS para uma SPA na AWS">
-<meta itemprop=description content="Como aplicamos HTTPS para o nosso frontend usando as ferramentas da AWS"><meta itemprop=datePublished content="2018-03-31T22:00:00-03:00">
+<meta property="og:title" content="Aplicando HTTPS para uma SPA na AWS">
+<meta itemprop=description content="Como aplicamos HTTPS para o nosso frontend usando as ferramentas da AWS">
+<meta property="og:description" content="Como aplicamos HTTPS para o nosso frontend usando as ferramentas da AWS">
+<meta property="og:url" content="https://www.lucassabreu.net.br/post/aplicando-https-para-uma-spa-na-aws/">
+<meta property="og:site_name" content="Lucas dos Santos Abreu">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="pt-BR"><meta itemprop=datePublished content="2018-03-31T22:00:00-03:00">
 <meta itemprop=dateModified content="2018-03-31T22:00:00-03:00">
-<meta itemprop=wordCount content="628"><meta itemprop=image content="http://www.lucassabreu.net.br/uploads/banner-cf-s3-https.svg.png">
+<meta itemprop=wordCount content="628">
+<meta property="og:image" content="https://www.lucassabreu.net.br/white_hu8334ad00c26f930f76e93dcf8b9ae200_1453_b057132501ea1357de1685fc4ac773d9.png">
+<meta name=twitter:card content="summary_large_image"><meta property="author" content="Lucas dos Santos Abreu"><meta name=twitter:creator content="@LucasSantAbreu">
+<meta name=twitter:site content="@LucasSantAbreu">
 <meta itemprop=keywords content="aws,https,cloudfront,s3,">
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
@@ -13,8 +22,8 @@
 Aplicando HTTPS para uma SPA na AWS |
 Lucas dos Santos Abreu
 </title>
-<link rel=stylesheet href="/css/style.css?rnd=1634214137">
-<script src="/js/index.js?rnd=1634214137"></script>
+<link rel=stylesheet href="/css/style.css?rnd=1634392200">
+<script src="/js/index.js?rnd=1634392200"></script>
 </head>
 <body>
 <a class=skip-to-content-link href=#main> Skip to content </a>
@@ -38,12 +47,11 @@ Lucas dos Santos Abreu
 Published:
 <time datetime="2018-03-31 22:00:00 -0300 -0300">2018-03-31</time>
 </span>
-</p>
+</p><figure class=big>
+<img class="lazyload blur-up feature" loading=lazy data-src=https://www.lucassabreu.net.br/post/aplicando-https-para-uma-spa-na-aws/feature.png alt="cover image" width=984 height=243>
+</figure>
 </header>
 <div class=content role=content>
-<figure class=big>
-<img class="lazyload blur-up" loading=lazy data-src=/uploads/banner-cf-s3-https.svg.png width=984 height=243>
-</figure>
 <p>Recentemente passamos a servir a nossa landing page e o SPA do <a href=https://planrockr.com/>Planrockr</a> sobre HTTPS, inicialmente apenas estamos usando HTTPS no nosso backend, mas percebemos que seria melhor que nosso frontend também usasse.</p>
 <p>Alguns dos motivos por traz disso seriam para melhorar o <a href=https://webmasters.googleblog.com/2014/08/https-as-ranking-signal.html>ranking em sites de pesquisa</a>, para garantir ainda mais a segurança nas comunicações, e também para passar mais segurança para os nossos usuários.</p>
 <p>Como estamos servindo nosso frontend usando o S3 da AWS, é apenas uma questão de colocar um CloudFront na frente e alterar a rota no Route 53 e tudo passa a funcionar, mas acabou dando alguma dor de cabeça, não por ser uma tarefa difícil, mas simplesmente por termos encontrado instruções confusas e errôneas quando pesquisamos como executar a migração.</p>
@@ -99,13 +107,13 @@ Published:
 </div><section class=share>
 <p>
 Share this post at
-<a href="https://twitter.com/share?text=Aplicando%20HTTPS%20para%20uma%20SPA%20na%c2%a0AWS&nbsp;-&nbsp;Lucas%20dos%20Santos%20Abreu&url=http%3a%2f%2fwww.lucassabreu.net.br%2fpost%2faplicando-https-para-uma-spa-na-aws%2f" onclick="return window.open(this.href,'twitter-share','width=550,height=235'),!1">
+<a href="https://twitter.com/share?text=Aplicando%20HTTPS%20para%20uma%20SPA%20na%c2%a0AWS&nbsp;-&nbsp;Lucas%20dos%20Santos%20Abreu&url=https%3a%2f%2fwww.lucassabreu.net.br%2fpost%2faplicando-https-para-uma-spa-na-aws%2f" onclick="return window.open(this.href,'twitter-share','width=550,height=235'),!1">
 Twitter
 </a>
-<a href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fwww.lucassabreu.net.br%2fpost%2faplicando-https-para-uma-spa-na-aws%2f" onclick="return window.open(this.href,'facebook-share','width=580,height=296'),!1">
+<a href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fwww.lucassabreu.net.br%2fpost%2faplicando-https-para-uma-spa-na-aws%2f" onclick="return window.open(this.href,'facebook-share','width=580,height=296'),!1">
 Facebook
 </a>
-<a href="http://pinterest.com/pin/create/button/?url=http%3a%2f%2fwww.lucassabreu.net.br%2fpost%2faplicando-https-para-uma-spa-na-aws%2f&description=Aplicando%20HTTPS%20para%20uma%20SPA%20na%c2%a0AWS" onclick="return window.open(this.href,'pinterest-share','width=580,height=296'),!1">
+<a href="http://pinterest.com/pin/create/button/?url=https%3a%2f%2fwww.lucassabreu.net.br%2fpost%2faplicando-https-para-uma-spa-na-aws%2f&description=Aplicando%20HTTPS%20para%20uma%20SPA%20na%c2%a0AWS" onclick="return window.open(this.href,'pinterest-share','width=580,height=296'),!1">
 Pinterest
 </a>
 </p>

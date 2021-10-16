@@ -280,6 +280,11 @@ header .reading-time::before {
   bottom: -2px;
 }
 
+article header figure.big {
+  margin-top: var(--paragraphmargin);
+  margin-bottom: var(--paragraphmargin);
+}
+
 article nav.toc,
 div.feature {
   background-color: var(--emphasisbgcolor);

@@ -1,9 +1,19 @@
 <!doctype html><html lang=pt-br>
 <head>
 <meta itemprop=name content="Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 1">
-<meta itemprop=description content="Como parte das minhas metas dentro da Coderockr está a construção de um cluster usando algumas das ferramentas de orquestração de contêineres que existem no mercado; como o Docker Swarm, Kubernetes, Apache Mesos, etc. Optei pelo Kubernetes..."><meta itemprop=datePublished content="2017-03-07T00:00:00+00:00">
+<meta property="og:title" content="Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 1">
+<meta itemprop=description content="Como parte das minhas metas dentro da Coderockr está a construção de um cluster usando algumas das ferramentas de orquestração de contêineres que existem no mercado; como o Docker Swarm, Kubernetes, Apache Mesos, etc. Optei pelo Kubernetes...">
+<meta property="og:description" content="Como parte das minhas metas dentro da Coderockr está a construção de um cluster usando algumas das ferramentas de orquestração de contêineres que existem no mercado; como o Docker Swarm, Kubernetes, Apache Mesos, etc. Optei pelo Kubernetes...">
+<meta property="og:url" content="https://www.lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/">
+<meta property="og:site_name" content="Lucas dos Santos Abreu">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="pt-BR"><meta itemprop=datePublished content="2017-03-07T00:00:00+00:00">
 <meta itemprop=dateModified content="2017-03-07T00:00:00+00:00">
-<meta itemprop=wordCount content="770"><meta itemprop=image content="http://www.lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png">
+<meta itemprop=wordCount content="770">
+<meta itemprop=image content="https://www.lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png">
+<meta property="og:image" content="https://www.lucassabreu.net.br/white_hu8334ad00c26f930f76e93dcf8b9ae200_1453_c521e4b8037ac338a1cd9bc0c9d38757.png">
+<meta name=twitter:card content="summary_large_image"><meta property="author" content="Lucas dos Santos Abreu"><meta name=twitter:creator content="@LucasSantAbreu">
+<meta name=twitter:site content="@LucasSantAbreu">
 <meta itemprop=keywords content="Kubernetes,Openshift,Introduction,Simple,Docker,">
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
@@ -13,8 +23,8 @@
 Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 1 |
 Lucas dos Santos Abreu
 </title>
-<link rel=stylesheet href="/css/style.css?rnd=1634214137">
-<script src="/js/index.js?rnd=1634214137"></script>
+<link rel=stylesheet href="/css/style.css?rnd=1634392200">
+<script src="/js/index.js?rnd=1634392200"></script>
 </head>
 <body>
 <a class=skip-to-content-link href=#main> Skip to content </a>
@@ -110,13 +120,13 @@ docker run -d --name app-test --link db-test:db <span style=color:#cb4b16>\
 </div><section class=share>
 <p>
 Share this post at
-<a href="https://twitter.com/share?text=Um%20ambiente%20simples%20usando%20Kubernetes%20e%20OpenShift%20Next%20Gen%e2%80%8a-%e2%80%8aParte%c2%a01&nbsp;-&nbsp;Lucas%20dos%20Santos%20Abreu&url=http%3a%2f%2fwww.lucassabreu.net.br%2fpost%2fum-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1%2f" onclick="return window.open(this.href,'twitter-share','width=550,height=235'),!1">
+<a href="https://twitter.com/share?text=Um%20ambiente%20simples%20usando%20Kubernetes%20e%20OpenShift%20Next%20Gen%e2%80%8a-%e2%80%8aParte%c2%a01&nbsp;-&nbsp;Lucas%20dos%20Santos%20Abreu&url=https%3a%2f%2fwww.lucassabreu.net.br%2fpost%2fum-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1%2f" onclick="return window.open(this.href,'twitter-share','width=550,height=235'),!1">
 Twitter
 </a>
-<a href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fwww.lucassabreu.net.br%2fpost%2fum-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1%2f" onclick="return window.open(this.href,'facebook-share','width=580,height=296'),!1">
+<a href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fwww.lucassabreu.net.br%2fpost%2fum-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1%2f" onclick="return window.open(this.href,'facebook-share','width=580,height=296'),!1">
 Facebook
 </a>
-<a href="http://pinterest.com/pin/create/button/?url=http%3a%2f%2fwww.lucassabreu.net.br%2fpost%2fum-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1%2f&description=Um%20ambiente%20simples%20usando%20Kubernetes%20e%20OpenShift%20Next%20Gen%e2%80%8a-%e2%80%8aParte%c2%a01" onclick="return window.open(this.href,'pinterest-share','width=580,height=296'),!1">
+<a href="http://pinterest.com/pin/create/button/?url=https%3a%2f%2fwww.lucassabreu.net.br%2fpost%2fum-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1%2f&description=Um%20ambiente%20simples%20usando%20Kubernetes%20e%20OpenShift%20Next%20Gen%e2%80%8a-%e2%80%8aParte%c2%a01" onclick="return window.open(this.href,'pinterest-share','width=580,height=296'),!1">
 Pinterest
 </a>
 </p>
