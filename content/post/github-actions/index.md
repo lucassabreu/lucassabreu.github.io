@@ -1,17 +1,16 @@
 +++
-date = "2021-09-12"
+date = "2021-10-15"
 title = "Github Actions"
 draft = false
 tags = ["Github", "Github Actions", "Continuous Integration"]
 toc = true
 description = """
 Como e onde podemos usar o Github Actions para automatizar os processos do
-dia-a-dia de um repositório, e alguns outros usos interessantes que podemos
+dia a dia de um repositório, e alguns outros usos interessantes que podemos
 fazer com a API de eventos disponível.
 """
+resources = ["./feature.png"]
 +++
-
-<!-- more -->
 
 ## O que é isso?
 

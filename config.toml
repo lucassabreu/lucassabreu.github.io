@@ -3,6 +3,8 @@ title = "Lucas dos Santos Abreu"
 baseurl = "/"
 theme = "smol"
 
+assetDir = "themes/smol/resources"
+
 disqusShortname = "lucas-dos-santos-abreu"
 enableEmoji = true
 
@@ -11,6 +13,7 @@ ignoreFiles = ["node_modules"]
 [Params]
   dateFmt = "2006-01-02"
   headingAnchors = true
+  twitter = '@LucasSantAbreu'
 
 [author]
   name = "Lucas dos Santos Abreu"
