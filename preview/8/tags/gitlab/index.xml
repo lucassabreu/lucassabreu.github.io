@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Gitlab on Lucas dos Santos Abreu</title><link>http://www.lucassabreu.net.br/preview/8/tags/gitlab/</link><description>Recent content in Gitlab on Lucas dos Santos Abreu</description><generator>Hugo -- gohugo.io</generator><language>pt-BR</language><lastBuildDate>Mon, 01 May 2017 00:00:00 +0000</lastBuildDate><atom:link href="http://www.lucassabreu.net.br/preview/8/tags/gitlab/index.xml" rel="self" type="application/rss+xml"/><item><title>Ambientes por Branch com OpenShift Next Gen</title><link>http://www.lucassabreu.net.br/preview/8/post/ambientes-por-branch-com-openshift-next-gen/</link><pubDate>Mon, 01 May 2017 00:00:00 +0000</pubDate><guid>http://www.lucassabreu.net.br/preview/8/post/ambientes-por-branch-com-openshift-next-gen/</guid><description>Como melhorar o processo de Pull Request usando deploys por branch usando OpenShift Next Gen e Continuous Integration</description><content:encoded><![CDATA[<figure class="big">
+	<img
+		class="lazyload blur-up"
+		loading="lazy"
+		data-src="/post/ambientes-por-branch-com-openshift-next-gen/header.png"
+		
+			width="1000" height="328"
+		
+	/>
+	
+</figure>
+
+<p>Hoje na <a href="https://blog.coderockr.com">Coderockr</a> utilizamos <a href="https://blog.coderockr.com/a-import%C3%A2ncia-da-revis%C3%A3o-de-c%C3%B3digo-a1a8b41ed7ff">Pull Requests e Code Reviews</a> como uma ferramenta de qualidade nos nossos desenvolvimentos, e tem garantido resultados nesse sentido.</p>
+<p>Mas mesmo com esse processo eventualmente temos de lidar com alguns problemas como, por exemplo, funções que interferem umas nas outras depois de aprovadas, permitir que os Testers possam avaliar as melhorias, e garantir que todos as mudanças feitas na branch principal podem ser enviadas para produção.</p>
+<p>Esses problemas podem ser reduzidos, ou até eliminados; se, mesmo antes de aprovar os PRs; os Testers conseguissem trabalhar sobre essas melhorias e só repassadas para a branch principal após a aprovação deles.</p>
+<p>Desse modo o fonte principal não só passou pelo Review de outros desenvolvedores, como foi testado pela equipe de QA, dando ainda mais confiança no mesmo.</p>
+<p>Mas subir ambientes de homologação para cada um dos PRs, automaticamente ou sobre demanda, não é um problema trivial, envolve subir máquinas, garantir que esta rodando a versão atualizada, liberar portas, etc.</p>
+<p>Uma forma que encontramos para resolver esse problema é utilizando um cluster Kubernetes (ou a versão da Red Hat o OpenShift), pois essas ações são bem simples de realizar com ele e ainda mais fáceis se forem automatizadas.</p>
+<p>Agora vou explicar como montar um exemplo simples, um para o GitLab e outro para o GitHub, integrando com o OpenShift da <a href="https://getupcloud.com.br">Getup Cloud</a>.</p>
+<p>Sobre uma introdução ao Kubernetes/OpenShift pode ver aqui:</p>
+<p><a href="/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/"><strong>Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 1</strong></a></p>
+<p>O cliente de linha de comando pode ser baixado em:</p>
+<p><a href="https://github.com/openshift/origin/releases"><strong>openshift/origin</strong> origin - Enterprise Kubernetes for Developers</a></p>
+<h4 id="gitlab-integrations-ci-registry-e-environments">
+	GitLab: Integrations, CI, Registry e Environments
+	
+		<a href="#gitlab-integrations-ci-registry-e-environments" class="heading-anchor"
+			aria-label="copy link to this section"
+			title="Copy link to this section"
+			>
+			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512">
+				<g>
+					<g>
+						<g>
+							<path d="M480.7,11H130.4c-11.3,0-20.4,9.1-20.4,20.4v60.3H31.5c-11.3,0-20.4,9.1-20.4,20.4v368.5c0,11.3,9.1,20.4,20.4,20.4		 h350.3c11.3,0,20.4-9.1,20.4-20.4v-60.3h78.5c11.3,0,20.4-9.1,20.4-20.4V31.4C501.1,20.1,491.9,11,480.7,11z M361.3,460.2H51.9		 V132.5h309.4V460.2z M460.2,379.5h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/>
+							<path d="m127.8,242.6h157.7c11.3,0 20.4-9.1 20.4-20.4 0-11.3-9.1-20.4-20.4-20.4h-157.7c-11.3,0-20.4,9.1-20.4,20.4 0,11.3 9.1,20.4 20.4,20.4z"/>
+							<path d="m127.8,390.9h157.7c11.3,0 20.4-9.1 20.4-20.4 0-11.3-9.1-20.4-20.4-20.4h-157.7c-11.3,0-20.4,9.1-20.4,20.4 0,11.2 9.1,20.4 20.4,20.4z"/>
+						</g>
+					</g>
+				</g>
+			</svg>
+		</a>
+	
+</h4>
+
+
+	
+
+<figure class="big">
+	<img
+		class="lazyload blur-up"
+		loading="lazy"
+		data-src="/post/ambientes-por-branch-com-openshift-next-gen/gitlab.png"
+		
+			width="800" height="202"
+		
+	/>
+	
+</figure>
+
+<p>A primeira experiencia que fizemos foi com o <a href="https://gitlab.com">GitLab</a>, principalmente pela integração que ele traz com o Kubernetes, e as outras ferramentas que ele oferece que acabaram cobrindo todo o escopo do problema.</p>
+<p>O que queremos montar é um ambiente por branch/PR que deve ser facilmente criado e destruído. Para demonstrar criei um repositório no GitLab com uma aplicação bem simples que apenas retorna uma página estática, mas é o suficiente para o objetivo.</p>
+
+
+	
+
+<figure >
+	<img
+		class="lazyload blur-up"
+		loading="lazy"
+		data-src="/post/ambientes-por-branch-com-openshift-next-gen/helloworld-view.png"
+		
+			width="638" height="365"
+		
+	/>
+	
+		<figcaption><p>retorno do serviço helloworld</p></figcaption>
+	
+</figure>
+
+<p>Primeiramente criei a base da aplicação usando Docker, a mesma gera uma página com o conteúdo acima. O que vale destacar nesse primeiro momento é que já configurei um processo de CI simples:</p>
+<div class="highlight"><pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#268bd2">build</span>:
+  <span style="color:#268bd2">image</span>: docker:latest
+  <span style="color:#268bd2">services</span>:
+    - docker:dind
+  <span style="color:#268bd2">stage</span>: build
+  <span style="color:#268bd2">script</span>:
+    - docker login -u &#34;gitlab-ci-token&#34; -p &#34;$CI_JOB_TOKEN&#34; $CI_REGISTRY
+    - docker build --pull -t &#34;$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME&#34; .
+    - docker push &#34;$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME&#34;
+    - echo &#34;Pushing image $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME&#34;
+  <span style="color:#268bd2">only</span>:
+    - branches
+</code></pre></div><p class="code-legend">.gitlab-ci.yml</p>
+<p>Nesse CI eu construo o contêiner da aplicação para cada commit feito e guardo no registro do próprio GitLab por branch, dessa forma tenho uma versão do meu contêiner para cada uma das branchs que forem criadas e vou atualizando essas versões automaticamente a cada alteração.</p>
+<p>Fonte completo até aqui:</p>
+<p><a href="https://gitlab.com/lucassabreu/k8s-pr-envs/tree/v1"><strong>Files · v1 · Lucas dos Santos Abreu / k8s-pr-envs</strong></a></p>
+<hr>
+<p>Nesse momento não tenho nenhum deploy, seja de ambiente de teste, produção ou por branch.</p>
+<p>Então vamos adicionar um processo de deploy no OpenShift para o ambiente de produção e testes, sendo que o ambiente de testes é atualizado automaticamente para os commits na master e o de produção apenas quando um usuário disparar o deploy.</p>
+<p>Para fazer isso primeiramente temos de configurar a integração entre o OpenShift e o GitLab, para isso vamos em <em>Settings</em> &gt; <em>Integrations</em> e procuramos <em>Kubernetes</em> nas opções. O GitLab irá solicitar algumas informações sobre o ambiente, qual o <strong>Namespace</strong>, o <strong>URL da API</strong> do <strong>Kubernetes</strong> e uma forma de autenticação, que pode ser um <strong>Service Token</strong> ou um <strong>CA Bundle</strong>.</p>
+<p>Dessa forma vou criar um novo <strong>Namespace</strong>, como fazer isso vai depender do seu vendor de Kubernetes, no caso da <a href="https://getupcloud.com.br">Getup Cloud</a>, basta ir em <a href="https://portal.getupcloud.com/projects">https://portal.getupcloud.com/projects</a> e criar um novo projeto, o nome do projeto será o <strong>Namespace.</strong></p>
+
+
+	
+
+<figure class="big">
+	<img
+		class="lazyload blur-up"
+		loading="lazy"
+		data-src="/post/ambientes-por-branch-com-openshift-next-gen/dashboard-getup.png"
+		
+			width="800" height="282"
+		
+	/>
+	
+</figure>
+
+<p>Uma vez com o <strong>Namespace</strong> podemos criar um novo <strong>Service Token</strong> para ser usado no CI do GitLab, no caso para criar um Service Token é necessário criar uma ServiceAccount e dar permissões a mesma, e então pegar o Service Token dela. O script abaixo realiza essas operações:</p>
+<pre>
+<b>$ oc login https://api.getupcloud.com:443</b>
+Authentication required for https://api.getupcloud.com:443 ...
+Username: lucas.s.abreu@gmail.com
+Password:
+Login successful.
+...
+
+<b>$ oc project gitlab-k8s-pr-envs #usar o seu projeto</b>
+Now using project "gitlab-k8s-pr-envs" on server ...
+
+<b>$ oc create serviceaccount gitlab</b>
+serviceaccount "gitlab" created
+
+<b>$ oc policy add-role-to-user admin \</b>
+    system:serviceaccount:gitlab-k8s-pr-envs:gitlab
+
+<b>$ oc describe serviceaccount gitlab</b>
+Name:  gitlab
+Namespace: gitlab-k8s-pr-envs
+Labels:  <none>
+
+Image pull secrets: gitlab-dockercfg-qj9o9
+
+Mountable secrets:  gitlab-token-6ael2
+                    gitlab-dockercfg-qj9o9
+
+Tokens:             gitlab-token-6ael2
+                    gitlab-token-zkk6u
+
+<b>$ oc describe secret gitlab-token-6ael2</b>
+Name:  gitlab-token-6ael2
+Namespace: gitlab-k8s-pr-envs
+Labels:  <none>
+Annotations: kubernetes.io/service-account.name=gitlab
+  kubernetes.io/service-account.uid=zzz
+
+Type: kubernetes.io/service-account-token
+
+Data
+====
+ca.crt:  1066 bytes
+namespace: 18 bytes
+service-ca.crt: 2182 bytes
+token:  <i><b>token-do-openshift-que-estou-ocultando</i></b>
+</pre>
+<p>Agora que temos o token gerado basta adicionar essas informações no
+GitLab.</p>
+
+
+	
+
+<figure class="big">
+	<img
+		class="lazyload blur-up"
+		loading="lazy"
+		data-src="/post/ambientes-por-branch-com-openshift-next-gen/gitlab-k8s-integration.png"
+		
+			width="750" height="481"
+		
+	/>
+	
+</figure>
+
+<p>Você pode confirmar se passou os dados corretos com o botão de teste no GitLab.</p>
+<p>Certo, agora o GitLab consegue conversar com o OpenShift. Podemos então alterar nossas regras de CI para criar duas novas etapas: <em>staging</em> e <em>production</em>, que irão realizar o deploy dos nossos ambientes padrões, sendo que <em>staging</em> será disparada automaticamente por commits na master e <em>production</em> ficará como manual.</p>
+<p>O .<code>gitlab-ci.yml</code> ficou como abaixo (já usando a integração com OpenShift):</p>
+<div class="highlight"><pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#268bd2">stages</span>:
+  - build
+  - staging
+  - production
+
+<span style="color:#268bd2">variables</span>:
+  <span style="color:#268bd2">KUBE_DOMAIN</span>: getup.io
+
+<span style="color:#268bd2">build</span>:
+  <span style="color:#268bd2">stage</span>: build
+  <span style="color:#268bd2">image</span>: docker:latest
+  <span style="color:#268bd2">services</span>:
+    - docker:dind
+  <span style="color:#268bd2">script</span>:
+    - docker login -u &#34;gitlab-ci-token&#34; -p &#34;$CI_JOB_TOKEN&#34; $CI_REGISTRY
+    - docker build --pull -t &#34;$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME&#34; .
+    - docker push &#34;$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME&#34;
+    - echo &#34;Pushing image $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME&#34;
+  <span style="color:#268bd2">only</span>:
+    - branches
+
+<span style="color:#268bd2">staging</span>:
+  <span style="color:#268bd2">stage</span>: staging
+  <span style="color:#268bd2">image</span>: lucassabreu/openshift-k8s-cli:latest
+  <span style="color:#268bd2">variables</span>:
+    <span style="color:#268bd2">CI_ENVIRONMENT_URL</span>: http://$CI_PROJECT_NAME-staging.$KUBE_DOMAIN
+  <span style="color:#268bd2">environment</span>:
+    <span style="color:#268bd2">name</span>: staging
+    <span style="color:#268bd2">url</span>: http://$CI_PROJECT_NAME-staging.$KUBE_DOMAIN
+  <span style="color:#268bd2">script</span>:
+    - k8s/deploy
+  <span style="color:#268bd2">only</span>:
+    - master
+
+<span style="color:#268bd2">production</span>:
+  <span style="color:#268bd2">stage</span>: production
+  <span style="color:#268bd2">image</span>: lucassabreu/openshift-k8s-cli:latest
+  <span style="color:#268bd2">variables</span>:
+    <span style="color:#268bd2">CI_ENVIRONMENT_URL</span>: http://$CI_PROJECT_NAME.$KUBE_DOMAIN
+  <span style="color:#268bd2">environment</span>:
+    <span style="color:#268bd2">name</span>: production
+    <span style="color:#268bd2">url</span>: http://$CI_PROJECT_NAME.$KUBE_DOMAIN
+  <span style="color:#268bd2">when</span>: manual
+  <span style="color:#268bd2">script</span>:
+    - k8s/deploy
+  <span style="color:#268bd2">only</span>:
+    - master
+</code></pre></div><p class="code-legend">.gitlab-ci.yml (v2)</p>
+<p>As mudança são os novos stages <code>staging</code> e <code>production</code>; as variáveis novas <code>KUBE_DOMAIN</code> e <code>CI_ENVIRONMENT_URL</code>; e o script <code>k8s/deploy</code>. Vamos por partes.</p>
+<p>A variável <code>KUBE_DOMAIN</code> vai ajudar a deixar o nosso processo de deploy mais simples, basicamente nós colocamos nela o domínio base que o OpenShift usa para expor as rotas dele, no caso da Getup seria &ldquo;<em>getup.io</em>&rdquo;. A <code>CI_ENVIRONMENT_URL</code> é completar a <code>KUBE_DOMAIN</code> e serve para informar o <code>k8s/deploy</code> qual endereço ele deve expor o ambiente, ele deve sempre terminar com o <code>KUBE_DOMAIN</code> e deve ser igual a <code>url</code> da chave <code>environment</code>, pois é por essa chave que o GitLab sabe onde os ambientes estão expostos.</p>
+<p>As etapas de <code>staging</code> e <code>production</code> irão fazer o deploy dos nossos ambientes e como comentei antes o ambiente de <em>staging</em> terá deploy automático para todo commit na master, enquanto <em>production</em> irá esperar uma ação do usuário. No mais as duas etapas são iguais mudando apenas a URL que estão sendo expostas. Estou usando a imagem <code>lucassabreu/openshift-k8s-cli</code> que é basicamente um <code>ubuntu</code> com o <code>oc</code> instalado.</p>
+<p>O script <code>k8s/deploy</code> está abaixo e ele basicamente se autentica contra a API do OpenShift usando o <em>Service Token</em> que criamos antes, destrói a aplicação antiga e executa o deploy de uma nova.</p>
+<div class="highlight"><pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#719e07">#!/bin/bash
+</span><span style="color:#719e07"></span>
+oc login <span style="color:#2aa198">&#34;</span><span style="color:#268bd2">$KUBE_URL</span><span style="color:#2aa198">&#34;</span> --token <span style="color:#2aa198">&#34;</span><span style="color:#268bd2">$KUBE_TOKEN</span><span style="color:#2aa198">&#34;</span>
+oc project <span style="color:#2aa198">&#34;</span><span style="color:#268bd2">$KUBE_NAMESPACE</span><span style="color:#2aa198">&#34;</span>
+
+<span style="color:#268bd2">HOSTNAME</span><span style="color:#719e07">=</span><span style="color:#2aa198">&#34;</span><span style="color:#268bd2">$CI_ENVIRONMENT_URL</span><span style="color:#2aa198">&#34;</span>
+
+<span style="color:#586e75"># remove protocol from URL</span>
+<span style="color:#268bd2">HOSTNAME</span><span style="color:#719e07">=</span><span style="color:#2aa198">&#34;</span><span style="color:#2aa198">${</span><span style="color:#268bd2">HOSTNAME</span>/<span style="color:#cb4b16">\h</span><span style="color:#268bd2">ttp</span>:<span style="color:#cb4b16">\/\/</span>/<span style="color:#2aa198">}</span><span style="color:#2aa198">&#34;</span>
+<span style="color:#268bd2">HOSTNAME</span><span style="color:#719e07">=</span><span style="color:#2aa198">&#34;</span><span style="color:#2aa198">${</span><span style="color:#268bd2">HOSTNAME</span>/<span style="color:#cb4b16">\h</span><span style="color:#268bd2">ttp</span>:<span style="color:#cb4b16">\/\/</span>/<span style="color:#2aa198">}</span><span style="color:#2aa198">&#34;</span>
+
+<span style="color:#268bd2">IMAGE_TAG</span><span style="color:#719e07">=</span><span style="color:#2aa198">&#34;</span><span style="color:#268bd2">$CI_REGISTRY_IMAGE</span><span style="color:#2aa198">:</span><span style="color:#268bd2">$CI_BUILD_REF_NAME</span><span style="color:#2aa198">&#34;</span>
+<span style="color:#268bd2">ENV</span><span style="color:#719e07">=</span><span style="color:#2aa198">&#34;</span><span style="color:#268bd2">$CI_ENVIRONMENT_SLUG</span><span style="color:#2aa198">&#34;</span>
+
+<span style="color:#b58900">echo</span> <span style="color:#2aa198">&#34;&gt;&gt; Deleting old application...&#34;</span>
+oc delete all -l <span style="color:#2aa198">&#34;app=</span><span style="color:#268bd2">$CI_ENVIRONMENT_SLUG</span><span style="color:#2aa198">&#34;</span>
+
+<span style="color:#b58900">echo</span> <span style="color:#2aa198">&#34;&gt;&gt; Deploying image </span><span style="color:#268bd2">$IMAGE_TAG</span><span style="color:#2aa198"> to env </span><span style="color:#268bd2">$ENV</span><span style="color:#2aa198"> at </span><span style="color:#268bd2">$HOSTNAME</span><span style="color:#2aa198">...&#34;</span>
+
+sed <span style="color:#2aa198">&#34;
+</span><span style="color:#2aa198">  s|__HOSTNAME__|</span><span style="color:#268bd2">$HOSTNAME</span><span style="color:#2aa198">|;
+</span><span style="color:#2aa198">  s|__ENV__|</span><span style="color:#268bd2">$ENV</span><span style="color:#2aa198">|;
+</span><span style="color:#2aa198">  s|__IMAGE_TAG__|</span><span style="color:#268bd2">$IMAGE_TAG</span><span style="color:#2aa198">|;
+</span><span style="color:#2aa198">  &#34;</span> k8s/full.yml | oc apply -f -
+<span style="color:#719e07">if</span> <span style="color:#719e07">[</span> <span style="color:#268bd2">$?</span> !<span style="color:#719e07">=</span> <span style="color:#2aa198">0</span> <span style="color:#719e07">]</span>; <span style="color:#719e07">then</span>
+  <span style="color:#b58900">exit</span> <span style="color:#2aa198">1</span>
+<span style="color:#719e07">fi</span>
+
+<span style="color:#b58900">echo</span> <span style="color:#2aa198">&#34;&gt;&gt; Deployed to </span><span style="color:#268bd2">$CI_ENVIRONMENT_URL</span><span style="color:#2aa198">&#34;</span>
+</code></pre></div><p class="code-legend">k8s/deploy</p>
+<p>Vale ressaltar que é importante marcar os componentes do ambiente com <code>app=$CI_ENVIRONMENT_SLUG</code>, pois é assim que o GitLab consegue encontrar eles e lhe retornar status sobre eles.</p>
+<p>Também estou usando um truque de &ldquo;templating&rdquo; com o YAML que define os ambientes para poder inserir as variáveis de cada ambiente nele. Existem outras ferramentas mais avançadas como o <a href="https://github.com/kubernetes/helm">Helm</a>, mas para o meu exemplo templating com <code>sed</code> é o suficiente.</p>
+<div class="highlight"><pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#268bd2">apiVersion</span>: extensions/v1beta1
+<span style="color:#268bd2">kind</span>: Deployment
+<span style="color:#268bd2">metadata</span>:
+  <span style="color:#268bd2">name</span>: hw-dpl-__ENV__
+  <span style="color:#268bd2">labels</span>:
+    <span style="color:#268bd2">app</span>: __ENV__
+<span style="color:#268bd2">spec</span>:
+  <span style="color:#268bd2">replicas</span>: <span style="color:#2aa198">1</span>
+  <span style="color:#268bd2">template</span>:
+    <span style="color:#268bd2">metadata</span>:
+      <span style="color:#268bd2">labels</span>:
+        <span style="color:#268bd2">app</span>: __ENV__
+        <span style="color:#268bd2">name</span>: hw-pod
+    <span style="color:#268bd2">spec</span>:
+      <span style="color:#268bd2">containers</span>:
+      - <span style="color:#268bd2">name</span>: hw-container
+        <span style="color:#268bd2">image</span>: __IMAGE_TAG__
+        <span style="color:#268bd2">imagePullPolicy</span>: Always
+        <span style="color:#268bd2">ports</span>:
+        - <span style="color:#268bd2">name</span>: web-port
+          <span style="color:#268bd2">containerPort</span>: <span style="color:#2aa198">8080</span>
+---
+<span style="color:#268bd2">apiVersion</span>: <span style="color:#2aa198">&#34;v1&#34;</span>
+<span style="color:#268bd2">kind</span>: Service
+<span style="color:#268bd2">metadata</span>:
+  <span style="color:#268bd2">name</span>: hw-src-__ENV__
+  <span style="color:#268bd2">labels</span>:
+    <span style="color:#268bd2">app</span>: __ENV__
+<span style="color:#268bd2">spec</span>:
+  <span style="color:#268bd2">ports</span>:
+    - <span style="color:#268bd2">port</span>: <span style="color:#2aa198">80</span>
+      <span style="color:#268bd2">targetPort</span>: <span style="color:#2aa198">&#34;web-port&#34;</span>
+      <span style="color:#268bd2">protocol</span>: TCP
+  <span style="color:#268bd2">selector</span>:
+    <span style="color:#268bd2">name</span>: hw-pod
+    <span style="color:#268bd2">app</span>: __ENV__
+---
+<span style="color:#268bd2">apiVersion</span>: v1
+<span style="color:#268bd2">kind</span>: Route
+<span style="color:#268bd2">metadata</span>:
+  <span style="color:#268bd2">name</span>: __ENV__
+  <span style="color:#268bd2">labels</span>:
+    <span style="color:#268bd2">app</span>: __ENV__
+<span style="color:#268bd2">spec</span>:
+  <span style="color:#268bd2">host</span>: __HOSTNAME__
+  <span style="color:#268bd2">to</span>:
+    <span style="color:#268bd2">kind</span>: Service
+    <span style="color:#268bd2">name</span>: hw-src-__ENV__
+</code></pre></div><p class="code-legend">k8s/full.yml</p>
+<p>Agora, depois que do commit das alterações, o GitLab faz o <em>build</em>, o deploy da <em>staging</em> e <em>production</em> (manual); podemos ver na área <em>Environments</em> do GitLab que os ambientes estão rodando, ele inclusive traz alguns comandos para facilitar a vida: link para a URL do ambiente, terminal dentro do Pod e opção de Re-deploy.</p>
+
+
+	
+
+<figure class="big">
+	<img
+		class="lazyload blur-up"
+		loading="lazy"
+		data-src="/post/ambientes-por-branch-com-openshift-next-gen/gilab-envs.png"
+		
+			width="1000" height="301"
+		
+	/>
+	
+</figure>
+
+<p>Fonte completo até agora:</p>
+<p><a href="https://gitlab.com/lucassabreu/k8s-pr-envs/tree/v2"><strong>Files · v2 · Lucas dos Santos Abreu / k8s-pr-envs</strong></a></p>
+<hr>
+<p>Agora que temos o <em>build</em> da nossa aplicação e um deploy automatizado, vamos adicionar a função de deploy por branch.</p>
+<p>Basicamente precisamos de duas novas etapas no nosso CI, uma para subir o ambiente para uma branch e outro para destruir esse ambiente para evitar consumir recursos sem necessidade.</p>
+<p>Para isso fiz as seguintes alterações nos <code>.gitlab-ci.yml</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#268bd2">stages</span>:
+  - build
+  - review
+  - staging
+  - production
+  - cleanup
+
+<span style="color:#268bd2">review</span>:
+  <span style="color:#268bd2">stage</span>: review
+  <span style="color:#268bd2">image</span>: lucassabreu/openshift-k8s-cli:latest
+  <span style="color:#268bd2">variables</span>:
+    <span style="color:#268bd2">CI_ENVIRONMENT_URL</span>: http://$CI_PROJECT_NAME-$CI_ENVIRONMENT_SLUG.$KUBE_DOMAIN
+  <span style="color:#268bd2">environment</span>:
+    <span style="color:#268bd2">name</span>: r/$CI_COMMIT_REF_NAME
+    <span style="color:#268bd2">url</span>: http://$CI_PROJECT_NAME-$CI_ENVIRONMENT_SLUG.$KUBE_DOMAIN
+    <span style="color:#268bd2">on_stop</span>: stop_review
+  <span style="color:#268bd2">script</span>:
+    - k8s/deploy
+  <span style="color:#268bd2">only</span>:
+    - branches
+  <span style="color:#268bd2">except</span>:
+    - master
+
+<span style="color:#268bd2">stop_review</span>:
+  <span style="color:#268bd2">stage</span>: cleanup
+  <span style="color:#268bd2">image</span>: lucassabreu/openshift-k8s-cli:latest
+  <span style="color:#268bd2">environment</span>:
+    <span style="color:#268bd2">name</span>: r/$CI_COMMIT_REF_NAME
+    <span style="color:#268bd2">action</span>: stop
+  <span style="color:#268bd2">when</span>: manual
+  <span style="color:#268bd2">variables</span>:
+    <span style="color:#268bd2">GIT_STRATEGY</span>: none
+  <span style="color:#268bd2">script</span>:
+    - oc login &#34;$KUBE_URL&#34; --token &#34;$KUBE_TOKEN&#34;
+    - oc project &#34;$KUBE_NAMESPACE&#34;
+    - oc delete deployments -l &#34;app=$CI_ENVIRONMENT_SLUG&#34;
+    - oc delete all -l &#34;app=$CI_ENVIRONMENT_SLUG&#34;
+  <span style="color:#268bd2">only</span>:
+    - branches
+  <span style="color:#268bd2">except</span>:
+    - master
+
+[...]
+</code></pre></div><p class="code-legend">.gitlab-ci.yml (v3)</p>
+<p>Basicamente adicionei as duas novas etapas, <code>review</code> basicamente faz a mesma coisa que <code>staging</code>, mas usa um nome de ambiente dinâmico baseado na branch; e tem um <code>enviroment:on_stop</code> que basicamente indica o que fazer quando a branch for removida.</p>
+<p>Na etapa <code>stop_review</code> executo alguns comandos para eliminar o ambiente quando for chamada, é importante deixar essa como <code>manual</code> para que ela não apague sozinha o ambiente quando terminar as outras etapas.</p>
+<p>Os comandos da etapa <code>stop_review</code> precisam estar definidos diretamente no <code>.gitlab-ci.yml</code>, pois quando essa etapa for executada é possível que a branch e commits dela não existam mais, é também por esse motivo que informamos a variável <code>GIT_STRATEGY</code> como <code>NO</code> evitando que sequer seja checado se a branch/commit de origem existem.</p>
+<p>Agora quando crio uma nova branch automaticamente é criado um novo ambiente para a mesma no OpenShift.</p>
+<p>Para testar criei a branch <code>a-change</code> e fiz a seguinte alteração:</p>
+<div class="highlight"><pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-diff" data-lang="diff">   &lt;img id=&#34;logo&#34; src=&#34;logo.svg&#34;
+     alt=&#34;CodeRocker&#34; title=&#34;CodeRocker&#34; /&gt;
+   &lt;h1&gt;Hello World !&lt;/h1&gt;
+<span style="color:#719e07">+  &lt;h2&gt;(with a change)&lt;/h2&gt;
+</span><span style="color:#719e07"></span> &lt;/body&gt;
+ &lt;/html&gt;
+</code></pre></div><p class="code-legend">public/index.html (pr)</p>
+<p>Assim que dei o <code>git push</code> começou o deploy do novo ambiente <code>r/a-change</code>, logo que terminou pude verificar na área de ambientes do GitLab que estava rodando, e tem as mesmas operações disponíveis que os outros, mais a opção de parada (<code>stop_review</code>):</p>
+
+
+	
+
+<figure class="big">
+	<img
+		class="lazyload blur-up"
+		loading="lazy"
+		data-src="/post/ambientes-por-branch-com-openshift-next-gen/branch-env.png"
+		
+			width="1000" height="145"
+		
+	/>
+	
+</figure>
+
+<p>Já rodando as alterações:</p>
+
+
+	
+
+<figure >
+	<img
+		class="lazyload blur-up"
+		loading="lazy"
+		data-src="/post/ambientes-por-branch-com-openshift-next-gen/a-change.png"
+		
+			width="612" height="343"
+		
+	/>
+	
+</figure>
+
+<p>Fontes com essas alterações em:</p>
+<p><a href="https://gitlab.com/lucassabreu/k8s-pr-envs/tree/v3"><strong>Files · v3 · Lucas dos Santos Abreu / k8s-pr-envs</strong></a></p>
+<hr>
+<p>Após essas alterações podemos implementar a regra de merge apenas após testes pela equipe de QA, sem interferência de outras atividades que foram aplicadas no meio do caminho e permitindo um controle melhor sobre o que esta pronto para ir para a produção.</p>
+<hr>
+<p>A postagem acabou ficando bem grande apenas para falar do processo no GitLab, por isso vou criar um segundo post sobre como fazer isso no GitHub, abaixo esta o link para ele:</p>
+<p><a href="/post/ambientes-por-branch-com-openshift-next-gen-usando-github"><strong>Ambientes por Branch com OpenShift Next Gen usando GitHub</strong></a></p>]]></content:encoded></item></channel></rss>
