@@ -1,0 +1,272 @@
+<!doctype html><html lang=pt-br>
+<head>
+<meta itemprop=name content="Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 4">
+<meta property="og:title" content="Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 4">
+<meta itemprop=description content="Para completar a jornada vamos ver como o Kubernetes lida com dados sensíveis dentro da plataforma">
+<meta property="og:description" content="Para completar a jornada vamos ver como o Kubernetes lida com dados sensíveis dentro da plataforma">
+<meta property="og:url" content="https://www.lucassabreu.net.br/preview/9/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4/">
+<meta property="og:site_name" content="Lucas dos Santos Abreu">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="pt-BR"><meta itemprop=datePublished content="2017-03-10T00:00:00+00:00">
+<meta itemprop=dateModified content="2017-03-10T00:00:00+00:00">
+<meta itemprop=wordCount content="656">
+<meta itemprop=image content="https://www.lucassabreu.net.br/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png">
+<meta property="og:image" content="https://www.lucassabreu.net.br/preview/9/white_hu8334ad00c26f930f76e93dcf8b9ae200_1453_8fe136c076b26c15f5840e06bda62df0.png">
+<meta name=twitter:card content="summary_large_image"><meta property="author" content="Lucas dos Santos Abreu"><meta name=twitter:creator content="@LucasSantAbreu">
+<meta name=twitter:site content="@LucasSantAbreu">
+<meta itemprop=keywords content="Kubernetes,Openshift,Introduction,Simple,Docker,">
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<style type=text/css>body{font-family:monospace}</style>
+<title>
+Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 4 |
+Lucas dos Santos Abreu
+</title>
+<link rel=stylesheet href="/preview/9/css/style.css?rnd=1634399426">
+<script src="/preview/9/js/index.js?rnd=1634399426"></script>
+</head>
+<body>
+<a class=skip-to-content-link href=#main> Skip to content </a>
+<header class=page-header>
+<nav arial-label=primary role=menu>
+<a href=/preview/9/preview/9/>Home</a>
+<a href=/preview/9/preview/9/resume>Resume</a>
+<a href=https://twitter.com/LucasSantAbreu>Twitter</a>
+<a href=https://github.com/lucassabreu>GitHub</a>
+<a href=https://medium.com/@lucassabreu>Medium</a>
+<a href=https://www.linkedin.com/in/lucassantosabreu>LinkedIn</a>
+</nav>
+</header>
+<main id=main>
+<article>
+<header>
+<h1>Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 4</h1>
+<p>
+<span class=reading-time>4 minute read</span>
+<span class=published-at>
+Published:
+<time datetime="2017-03-10 00:00:00 +0000 UTC">2017-03-10</time>
+</span>
+</p>
+</header>
+<div class=content role=content>
+<figure class=big>
+<img class="lazyload blur-up" loading=lazy data-src=/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/header.png width=1000 height=165>
+</figure>
+<p>Este post é a quarta parte de uma série sobre o básico necessário para usar o Kubernetes, caso você não tenha lido o post anterior recomendo lê-lo e depois voltar aqui para não ficar perdido.</p>
+<ul>
+<li>Parte 1 - Conceitos Básicos: <a href=/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1>clique aqui</a></li>
+<li>Parte 2 - Construindo o Ambiente: <a href=/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2>clique aqui</a></li>
+<li>Parte 3 - Volumes Persistentes: <a href=/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3>clique aqui</a></li>
+</ul>
+<hr>
+<p>Como citei no <a href=/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3>post anterior</a> ainda existe um ponto de desconforto no ambiente, que é o fato das senhas e usuários estarem expostos diretamente nas configurações. O Kubernetes oferece uma solução para esse problema os <a href=https://kubernetes.io/docs/user-guide/secrets/><strong>Secrets</strong></a>.</p>
+<p>E agora irei mostrar como adicioná-los ao projeto.</p>
+<p>Caso não tenha mais os fontes até o estado do post anterior, ou prefira acompanhar o meu andamento, pode pode pegá-los aqui: <a href=https://github.com/lucassabreu/openshift-next-gen/tree/v2>https://github.com/lucassabreu/openshift-next-gen/tree/v2</a>; ou executar:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>git clone -b v2 <span style=color:#cb4b16>\
+</span><span style=color:#cb4b16></span>    https://github.com/lucassabreu/openshift-next-gen.git
+</code></pre></div><hr>
+<h4 id=secrets>
+Secrets
+<a href=#secrets class=heading-anchor aria-label="copy link to this section" title="Copy link to this section"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><g><g><g><path d="M480.7 11H130.4c-11.3.0-20.4 9.1-20.4 20.4v60.3H31.5c-11.3.0-20.4 9.1-20.4 20.4v368.5c0 11.3 9.1 20.4 20.4 20.4h350.3c11.3.0 20.4-9.1 20.4-20.4v-60.3h78.5c11.3.0 20.4-9.1 20.4-20.4V31.4C501.1 20.1 491.9 11 480.7 11zM361.3 460.2H51.9V132.5h309.4V460.2zm98.9-80.7h-58.1V112.1c0-11.3-9.1-20.4-20.4-20.4h-231V51.8h309.4V379.5z"/><path d="m127.8 242.6h157.7c11.3.0 20.4-9.1 20.4-20.4s-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4s9.1 20.4 20.4 20.4z"/><path d="m127.8 390.9h157.7c11.3.0 20.4-9.1 20.4-20.4.0-11.3-9.1-20.4-20.4-20.4H127.8c-11.3.0-20.4 9.1-20.4 20.4.0 11.2 9.1 20.4 20.4 20.4z"/></g></g></g></svg>
+</a>
+</h4>
+<p>Existem algumas formas de criar e usar os mesmos, criá-los diretamente de arquivos, ou usando configurações, e expô-los aos contêineres usando volumes ou variáveis de ambiente.</p>
+<p>Para essa aplicação vou utilizar um YAML para definir um Secret e vou modificar os Pods para alimentarem as variáveis de ambiente com eles. A estrutura básica do Secret é como segue:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#268bd2>apiVersion</span>: v1
+<span style=color:#268bd2>kind</span>: Secret
+<span style=color:#268bd2>metadata</span>:
+  <span style=color:#268bd2>name</span>: mysql-secrets
+<span style=color:#268bd2>type</span>: Opaque
+<span style=color:#268bd2>data</span>:
+  <span style=color:#268bd2>mysql-root-password</span>: &lt;hash base64&gt;
+  <span style=color:#268bd2>mysql-user</span>: &lt;hash base64&gt;
+  <span style=color:#268bd2>mysql-password</span>: &lt;hash base64&gt;
+  <span style=color:#268bd2>mysql-database-connection</span>: &lt;hash base64&gt;
+</code></pre></div><p>Nele estou criando o Secret <code>mysql-secrets</code> e definindo quatro chaves que representam as três variáveis do MySQL e uma do servidor HTTP. No lugar do <code>&lt;hash base64></code> deve ir o conteúdo do segredo em Base 64, que pode ser gerado usando o comando <code>echo -n "meusegredo" | base64 -w0</code>.</p>
+<p>Eu não gostei muito da ideia de guardar o Base 64 dentro da definição do Secret, então fiz a seguinte modificação no meu <code>mysql-secrets.yml</code>:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#268bd2>apiVersion</span>: v1
+<span style=color:#268bd2>kind</span>: Secret
+<span style=color:#268bd2>metadata</span>:
+  <span style=color:#268bd2>name</span>: mysql-secrets
+<span style=color:#268bd2>type</span>: Opaque
+<span style=color:#268bd2>data</span>:
+  <span style=color:#268bd2>mysql-root-password</span>: %MYSQL_ROOT_PASSWORD
+  <span style=color:#268bd2>mysql-user</span>: %MYSQL_USER
+  <span style=color:#268bd2>mysql-password</span>: %MYSQL_PASSWORD
+  <span style=color:#268bd2>mysql-database-connection</span>: %DATABASE_CONNECTION
+</code></pre></div><p>E quando vou aplicar o Secret no Kubernetes uso este script:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#268bd2>MYSQL_ROOT_PASSWORD</span><span style=color:#719e07>=</span><span style=color:#719e07>$(</span>&lt; /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c<span style=color:#2aa198>${</span><span style=color:#268bd2>1</span><span style=color:#719e07>:-</span><span style=color:#268bd2>32</span><span style=color:#2aa198>}</span><span style=color:#719e07>)</span>
+<span style=color:#268bd2>B64_MYSQL_ROOT_PASSWORD</span><span style=color:#719e07>=</span><span style=color:#719e07>$(</span><span style=color:#b58900>echo</span> -n <span style=color:#268bd2>$MYSQL_ROOT_PASSWORD</span> | base64 -w0<span style=color:#719e07>)</span>
+<span style=color:#268bd2>B64_DATABASE_USER</span><span style=color:#719e07>=</span><span style=color:#719e07>$(</span><span style=color:#b58900>echo</span> -n <span style=color:#268bd2>$DATABASE_USER</span> | base64 -w0<span style=color:#719e07>)</span>
+<span style=color:#268bd2>B64_DATABASE_PASSWORD</span><span style=color:#719e07>=</span><span style=color:#719e07>$(</span><span style=color:#b58900>echo</span> -n <span style=color:#268bd2>$DATABASE_PASSWORD</span> | base64 -w0<span style=color:#719e07>)</span>
+<span style=color:#268bd2>B64_DATABASE_CONNECTION</span><span style=color:#719e07>=</span><span style=color:#719e07>$(</span><span style=color:#b58900>echo</span> -n <span style=color:#cb4b16>\
+</span><span style=color:#cb4b16></span>    <span style=color:#2aa198>&#34;mysql://</span><span style=color:#268bd2>$DATABASE_USER</span><span style=color:#2aa198>:</span><span style=color:#268bd2>$DATABASE_PASSWORD</span><span style=color:#2aa198>@db-service:3306/appointments&#34;</span> <span style=color:#cb4b16>\
+</span><span style=color:#cb4b16></span>    | base64 -w0<span style=color:#719e07>)</span>
+
+sed <span style=color:#2aa198>&#34;\
+</span><span style=color:#2aa198>  s|%MYSQL_ROOT_PASSWORD|</span><span style=color:#268bd2>$B64_MYSQL_ROOT_PASSWORD</span><span style=color:#2aa198>|;\
+</span><span style=color:#2aa198>  s|%MYSQL_USER|</span><span style=color:#268bd2>$B64_DATABASE_USER</span><span style=color:#2aa198>|;\
+</span><span style=color:#2aa198>  s|%MYSQL_PASSWORD|</span><span style=color:#268bd2>$B64_DATABASE_PASSWORD</span><span style=color:#2aa198>|;\
+</span><span style=color:#2aa198>  s|%DATABASE_CONNECTION|</span><span style=color:#268bd2>$B64_DATABASE_CONNECTION</span><span style=color:#2aa198>|&#34;</span> <span style=color:#cb4b16>\
+</span><span style=color:#cb4b16></span>  mysql-secrets.yml | oc apply -f -
+</code></pre></div><p>Esse script cria uma senha aleatória para o root e usa duas variáveis de ambiente para definir o usuário e senha do MySQL, faz o Base 64 deles, injeta eles no arquivo via <code>sed</code> no Secret e aplica no Kubernetes com <code>oc apply -f -</code> que irá ler a saída do <code>sed</code> e aplicá-la. Na hora de executar fica assim:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ <span style=color:#b58900>export</span> <span style=color:#268bd2>DATABASE_USER</span><span style=color:#719e07>=</span>appoint
+$ <span style=color:#b58900>export</span> <span style=color:#268bd2>DATABASE_PASSWORD</span><span style=color:#719e07>=</span><span style=color:#2aa198>123</span>
+$ ./env-set-oc.sh
+secret <span style=color:#2aa198>&#34;mysql-secrets&#34;</span> configured
+</code></pre></div><p>Altero os Deployments para considerarem o Secret que criei:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#268bd2>apiVersion</span>: extensions/v1beta1
+<span style=color:#268bd2>kind</span>: Deployment
+<span style=color:#268bd2>metadata</span>:
+  <span style=color:#268bd2>name</span>: <span style=color:#2aa198>&#34;db-deployment&#34;</span>
+<span style=color:#268bd2>spec</span>:
+  <span style=color:#268bd2>replicas</span>: <span style=color:#2aa198>1</span>
+  <span style=color:#268bd2>template</span>:
+    <span style=color:#268bd2>metadata</span>:
+      <span style=color:#268bd2>labels</span>:
+        <span style=color:#268bd2>name</span>: <span style=color:#2aa198>&#34;db-pod&#34;</span>
+    <span style=color:#268bd2>spec</span>:
+      <span style=color:#268bd2>containers</span>:
+        - <span style=color:#268bd2>name</span>: <span style=color:#2aa198>&#34;db&#34;</span>
+          <span style=color:#268bd2>image</span>: <span style=color:#2aa198>&#34;lucassabreu/openshift-mysql-test&#34;</span>
+          <span style=color:#268bd2>ports</span>:
+            - <span style=color:#268bd2>name</span>: <span style=color:#2aa198>&#34;mysql-port&#34;</span>
+              <span style=color:#268bd2>containerPort</span>: <span style=color:#2aa198>3306</span>
+          <span style=color:#268bd2>env</span>:
+            - <span style=color:#268bd2>name</span>: MYSQL_DATABASE
+              <span style=color:#268bd2>value</span>: appointments
+            - <span style=color:#268bd2>name</span>: MYSQL_ROOT_PASSWORD
+              <span style=color:#268bd2>valueFrom</span>:
+                <span style=color:#268bd2>secretKeyRef</span>:
+                  <span style=color:#268bd2>name</span>: mysql-secrets
+                  <span style=color:#268bd2>key</span>: mysql-root-password
+            - <span style=color:#268bd2>name</span>: MYSQL_USER
+              <span style=color:#268bd2>valueFrom</span>:
+                <span style=color:#268bd2>secretKeyRef</span>:
+                  <span style=color:#268bd2>name</span>: mysql-secrets
+                  <span style=color:#268bd2>key</span>: mysql-user
+            - <span style=color:#268bd2>name</span>: MYSQL_PASSWORD
+              <span style=color:#268bd2>valueFrom</span>:
+                <span style=color:#268bd2>secretKeyRef</span>:
+                  <span style=color:#268bd2>name</span>: mysql-secrets
+                  <span style=color:#268bd2>key</span>: mysql-password
+          <span style=color:#268bd2>volumeMounts</span>:
+            - <span style=color:#268bd2>name</span>: <span style=color:#2aa198>&#34;mysql-persistent-volume&#34;</span>
+              <span style=color:#268bd2>mountPath</span>: <span style=color:#2aa198>&#34;/var/lib/mysql&#34;</span>
+      <span style=color:#268bd2>volumes</span>:
+        - <span style=color:#268bd2>name</span>: <span style=color:#2aa198>&#34;mysql-persistent-volume&#34;</span>
+          <span style=color:#268bd2>persistentVolumeClaim</span>:
+            <span style=color:#268bd2>claimName</span>: mysql-pv-claim
+</code></pre></div><p><small><center>db-deployment.yml</center></small></p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#268bd2>apiVersion</span>: extensions/v1beta1
+<span style=color:#268bd2>kind</span>: Deployment
+<span style=color:#268bd2>metadata</span>:
+  <span style=color:#268bd2>name</span>: <span style=color:#2aa198>&#34;node-deployment&#34;</span>
+<span style=color:#268bd2>spec</span>:
+  <span style=color:#268bd2>replicas</span>: <span style=color:#2aa198>1</span>
+  <span style=color:#268bd2>template</span>:
+    <span style=color:#268bd2>metadata</span>:
+      <span style=color:#268bd2>labels</span>:
+        <span style=color:#268bd2>name</span>: <span style=color:#2aa198>&#34;node-pod&#34;</span>
+    <span style=color:#268bd2>spec</span>:
+      <span style=color:#268bd2>containers</span>:
+        - <span style=color:#268bd2>name</span>: <span style=color:#2aa198>&#34;node&#34;</span>
+          <span style=color:#268bd2>image</span>: <span style=color:#2aa198>&#34;lucassabreu/openshift-app-test&#34;</span>
+          <span style=color:#268bd2>ports</span>:
+            - <span style=color:#268bd2>name</span>: node-port
+              <span style=color:#268bd2>containerPort</span>: <span style=color:#2aa198>8080</span>
+              <span style=color:#268bd2>protocol</span>: TCP
+          <span style=color:#268bd2>env</span>:
+            - <span style=color:#268bd2>name</span>: DATABASE_CONNECTION
+              <span style=color:#268bd2>valueFrom</span>:
+                <span style=color:#268bd2>secretKeyRef</span>:
+                  <span style=color:#268bd2>name</span>: mysql-secrets
+                  <span style=color:#268bd2>key</span>: mysql-database-connection
+</code></pre></div><p><small><center>node-deployment.yml</center></small></p>
+<p>A alteração consiste de trocar a chave <code>value</code> das variáveis por <code>valueFrom</code> e apontar para as chaves corretas dentro do Secret.</p>
+<p>Depois que aplica as mudanças os Deployments vão identificá-las e trocar os Pods por novos. E passaram a utilizar os Secrets informado nas variáveis para eles.</p>
+<hr>
+<p>Ao final dessa séria, a conclusão que posso chegar é que o Kubernetes exige um conjunto razoavelmente grande de configurações para podermos servir uma aplicação, mas são arquivos simples de se entender e muito bem <a href=https://kubernetes.io/docs/reference/>documentados</a> o que facilitou bastante o processo, e não me fez sentir o peso dessa quantidade.</p>
+</div><section class=share>
+<p>
+Share this post at
+<a href="https://twitter.com/share?text=Um%20ambiente%20simples%20usando%20Kubernetes%20e%20OpenShift%20Next%20Gen%e2%80%8a-%e2%80%8aParte%c2%a04&nbsp;-&nbsp;Lucas%20dos%20Santos%20Abreu&url=https%3a%2f%2fwww.lucassabreu.net.br%2fpreview%2f9%2fpost%2fum-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4%2f" onclick="return window.open(this.href,'twitter-share','width=550,height=235'),!1">
+Twitter
+</a>
+<a href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fwww.lucassabreu.net.br%2fpreview%2f9%2fpost%2fum-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4%2f" onclick="return window.open(this.href,'facebook-share','width=580,height=296'),!1">
+Facebook
+</a>
+<a href="http://pinterest.com/pin/create/button/?url=https%3a%2f%2fwww.lucassabreu.net.br%2fpreview%2f9%2fpost%2fum-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-4%2f&description=Um%20ambiente%20simples%20usando%20Kubernetes%20e%20OpenShift%20Next%20Gen%e2%80%8a-%e2%80%8aParte%c2%a04" onclick="return window.open(this.href,'pinterest-share','width=580,height=296'),!1">
+Pinterest
+</a>
+</p>
+</section>
+<footer>
+<section role=comment>
+<p>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//lucas-dos-santos-abreu.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</p>
+</section>
+<section>
+<p>
+Published
+by <span itemprop=author></span>
+<time datetime=2017-03-10T00:00:00+00:00>
+10 Mar, 2017
+</time>
+and tagged
+<a href=/preview/9/tags/kubernetes>Kubernetes</a>
+<a href=/preview/9/tags/openshift>Openshift</a>
+<a href=/preview/9/tags/introduction>Introduction</a>
+<a href=/preview/9/tags/simple>Simple</a>
+<a href=/preview/9/tags/docker>Docker</a>
+using <span itemprop=wordCount>656</span> words.
+</p>
+</section>
+</footer>
+</article>
+</main>
+<aside>
+<header>Related Content</header>
+<ul>
+<li>
+<a href=/preview/9/post/ambientes-por-branch-com-openshift-next-gen-usando-github/>Ambientes por Branch com OpenShift Next Gen usando GitHub</a> &ndash;
+<time>9 minute read</time>
+</li>
+<li>
+<a href=/preview/9/post/ambientes-por-branch-com-openshift-next-gen/>Ambientes por Branch com OpenShift Next Gen</a> &ndash;
+<time>9 minute read</time>
+</li>
+<li>
+<a href=/preview/9/gist/coderockr-jam-2017-03/>Notas Kubernetes - Coderockr Jam 2017-03-11</a> &ndash;
+<time>5 minute read</time>
+</li>
+<li>
+<a href=/preview/9/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-3/>Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 3</a> &ndash;
+<time>4 minute read</time>
+</li>
+<li>
+<a href=/preview/9/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-2/>Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 2</a> &ndash;
+<time>5 minute read</time>
+</li>
+<li>
+<a href=/preview/9/post/um-ambiente-simples-usando-kubernetes-e-openshift-next-gen-parte-1/>Um ambiente simples usando Kubernetes e OpenShift Next Gen - Parte 1</a> &ndash;
+<time>4 minute read</time>
+</li>
+</ul>
+</aside>
+<a href=#main id=back-to-top>Back to the top</a>
+<footer>
+<p>
+&copy;
+2021 ·
+This page was generated using <a target=_blank rel=noopener href=https://github.com/lucassabreu/smol>smol<a> for <a target=_blank rel=noopener href=https://gohugo.io/>Hugo</a>.
+</p>
+</footer>
+</body>
+</html>

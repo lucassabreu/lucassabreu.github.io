@@ -1,0 +1,157 @@
+<!doctype html><html lang=pt-br>
+<head>
+<meta itemprop=name content="Aplicando HTTPS para uma SPA na AWS">
+<meta property="og:title" content="Aplicando HTTPS para uma SPA na AWS">
+<meta itemprop=description content="Como aplicamos HTTPS para o nosso frontend usando as ferramentas da AWS">
+<meta property="og:description" content="Como aplicamos HTTPS para o nosso frontend usando as ferramentas da AWS">
+<meta property="og:url" content="https://www.lucassabreu.net.br/preview/9/post/aplicando-https-para-uma-spa-na-aws/">
+<meta property="og:site_name" content="Lucas dos Santos Abreu">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="pt-BR"><meta itemprop=datePublished content="2018-03-31T22:00:00-03:00">
+<meta itemprop=dateModified content="2018-03-31T22:00:00-03:00">
+<meta itemprop=wordCount content="628">
+<meta property="og:image" content="https://www.lucassabreu.net.br/preview/9/white_hu8334ad00c26f930f76e93dcf8b9ae200_1453_f0e8274fb6821efb08e49ba8df7266c4.png">
+<meta name=twitter:card content="summary_large_image"><meta property="author" content="Lucas dos Santos Abreu"><meta name=twitter:creator content="@LucasSantAbreu">
+<meta name=twitter:site content="@LucasSantAbreu">
+<meta itemprop=keywords content="aws,https,cloudfront,s3,">
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<style type=text/css>body{font-family:monospace}</style>
+<title>
+Aplicando HTTPS para uma SPA na AWS |
+Lucas dos Santos Abreu
+</title>
+<link rel=stylesheet href="/preview/9/css/style.css?rnd=1634399426">
+<script src="/preview/9/js/index.js?rnd=1634399426"></script>
+</head>
+<body>
+<a class=skip-to-content-link href=#main> Skip to content </a>
+<header class=page-header>
+<nav arial-label=primary role=menu>
+<a href=/preview/9/preview/9/>Home</a>
+<a href=/preview/9/preview/9/resume>Resume</a>
+<a href=https://twitter.com/LucasSantAbreu>Twitter</a>
+<a href=https://github.com/lucassabreu>GitHub</a>
+<a href=https://medium.com/@lucassabreu>Medium</a>
+<a href=https://www.linkedin.com/in/lucassantosabreu>LinkedIn</a>
+</nav>
+</header>
+<main id=main>
+<article>
+<header>
+<h1>Aplicando HTTPS para uma SPA na AWS</h1>
+<p>
+<span class=reading-time>3 minute read</span>
+<span class=published-at>
+Published:
+<time datetime="2018-03-31 22:00:00 -0300 -0300">2018-03-31</time>
+</span>
+</p><figure class=big>
+<img class="lazyload blur-up feature" loading=lazy data-src=https://www.lucassabreu.net.br/preview/9/post/aplicando-https-para-uma-spa-na-aws/feature.png alt="cover image" width=984 height=243>
+</figure>
+</header>
+<div class=content role=content>
+<p>Recentemente passamos a servir a nossa landing page e o SPA do <a href=https://planrockr.com/>Planrockr</a> sobre HTTPS, inicialmente apenas estamos usando HTTPS no nosso backend, mas percebemos que seria melhor que nosso frontend também usasse.</p>
+<p>Alguns dos motivos por traz disso seriam para melhorar o <a href=https://webmasters.googleblog.com/2014/08/https-as-ranking-signal.html>ranking em sites de pesquisa</a>, para garantir ainda mais a segurança nas comunicações, e também para passar mais segurança para os nossos usuários.</p>
+<p>Como estamos servindo nosso frontend usando o S3 da AWS, é apenas uma questão de colocar um CloudFront na frente e alterar a rota no Route 53 e tudo passa a funcionar, mas acabou dando alguma dor de cabeça, não por ser uma tarefa difícil, mas simplesmente por termos encontrado instruções confusas e errôneas quando pesquisamos como executar a migração.</p>
+<p>A maioria dos tutoriais que existem na internet sobre habilitar HTTPS no AWS para um SPA passam a instrução errada de que não podemos usar o link facilitado do S3 para vincular com o CloudFront. Isso acabou em um conjunto problemas de comunicação com o S3, e o fez rejeitar as chamadas vindas do CloudFront; e passar a simplesmente redirecionar para a URL pública do bucket, quebrando algumas funcionalidades do Planrockr, principalmente no on-boarding.</p>
+<p>Para evitar que outros acabem passando por problemas semelhantes e para servir de registro para projetos futuros, abaixo vou descrever a forma correta (e fácil) de habilitar HTTPS usando o S3 e CloudFront da AWS.</p>
+<hr>
+<p>Para usar HTTPS em um bucket do S3, primeiro é necessário possuir um bucket (😜), para esse tutorial, criei um bucket com o nome <code>simple.planrockr.com</code>, e adicionei um arquivo <code>index.html</code> bem simples:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html>&lt;<span style=color:#268bd2>html</span>&gt;
+
+&lt;<span style=color:#268bd2>head</span>&gt;
+    &lt;<span style=color:#268bd2>title</span>&gt;Example&lt;/<span style=color:#268bd2>title</span>&gt;
+&lt;/<span style=color:#268bd2>head</span>&gt;
+
+&lt;<span style=color:#268bd2>body</span>&gt;
+    &lt;<span style=color:#268bd2>h1</span>&gt;Hello World&lt;/<span style=color:#268bd2>h1</span>&gt;
+&lt;/<span style=color:#268bd2>body</span>&gt;
+
+&lt;/<span style=color:#268bd2>html</span>&gt;
+</code></pre></div><p>Habilitei o mesmo para funcionar como <em>Static website hosting</em>, então posso acessar a URL <a href=http://simple.planrockr.com.s3-website-sa-east-1.amazonaws.com/>http://simple.planrockr.com.s3-website-sa-east-1.amazonaws.com/</a> e verei o seguinte:</p>
+<figure>
+<img class="lazyload blur-up" loading=lazy data-src=/uploads/https-aws-s3-cf_index.html-sem-https.png width=552 height=292>
+<figcaption><p>Página simples servida via HTTP</p></figcaption>
+</figure>
+<p>Com esse bucket podemos simular a migração de uma &ldquo;SPA&rdquo; no S3 sem HTTPS para uma usando CloudFront para servir via HTTPS.</p>
+<p>O primeiro é acessar o dashboard do CloudFront no AWS, nele acesse o botão <strong>Create Distribution</strong>:</p>
+<figure>
+<img class="lazyload blur-up" loading=lazy data-src=/uploads/https-aws-s3-cf_cloudfront-dashboard.png width=753 height=229>
+<figcaption><p>Botão Create Distribution CloudFront</p></figcaption>
+</figure>
+<p>Ir na opção para Web:</p>
+<figure>
+<img class="lazyload blur-up" loading=lazy data-src=/uploads/https-aws-s3-cf_cloudfront-get-started.png width=1286 height=290>
+<figcaption><p>Get Started do CloudFront (Web)</p></figcaption>
+</figure>
+<p>Na tela <strong>Create Distribution</strong>, informe o nome do bucket que deseja usar, e selecione-o quando aparecer na lista.</p>
+<figure>
+<img class="lazyload blur-up" loading=lazy data-src=/uploads/https-aws-s3-cf_cloudfront-create-distribution.png width=884 height=192>
+<figcaption><p>CloudFront Create Distribution, selecionar bucket</p></figcaption>
+</figure>
+<p>Eu recomendo marcar a opção &ldquo;Redirect HTTP to HTTPS&rdquo; em <strong>Viewer Protocol Policy</strong>, para que o seu site/SPA sempre seja acessado via HTTPS, mesmo que o usuário tenha um link com HTTP apenas.</p>
+<p>O resto é bem simples, pode deixar tudo no padrão, e apenas informar o certificado e os &ldquo;CNAMEs&rdquo; para o seu serviço.</p>
+<p>Como normalmente um SPA usa algum framework JavaScript para gerenciar as rotas (como no nosso caso o <code>react-routes</code>), então é necessário configurar algumas regras na distribution do CloudFront para que ele direcione todas as chamadas para o seu <code>index.html</code> base que ira lidar com as rotas.</p>
+<p>Para isso entre na distribution, na aba &ldquo;Error Pages&rdquo;, vamos adicionar duas regras para que todas as chamadas para arquivos que não existam no bucket sejam direcionadas para o <code>index.html</code> do SPA.</p>
+<p>Fica assim:</p>
+<figure>
+<img class="lazyload blur-up" loading=lazy data-src=/uploads/https-aws-s3-cf_cloudfront-create-error-page.png width=717 height=424>
+<figcaption><p>CloudFront Custom Error Response Settings</p></figcaption>
+</figure>
+<p>O S3 retorna os Status Codes <code>403</code> e <code>404</code> quando não consegue achar um arquivo ou não permite acesso a ele, desse modo criando a regra acima para esses dois Status Codes todas as requisições (que não forem de assets) serão direcionados ao <code>index.html</code>.</p>
+<p>Depois destes ajustes você tem um bucket do S3 sendo servido com HTTPS pelo CloudFront sem quaisquer problemas.</p>
+<hr>
+<p>É importante dizer que essa solução é muito boa para SPAs, mas se possuir regras mais complexas de redirecionamentos, ou mais “páginas principais” para o mesmo site, então provavelmente não vai lhe atender, pois não há suporte no CloudFront para isso, seria necessário tratar na origem que o CloudFront estiver lendo.</p>
+</div><section class=share>
+<p>
+Share this post at
+<a href="https://twitter.com/share?text=Aplicando%20HTTPS%20para%20uma%20SPA%20na%c2%a0AWS&nbsp;-&nbsp;Lucas%20dos%20Santos%20Abreu&url=https%3a%2f%2fwww.lucassabreu.net.br%2fpreview%2f9%2fpost%2faplicando-https-para-uma-spa-na-aws%2f" onclick="return window.open(this.href,'twitter-share','width=550,height=235'),!1">
+Twitter
+</a>
+<a href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fwww.lucassabreu.net.br%2fpreview%2f9%2fpost%2faplicando-https-para-uma-spa-na-aws%2f" onclick="return window.open(this.href,'facebook-share','width=580,height=296'),!1">
+Facebook
+</a>
+<a href="http://pinterest.com/pin/create/button/?url=https%3a%2f%2fwww.lucassabreu.net.br%2fpreview%2f9%2fpost%2faplicando-https-para-uma-spa-na-aws%2f&description=Aplicando%20HTTPS%20para%20uma%20SPA%20na%c2%a0AWS" onclick="return window.open(this.href,'pinterest-share','width=580,height=296'),!1">
+Pinterest
+</a>
+</p>
+</section>
+<footer>
+<section role=comment>
+<p>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//lucas-dos-santos-abreu.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</p>
+</section>
+<section>
+<p>
+Published
+by <span itemprop=author></span>
+<time datetime=2018-03-31T22:00:00-03:00>
+31 Mar, 2018
+</time>
+and tagged
+<a href=/preview/9/tags/aws>aws</a>
+<a href=/preview/9/tags/https>https</a>
+<a href=/preview/9/tags/cloudfront>cloudfront</a>
+<a href=/preview/9/tags/s3>s3</a>
+using <span itemprop=wordCount>628</span> words.
+</p>
+</section>
+</footer>
+</article>
+</main>
+<a href=#main id=back-to-top>Back to the top</a>
+<footer>
+<p>
+&copy;
+2021 ·
+This page was generated using <a target=_blank rel=noopener href=https://github.com/lucassabreu/smol>smol<a> for <a target=_blank rel=noopener href=https://gohugo.io/>Hugo</a>.
+</p>
+</footer>
+</body>
+</html>
