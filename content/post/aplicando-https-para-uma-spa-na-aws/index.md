@@ -1,8 +1,8 @@
 ---
 title: "Aplicando HTTPS para uma SPA na\_AWS"
 date: '2018-03-31T22:00:00-03:00'
-images:
-  - /uploads/banner-cf-s3-https.svg.png
+resources:
+  - ./feature.png
 draft: false
 toc: false
 description: Como aplicamos HTTPS para o nosso frontend usando as ferramentas da AWS
@@ -12,9 +12,6 @@ tags:
   - cloudfront
   - s3
 ---
-<!--more-->
-
-{{< figure class="big" src="/uploads/banner-cf-s3-https.svg.png" >}}
 
 Recentemente passamos a servir a nossa landing page e o SPA do [Planrockr](https://planrockr.com/) sobre HTTPS, inicialmente apenas estamos usando HTTPS no nosso backend, mas percebemos que seria melhor que nosso frontend também usasse.
 

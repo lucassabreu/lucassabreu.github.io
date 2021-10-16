@@ -11,4 +11,4 @@ build:
 
 server:
 	$$BROWSER http://localhost:1313
-	hugo server -v
+	hugo server -v --minify
