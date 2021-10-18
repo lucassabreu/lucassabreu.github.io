@@ -1,5 +1,6 @@
 +++
 date = "2021-10-15"
+lastmod = "2021-10-18"
 title = "Github Actions"
 draft = false
 tags = ["Github", "Github Actions", "Continuous Integration"]
@@ -801,6 +802,17 @@ fonte presente nesses repositórios:
  * [lucassabreu/lucassabreu.github.io][]
 {{% /feature %}}
 
+## Atualização 2021-10-18
+
+> Caso você esteja usando o `eslint` para validar a sua aplicação NodeJS ou
+> Frontend, você não vai precisar configurar um formato de saída especial ou
+> manipular via [`sed`][sed] para gerar as [`annotations`][annotations-anchor].
+>
+> O Github reconhece a saída padrão do `eslint` sem nenhuma ação extra.
+>
+> Espero que isso evite alguma confusão.
+
+[annotations-anchor]: #lintsan%c3%a1lise-est%c3%a1tica-com-annotations
 [dind]: https://github.com/lucassabreu/github-actions-examples/blob/da3b1d7e069f24115d9ce750acf9178814c9a1a3/.github/workflows/phpcs-dind.yaml
 [lucassabreu/github-actions-examples]: https://github.com/lucassabreu/github-actions-examples
 [lucassabreu/lucassabreu]: https://github.com/lucassabreu/lucassabreu/tree/main/.github/workflows
