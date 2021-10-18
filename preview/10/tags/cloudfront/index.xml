@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>cloudfront on Lucas dos Santos Abreu</title><link>https://www.lucassabreu.net.br/preview/10/tags/cloudfront/</link><description>Recent content in cloudfront on Lucas dos Santos Abreu</description><generator>Hugo -- gohugo.io</generator><language>pt-BR</language><lastBuildDate>Sat, 31 Mar 2018 22:00:00 -0300</lastBuildDate><atom:link href="https://www.lucassabreu.net.br/preview/10/tags/cloudfront/index.xml" rel="self" type="application/rss+xml"/><item><title>Aplicando HTTPS para uma SPA na AWS</title><link>https://www.lucassabreu.net.br/preview/10/post/aplicando-https-para-uma-spa-na-aws/</link><pubDate>Sat, 31 Mar 2018 22:00:00 -0300</pubDate><guid>https://www.lucassabreu.net.br/preview/10/post/aplicando-https-para-uma-spa-na-aws/</guid><description>Como aplicamos HTTPS para o nosso frontend usando as ferramentas da AWS</description><image><url>https://www.lucassabreu.net.br/preview/10/post/aplicando-https-para-uma-spa-na-aws/feature.png</url></image><content:encoded><![CDATA[<p>Recentemente passamos a servir a nossa landing page e o SPA do <a href="https://planrockr.com/">Planrockr</a> sobre HTTPS, inicialmente apenas estamos usando HTTPS no nosso backend, mas percebemos que seria melhor que nosso frontend também usasse.</p>
+<p>Alguns dos motivos por traz disso seriam para melhorar o <a href="https://webmasters.googleblog.com/2014/08/https-as-ranking-signal.html">ranking em sites de pesquisa</a>, para garantir ainda mais a segurança nas comunicações, e também para passar mais segurança para os nossos usuários.</p>
+<p>Como estamos servindo nosso  frontend usando o S3 da AWS, é apenas uma questão de colocar um CloudFront na frente e alterar a rota no Route 53 e tudo passa a funcionar, mas acabou dando alguma dor de cabeça, não por ser uma tarefa difícil, mas simplesmente por termos encontrado instruções confusas e errôneas quando pesquisamos como executar a migração.</p>
+<p>A maioria dos tutoriais que existem na internet sobre habilitar HTTPS no AWS para um SPA passam a instrução errada de que não podemos usar o link facilitado do S3 para vincular com o CloudFront. Isso acabou em um conjunto problemas de comunicação com o S3, e o fez rejeitar as chamadas vindas do CloudFront; e passar a simplesmente redirecionar para a URL pública do bucket, quebrando algumas funcionalidades do Planrockr, principalmente no on-boarding.</p>
+<p>Para evitar que outros acabem passando por problemas semelhantes e para servir de registro para projetos futuros, abaixo vou descrever a forma correta (e fácil) de habilitar HTTPS usando o S3 e CloudFront da AWS.</p>
+<hr>
+<p>Para usar HTTPS em um bucket do S3, primeiro é necessário possuir um bucket (😜), para esse tutorial, criei um bucket com o nome <code>simple.planrockr.com</code>, e adicionei um arquivo <code>index.html</code> bem simples:</p>
+<div class="highlight"><pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">&lt;<span style="color:#268bd2">html</span>&gt;
+
+&lt;<span style="color:#268bd2">head</span>&gt;
+    &lt;<span style="color:#268bd2">title</span>&gt;Example&lt;/<span style="color:#268bd2">title</span>&gt;
+&lt;/<span style="color:#268bd2">head</span>&gt;
+
+&lt;<span style="color:#268bd2">body</span>&gt;
+    &lt;<span style="color:#268bd2">h1</span>&gt;Hello World&lt;/<span style="color:#268bd2">h1</span>&gt;
+&lt;/<span style="color:#268bd2">body</span>&gt;
+
+&lt;/<span style="color:#268bd2">html</span>&gt;
+</code></pre></div><p>Habilitei o mesmo para funcionar como <em>Static website hosting</em>, então posso acessar a URL <a href="http://simple.planrockr.com.s3-website-sa-east-1.amazonaws.com/">http://simple.planrockr.com.s3-website-sa-east-1.amazonaws.com/</a> e verei o seguinte:</p>
+
+
+	
+
+<figure >
+	<img
+		class="lazyload blur-up"
+		loading="lazy"
+		data-src="/uploads/https-aws-s3-cf_index.html-sem-https.png"
+		
+			width="552" height="292"
+		
+	/>
+	
+		<figcaption><p>Página simples servida via HTTP</p></figcaption>
+	
+</figure>
+
+<p>Com esse bucket podemos simular a migração de uma &ldquo;SPA&rdquo; no S3 sem HTTPS para uma usando CloudFront para servir via HTTPS.</p>
+<p>O primeiro é acessar o dashboard do CloudFront no AWS, nele acesse o botão <strong>Create Distribution</strong>:</p>
+
+
+	
+
+<figure >
+	<img
+		class="lazyload blur-up"
+		loading="lazy"
+		data-src="/uploads/https-aws-s3-cf_cloudfront-dashboard.png"
+		
+			width="753" height="229"
+		
+	/>
+	
+		<figcaption><p>Botão Create Distribution CloudFront</p></figcaption>
+	
+</figure>
+
+<p>Ir na opção para Web:</p>
+
+
+	
+
+<figure >
+	<img
+		class="lazyload blur-up"
+		loading="lazy"
+		data-src="/uploads/https-aws-s3-cf_cloudfront-get-started.png"
+		
+			width="1286" height="290"
+		
+	/>
+	
+		<figcaption><p>Get Started do CloudFront (Web)</p></figcaption>
+	
+</figure>
+
+<p>Na tela <strong>Create Distribution</strong>, informe o nome do bucket que deseja usar, e selecione-o quando aparecer na lista.</p>
+
+
+	
+
+<figure >
+	<img
+		class="lazyload blur-up"
+		loading="lazy"
+		data-src="/uploads/https-aws-s3-cf_cloudfront-create-distribution.png"
+		
+			width="884" height="192"
+		
+	/>
+	
+		<figcaption><p>CloudFront Create Distribution, selecionar bucket</p></figcaption>
+	
+</figure>
+
+<p>Eu recomendo marcar a opção &ldquo;Redirect HTTP to HTTPS&rdquo; em <strong>Viewer Protocol Policy</strong>, para que o seu site/SPA sempre seja acessado via HTTPS, mesmo que o usuário tenha um link com HTTP apenas.</p>
+<p>O resto é bem simples, pode deixar tudo no padrão, e apenas informar o certificado e os &ldquo;CNAMEs&rdquo; para o seu serviço.</p>
+<p>Como normalmente um SPA usa algum framework JavaScript para gerenciar as rotas (como no nosso caso o <code>react-routes</code>), então é necessário configurar algumas regras na distribution do CloudFront para que ele direcione todas as chamadas para o seu <code>index.html</code> base que ira lidar com as rotas.</p>
+<p>Para isso entre na distribution, na aba &ldquo;Error Pages&rdquo;, vamos adicionar duas regras para que todas as chamadas para arquivos que não existam no bucket sejam direcionadas para o <code>index.html</code> do SPA.</p>
+<p>Fica assim:</p>
+
+
+	
+
+<figure >
+	<img
+		class="lazyload blur-up"
+		loading="lazy"
+		data-src="/uploads/https-aws-s3-cf_cloudfront-create-error-page.png"
+		
+			width="717" height="424"
+		
+	/>
+	
+		<figcaption><p>CloudFront Custom Error Response Settings</p></figcaption>
+	
+</figure>
+
+<p>O S3 retorna os Status Codes <code>403</code> e <code>404</code> quando não consegue achar um arquivo ou não permite acesso a ele, desse modo criando a regra acima para esses dois Status Codes todas as requisições (que não forem de assets) serão direcionados ao <code>index.html</code>.</p>
+<p>Depois destes ajustes você tem um bucket do S3 sendo servido com HTTPS pelo CloudFront sem quaisquer problemas.</p>
+<hr>
+<p>É importante dizer que essa solução é muito boa para SPAs, mas se possuir regras mais complexas de redirecionamentos, ou mais “páginas principais” para o mesmo site, então provavelmente não vai lhe atender, pois não há suporte no CloudFront para isso, seria necessário tratar na origem que o CloudFront estiver lendo.</p>
+]]></content:encoded></item></channel></rss>
