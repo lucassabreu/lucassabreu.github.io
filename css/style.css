@@ -37,6 +37,8 @@ html {
   --sumarrypadding: 1rem;
 
   --featureborder: 2rem;
+
+  --quotecolor: #3a3a3a;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -44,6 +46,7 @@ html {
     --bgcolor: black;
     --fontcolor: white;
     --emphasisbgcolor: #111;
+    --quotecolor: #cacaca;
   }
 }
 
@@ -329,6 +332,13 @@ article nav.toc li ol > li {
 
 article div.content {
   margin-top: var(--paragraphmargin);
+}
+
+article blockquote {
+  border-left: 1ex solid var(--emphasisbgcolor);
+  margin: var(--paragraphmargin) 0;
+  padding-left: var(--paragraphmargin);
+  color: var(--quotecolor);
 }
 
 article table pre {
