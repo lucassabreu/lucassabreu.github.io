@@ -1,5 +1,6 @@
 +++
 date = "2021-10-15"
+lastmod = "2021-10-18"
 title = "Github Actions"
 draft = false
 tags = ["Github", "Github Actions", "Continuous Integration"]
