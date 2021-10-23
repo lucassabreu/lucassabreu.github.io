@@ -1,6 +1,4 @@
 html {
-  overflow-x: hidden;
-  overflow-y: scroll;
   font-size: 1em;
 }
 
@@ -37,8 +35,20 @@ html {
   --sumarrypadding: 1rem;
 
   --featureborder: 2rem;
+  --featurelrborder: var(--featureborder);
 
   --quotecolor: #3a3a3a;
+
+  --bodywidth: 50rem;
+  --bodylrpadding: 20px;
+  --bodytbpadding: 10px;
+}
+
+@media screen and (max-width: 50rem) {
+  :root {
+    --featurelrborder: calc(var(--bodylrpadding) / 2);
+    --bodywidth: 100vw;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -62,16 +72,21 @@ html {
   }
 }
 
+html,
 body {
-  max-width: 50rem;
+  background: var(--bgcolor);
+}
+
+body {
+  width: var(--bodywidth);
   margin: 0 auto;
-  padding: 20px 10px;
+  padding: var(--bodylrpadding) var(--bodytbpadding);
   font-size: 1rem;
   font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
     Bitstream Vera Sans Mono, Courier New, monospace, serif;
   color: var(--fontcolor);
-  background: var(--bgcolor);
 }
+
 a:link {
   color: var(--linkcolor);
 }
@@ -206,12 +221,19 @@ figure img {
 
 figure.big {
   margin: 0;
-  margin-right: calc(-100vw - 50%);
-  margin-left: calc(-100vw - 50%);
+  width: 100vw;
+  margin-left: calc((100vw - var(--bodywidth)) / -2);
 }
 
 figure.big img {
   max-width: 100vw;
+}
+
+@media screen and (max-width: 50rem) {
+  figure.big,
+  figure.big img {
+    width: 100%;
+  }
 }
 
 figcaption p,
@@ -292,8 +314,8 @@ article nav.toc,
 div.feature {
   background-color: var(--emphasisbgcolor);
   padding: calc(var(--featureborder) - var(--paragraphmargin))
-    var(--featureborder);
-  margin: var(--paragraphmargin) calc(var(--featureborder) * -1);
+    var(--featurelrborder);
+  margin: var(--paragraphmargin) calc(var(--featurelrborder) * -1);
 }
 
 article nav.toc {
