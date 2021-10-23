@@ -1,5 +1,6 @@
 html {
   font-size: 1em;
+  overflow-x: hidden;
 }
 
 * {
@@ -40,14 +41,18 @@ html {
   --quotecolor: #3a3a3a;
 
   --bodywidth: 50rem;
-  --bodylrpadding: 20px;
-  --bodytbpadding: 10px;
+  --bodylrpadding: 10px;
+  --bodytbpadding: 20px;
 }
 
 @media screen and (max-width: 50rem) {
   :root {
-    --featurelrborder: calc(var(--bodylrpadding) / 2);
-    --bodywidth: 100vw;
+    --featurelrborder: var(--bodylrpadding);
+    --bodywidth: 100%;
+  }
+
+  a {
+    line-break: loose;
   }
 }
 
@@ -78,13 +83,24 @@ body {
 }
 
 body {
-  width: var(--bodywidth);
-  margin: 0 auto;
-  padding: var(--bodylrpadding) var(--bodytbpadding);
+  margin: 0;
+  width: calc(100vw - var(--bodylrpadding));
+  padding: var(--bodytbpadding) var(--bodylrpadding);
   font-size: 1rem;
   font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
     Bitstream Vera Sans Mono, Courier New, monospace, serif;
   color: var(--fontcolor);
+}
+
+@media screen and (min-width: 50rem) {
+  body {
+    width: var(--bodywidth);
+    margin: 0 auto;
+  }
+
+  a {
+    line-break: loose;
+  }
 }
 
 a:link {
@@ -221,8 +237,8 @@ figure img {
 
 figure.big {
   margin: 0;
-  width: 100vw;
-  margin-left: calc((100vw - var(--bodywidth)) / -2);
+  width: calc(100vw - var(--bodylrpadding) * 2);
+  margin-left: calc(((100vw - var(--bodywidth)) / -2));
 }
 
 figure.big img {
@@ -232,6 +248,7 @@ figure.big img {
 @media screen and (max-width: 50rem) {
   figure.big,
   figure.big img {
+    margin: 0 auto;
     width: 100%;
   }
 }
@@ -239,10 +256,12 @@ figure.big img {
 figcaption p,
 p.code-legend,
 .code-legend p {
+  margin: auto;
   margin-top: calc(var(--paragraphmargin) / 2);
   font-size: 80%;
   text-align: center;
   font-weight: 700;
+  width: var(--bodywidth);
 }
 
 img {
@@ -350,6 +369,15 @@ article nav.toc ol > li:before {
 
 article nav.toc li ol > li {
   margin: 0;
+}
+
+@media screen and (max-width: 50rem) {
+  article nav.toc {
+    margin: 0;
+  }
+  article nav.toc ol > li:before {
+    display: inline-block;
+  }
 }
 
 article div.content {
